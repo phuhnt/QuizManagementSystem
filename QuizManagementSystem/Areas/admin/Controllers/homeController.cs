@@ -6,14 +6,12 @@ using System.Web.Mvc;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class loginController : Controller
+    public class homeController : Controller
     {
-        // GET: admin/login
+        // GET: admin/home
         public ActionResult Index()
         {
             return View();
         }
-
-
     }
 }
