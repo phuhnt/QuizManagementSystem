@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class homeController : Controller
+    public class homeController : baseController
     {
         // GET: admin/home
         public ActionResult Index()

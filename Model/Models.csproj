@@ -49,8 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAO\UserDAO.cs" />
+    <Compile Include="EF\Answer.cs" />
+    <Compile Include="EF\Class.cs" />
+    <Compile Include="EF\CodeTest.cs" />
+    <Compile Include="EF\Exam.cs" />
+    <Compile Include="EF\Kind.cs" />
+    <Compile Include="EF\Level.cs" />
+    <Compile Include="EF\Question.cs" />
+    <Compile Include="EF\QuestionTest.cs" />
     <Compile Include="EF\QuizManagementSystemDbContext.cs" />
     <Compile Include="EF\Role.cs" />
+    <Compile Include="EF\ScoreLadder.cs" />
+    <Compile Include="EF\Subject.cs" />
+    <Compile Include="EF\Test.cs" />
+    <Compile Include="EF\TestResultDetail.cs" />
     <Compile Include="EF\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,7 +72,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DAO\" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

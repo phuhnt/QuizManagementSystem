@@ -3,95 +3,157 @@
     Layout = null;
 }
 
-<!DOCTYPE html>
+@model QuizManagementSystem.Areas.admin.Models.AdminLoginModel
 
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Admin - Đăng nhập vào hệ thống Quiz Management System </title>
-    <!-- Bootstrap -->
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet"/>
-    <!-- Font Awesome -->
-    <link href="~/Content/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
-    <!-- NProgress -->
-    <link href="~/Content/vendors/nprogress/nprogress.css" rel="stylesheet"/>
-    <!-- Animate.css -->
-    <link href="~/Content/vendors/animate.css/animate.min.css" rel="stylesheet"/>
-    <!-- Custom Theme Style -->
-    <link href="~/Content/build/css/custom.min.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Đăng nhập vào hệ thống quản trị Quiz Management System</title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="~/Assets/Admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link href="~/Assets/Admin/css/sb-admin.css" rel="stylesheet">
 </head>
-<body class="login">
-    <div>
-        <a class="hiddenanchor" id="signup"></a>
-        <a class="hiddenanchor" id="signin"></a>
-        <div class="login_wrapper">
-            <div class="animate form login_form">
-                <section class="login_content">
-                    @using (Html.BeginForm())
-                    {
-                        <h1>Đăng nhập vào Admin!</h1>
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div>
-                            @*@Html.TextBoxFor(model => model.Username, new { @type = "text", @class = "form-control", @placeholder = "Tên đăng nhập", @required = "" })*@
-                        </div>
-                        <div>
-                            @*@Html.TextBoxFor(model => model.Password, new { @type = "password", @class = "form-control", @placeholder = "Mật khẩu", @required = "" })*@
-                        </div>
-                        <div>
-                            <button class="btn btn-default submit">Đăng nhập</button>
-                            <a class="reset_pass" href="#">Quên mật khẩu?</a>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="separator">
-                            <p class="change_link">
-                                Không thể đăng nhập?
-                                <a href="#signup" class="to_register"> báo lỗi </a>
-                            </p>
-                            <div class="clearfix"></div>
-                            <br />
-                            <div>
-                                <h1><i class="fa fa-paw"></i> Huỳnh Ngọc Thanh Phú</h1>
-                                <p>UIT ©2017 All Rights Reserved. Hệ thống Quiz Management System</p>
-                            </div>
-                        </div>
-                    }
-                </section>
-            </div>
-            <div id="register" class="animate form registration_form">
-                <section class="login_content">
+<body class="bg-dark">
+    <div class="container">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header">Đăng nhập vào Admin</div>
+            <div class="card-body">
+                @using (Html.BeginForm("login", "login", FormMethod.Post))
+                {
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                     <form>
-                        <h1>Báo lỗi</h1>
-                        <div>
-                            <input type="text" class="form-control" placeholder="Tài khoản" required="" />
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên tài khoản</label>
+                            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", @autofocus = "autofocus" })
+                            @*<input class="form-control" id="exampleInputEmail1" type="email" aria-describedby="emailHelp" placeholder="Enter email">*@
                         </div>
-                        <div>
-                            <input type="email" class="form-control" placeholder="Email" required="" />
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Mật khẩu</label>
+                            @*<input class="form-control" id="exampleInputPassword1" type="password" placeholder="Password">*@
+                            @Html.PasswordFor(model => model.PassWord, new { @class = "form-control"})
                         </div>
-                        <div>
-                            <input type="text" class="form-control" placeholder="Nội dung" required="" />
-                        </div>
-                        <div>
-                            <a class="btn btn-default submit" href="index.html">Nộp đơn</a>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="separator">
-                            <p class="change_link">
-                                Hủy báo lỗi ?
-                                <a href="#signin" class="to_register"> Đăng nhập </a>
-                            </p>
-                            <div class="clearfix"></div>
-                            <br />
-                            <div>
-                                <h1><i class="fa fa-paw"></i> Huỳnh Ngọc Thanh Phú</h1>
-                                <p>UIT ©2017 All Rights Reserved. Hệ thống Quiz Management System</p>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <label>
+                                    @Html.CheckBoxFor(model => model.RememberMe, new { @class= "form-check-label"})Nhớ mật khẩu
+                                    @*<input class="form-check-input" type="checkbox"> Nhớ mật khẩu*@
+                                </label>
                             </div>
                         </div>
+                        <button class="btn btn-primary btn-block" type="submit">Đăng nhập</button>
                     </form>
-                </section>
+                }
+
+                <div class="text-center">
+                    <a class="d-block small mt-3" href="register.html">Đăng ký tài khoản</a>
+                    <a class="d-block small" href="forgot-password.html">Quên mật khẩu?</a>
+                </div>
             </div>
         </div>
     </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Assets/Admin/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/Assets/Admin/vendor/jquery-easing/jquery.easing.min.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+@*<!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Đăng nhập vào hệ thống Quiz Management System | UIT</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="~/Assets/Login/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="~/fonts/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="~/Assets/Login/css/form-elements.css" />
+        <link rel="stylesheet" href="~/Assets/Login/css/style.css">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <!-- Favicon and touch icons -->
+        <link rel="shortcut icon" href="~/Assets/Login/ico/favicon.png">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Assets/Login/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Assets/Login/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Assets/Login/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="~/Assets/Login/ico/apple-touch-icon-57-precomposed.png">
+    </head>
+    <body>
+        <!-- Top content -->
+        <div class="top-content">
+            <div class="inner-bg">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                            <h1><strong>HỆ THỐNG HỖ TRỢ SOẠN THẢO CÂU HỎI TRẮC NGHIỆM</strong></h1>
+                            <div class="description">
+                                <p>
+                                    <strong>QUIZ MANAGEMENT SYSTEM</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3 form-box">
+                            <div class="form-top">
+                                <div class="form-top-left">
+                                    <h3>Đăng nhập</h3>
+                                    <p>Nhập vào tài khoản và mật khẩu vào bên dưới</p>
+                                </div>
+                                <div class="form-top-right">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                            </div>
+                            <div class="form-bottom">
+                                <form role="form" action="" method="post" class="login-form">
+                                    <div class="form-group">
+                                        <label class="sr-only" for="form-username">Username</label>
+                                        <input type="text" name="form-username" placeholder="Tên tài khoản" class="form-username form-control" id="form-username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="sr-only" for="form-password">Password</label>
+                                        <input type="password" name="form-password" placeholder="Mật khẩu" class="form-password form-control" id="form-password">
+                                    </div>
+                                    <button type="submit" class="btn">Đăng nhập</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Javascript -->
+        <script src="~/Assets/Login/js/jquery-1.11.1.min.js"></script>
+        <script src="~/Assets/Login/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/Assets/Login/js/jquery.backstretch.min.js"></script>
+        <script src="~/Assets/Login/js/scripts.js"></script>
+
+        <!--[if lt IE 10]>
+            <script src="~/Assets/Login/js/placeholder.js"></script>
+        <![endif]-->
+    </body>
+    </html>*@

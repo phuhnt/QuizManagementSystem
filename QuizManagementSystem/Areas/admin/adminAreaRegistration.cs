@@ -17,7 +17,7 @@ namespace QuizManagementSystem.Areas.admin
             context.MapRoute(
                 "admin_default",
                 "admin/{controller}/{action}/{id}",
-                new { action = "Index", controller = "login", id = UrlParameter.Optional }
+                new { controller = "login", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
