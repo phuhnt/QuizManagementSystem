@@ -26,7 +26,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 var _result = _userDao.Login(model.UserName, Encode.MD5Hash(model.PassWord));
                 if (_result == 1)
                 {
-                    var _user = _userDao.GetById(model.UserName);
+                    var _user = _userDao.GetUserByUserName(model.UserName);
                     var _userSession = new UserLogin();
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;

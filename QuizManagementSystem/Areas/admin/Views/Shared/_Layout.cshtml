@@ -18,6 +18,7 @@
     <link href="~/Assets/Admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- Custom styles for this template-->
     <link href="~/Assets/Admin/css/sb-admin.css" rel="stylesheet">
+    @RenderSection("linkHeader", required: false)
 </head>
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
     <!-- Navigation-->
@@ -29,9 +30,15 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-                    <a class="nav-link" href="index.html">
+                    <a class="nav-link" href="/admin/home">
                         <i class="fa fa-fw fa-dashboard"></i>
-                        <span class="nav-link-text">Dashboard</span>
+                        <span class="nav-link-text">Trang chủ</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                    <a class="nav-link" href="/admin/user">
+                        <i class="fa fa-fw fa-user-circle"></i>
+                        <span class="nav-link-text">Quản lý người dùng</span>
                     </a>
                 </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
@@ -233,17 +240,17 @@
             <!-- Breadcrumbs-->
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="index.html">Dashboard</a>
+                    <a href="/admin/home">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active">@RenderSection("breadcrumb", required: true)</li>
             </ol>
-            @RenderBody()   
+            @RenderBody()
             @*<div class="row">
-                <div class="col-12">
-                    <h1>Blank</h1>
-                    <p>This is an example of a blank page that you can use as a starting point for creating new ones.</p>
-                </div>
-            </div>*@
+                    <div class="col-12">
+                        <h1>Blank</h1>
+                        <p>This is an example of a blank page that you can use as a starting point for creating new ones.</p>
+                    </div>
+                </div>*@
         </div>
         <!-- /.container-fluid-->
         <!-- /.content-wrapper-->
@@ -284,6 +291,8 @@
         <script src="~/Assets/Admin/vendor/jquery-easing/jquery.easing.min.js"></script>
         <!-- Custom scripts for all pages-->
         <script src="~/Assets/Admin/js/sb-admin.min.js"></script>
+        @RenderSection("jsFooter", required: false)
+
     </div>
 </body>
 </html>

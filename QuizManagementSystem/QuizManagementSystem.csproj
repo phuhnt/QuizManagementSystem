@@ -154,6 +154,7 @@
     <Content Include="Assets\Admin\vendor\jquery-easing\jquery.easing.min.js" />
     <Content Include="Assets\Admin\vendor\jquery\jquery.js" />
     <Content Include="Assets\Admin\vendor\jquery\jquery.min.js" />
+    <Content Include="Assets\Images\avatardefault.png" />
     <Content Include="Assets\Login\backgrounds\1%402x.jpg" />
     <Content Include="Assets\Login\backgrounds\1.jpg" />
     <Content Include="Assets\Login\backgrounds\2%402x.jpg" />
@@ -300,6 +301,8 @@
     <Content Include="Assets\Admin\scss\_utilities.scss" />
     <Content Include="Assets\Admin\scss\_variables.scss" />
     <Content Include="Areas\admin\Views\user\Index.cshtml" />
+    <Content Include="Areas\admin\Views\user\Create.cshtml" />
+    <Content Include="Areas\admin\Views\user\Edit.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -324,8 +327,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\admin\adminAreaRegistration.cs" />
     <Compile Include="Areas\admin\Controllers\baseController.cs" />
+    <Compile Include="Areas\admin\Controllers\classController.cs" />
     <Compile Include="Areas\admin\Controllers\homeController.cs" />
     <Compile Include="Areas\admin\Controllers\loginController.cs" />
+    <Compile Include="Areas\admin\Controllers\roleController.cs" />
     <Compile Include="Areas\admin\Controllers\userController.cs" />
     <Compile Include="Areas\admin\Models\AdminLoginModel.cs" />
     <Compile Include="Common\ConstantVariable.cs" />
@@ -353,6 +358,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\admin\Views\base\" />
+    <Folder Include="Areas\admin\Views\class\" />
+    <Folder Include="Areas\admin\Views\role\" />
     <Folder Include="Controllers\" />
     <Folder Include="Models\" />
   </ItemGroup>

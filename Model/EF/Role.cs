@@ -14,7 +14,6 @@ namespace Model.EF
             Users = new HashSet<User>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Required]

@@ -1,130 +1,87 @@
-﻿@model Model.EF.User
+﻿@using PagedList;
+@using PagedList.Mvc;
+
+@model PagedList.IPagedList<Model.EF.User>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Quản lý người dùng";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+
 }
 
 @section breadcrumb{
-    Thêm tài khoản
+    Danh sách người dùng
+}
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css"/>
 }
 
-@using (Html.BeginForm("Create", "user", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
+@section jsFooter{
+    <!-- Custom scripts for this page-->
+    <script src="~/Assets/Admin/js/sb-admin-datatables.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="~/Assets/Admin/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('dataTable').dataTable();
+        });
+    </script>
+}
 
-<div class="form-horizontal">
-    <h4>User</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
-        </div>
+<!-- Example DataTables Card-->
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-table"></i> Danh sách người dùng
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.PaswordHash, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.PaswordHash, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-            @Html.ValidationMessageFor(model => model.PaswordHash, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.Label("Nhập lại mật khẩu", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ConfirmPaswordHash, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-            @Html.ValidationMessageFor(model => model.ConfirmPaswordHash, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.DayOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.DayOfBirth, new { htmlAttributes = new { @class = "form-control datepicker" } })
-            @Html.ValidationMessageFor(model => model.DayOfBirth, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    @*<div class="form-group">
-            @Html.LabelFor(model => model.DateOfParticipation, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateOfParticipation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateOfParticipation, "", new { @class = "text-danger" })
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "user", FormMethod.Get))
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên tài khoản</th>
+                            <th>Loại tài khoản</th>
+                            <th>Email</th>
+                            <th>Ngày đăng ký</th>
+                            <th>Kích hoạt</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên tài khoản</th>
+                            <th>Loại tài khoản</th>
+                            <th>Email</th>
+                            <th>Ngày đăng ký</th>
+                            <th>Kích hoạt</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Roles</td>
+                                <td>@item.Email</td>
+                                <td>@item.DateOfParticipation</td>
+                                <td>@item.Status</td>
+                                <td>
+                                    <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
+                                    <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
             </div>
-        </div>*@
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
-        </div>
+        }
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Sex, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Sex, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Sex, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.ClassID, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.ClassID, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Avatar, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Tạo" class="btn btn-default" />
-        </div>
-    </div>
-</div>
-}
-<script type="text/javascript">
-    $(function () { // will trigger when the document is ready
-        $('.datepicker').datepicker(); //Initialise any date pickers
-    });
-</script>
-<div>
-    @Html.ActionLink("Quay lại", "Index")
 </div>

@@ -28,6 +28,7 @@
             <div class="card-body">
                 @using (Html.BeginForm("login", "login", FormMethod.Post))
                 {
+                    @Html.ValidationSummary(true, "success", new { @class = "text-success" })
                     @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                     <form>
                         <div class="form-group">
