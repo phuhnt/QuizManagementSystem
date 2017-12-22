@@ -342,9 +342,11 @@
     <Compile Include="Common\ConstantVariable.cs" />
     <Compile Include="Common\Encode.cs" />
     <Compile Include="Common\UserLogin.cs" />
+    <Compile Include="Controllers\userController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +356,7 @@
     <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <Content Include="tsconfig.json" />
+    <Content Include="Views\user\Login.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -366,8 +369,6 @@
     <Folder Include="Areas\admin\Views\base\" />
     <Folder Include="Areas\admin\Views\class\" />
     <Folder Include="Areas\admin\Views\role\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
