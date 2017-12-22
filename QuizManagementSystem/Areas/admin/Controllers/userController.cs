@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Model.EF;
 using Model.DAO;
 using QuizManagementSystem.Common;
+using System.Data.Entity.Infrastructure;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -29,25 +30,38 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User user)
+        public ActionResult Create(User user, int RoleID)
         {
             SetClassViewBag();
-            SetRolesViewBag();
-            var _dao = new UserDAO();
+            var _userDao = new UserDAO();
 
             // Kiểm tra username có tồn tại trong cơ sở dữ liệu chưa?
-            if (_dao.IsUserNameExist(user.UserName) != null)
+            if (_userDao.IsUserNameExist(user.UserName) != null)
             {
                 ModelState.AddModelError("", "Tên tài khoản đã tồn tại.");
             }
+
             if (ModelState.IsValid)
             {
 
+                var _roleDao = new RolesDAO();
                 var _passWordHash = Encode.MD5Hash(user.PasswordHash);
+                int _id = 0;
+
                 user.PasswordHash = _passWordHash;
                 user.ConfirmPaswordHash = _passWordHash;
                 user.DateOfParticipation = DateTime.Now;
-                long _id = _dao.Insert(user);
+
+                var _role = _roleDao.FindById(RoleID);
+
+                if (_role != null)
+                {
+                    _id = _userDao.Insert(user, _role);
+                }
+                else
+                {
+                    _id = _userDao.Insert(user);
+                }
 
                 if (_id > 0)
                 {
@@ -55,10 +69,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("success", "Thêm người dùng thành công");
+                    ModelState.AddModelError("success", "Thêm người dùng thành công.");
                 }
             }
-            return View("create");
+            SetRolesViewBag();
+            return View(user);
         }
 
         /// <summary>
@@ -66,10 +81,58 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /// 
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             var _user = new UserDAO().GetUserById(id);
+            var _role = _user.Roles.FirstOrDefault(x => x.Id == _user.Id);
+            
+
+            SetClassViewBag(_user.ClassID);
+            if (_role == null)
+            {
+                SetRolesViewBag();
+            }
+            else
+            {
+                SetRolesViewBag(_role.Id);
+            }
+            
             return View(_user);
+        }
+
+
+        [HttpPost]
+        public ActionResult Edit(User user, int id, int? RoleID)
+        {
+            var _role = new RolesDAO().FindById(RoleID);
+            var _userDao = new UserDAO();
+            var _user = _userDao.GetUserById(id);
+
+            if (ModelState.IsValid)
+            {
+                var _passWordHash = Encode.MD5Hash(user.PasswordHash);
+
+                _user.PasswordHash = _passWordHash;
+                _user.ConfirmPaswordHash = _passWordHash;
+                
+                var _result = _userDao.Update(_user, _role);
+                if (_result == true)
+                {
+                    return RedirectToAction("Index", "user");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                }
+            }
+            else
+            {
+                SetClassViewBag(user.ClassID);
+                SetRolesViewBag(RoleID);
+            }
+            return View("Edit");
         }
 
         //Lấy danh sách lớp
@@ -86,28 +149,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var _roleDao = new RolesDAO();
 
-            ViewBag.Roles = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
+            ViewBag.RoleID = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
         }
 
-        private IEnumerable<SelectListItem> GetSelectListItems(IEnumerable<string> elements)
-        {
-            // Create an empty list to hold result of the operation
-            var selectList = new List<SelectListItem>();
 
-            // For each string in the 'elements' variable, create a new SelectListItem object
-            // that has both its Value and Text properties set to a particular value.
-            // This will result in MVC rendering each item as:
-            //     <option value="State Name">State Name</option>
-            foreach (var element in elements)
-            {
-                selectList.Add(new SelectListItem
-                {
-                    Value = element,
-                    Text = element
-                });
-            }
-
-            return selectList;
-        }
     }
 }

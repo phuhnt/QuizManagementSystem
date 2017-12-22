@@ -5,6 +5,7 @@ namespace Model.EF
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
+    using System.Web.Mvc;
 
     public partial class Role
     {
@@ -14,7 +15,8 @@ namespace Model.EF
             Users = new HashSet<User>();
         }
 
-        public int Id { get; set; }
+        [Key]
+        public int? Id { get; set; }
 
         [Required]
         [StringLength(256)]

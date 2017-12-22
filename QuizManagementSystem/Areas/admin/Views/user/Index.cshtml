@@ -14,7 +14,7 @@
 }
 @section linkHeader{
     <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
-    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css"/>
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
 }
 
 @section jsFooter{
@@ -66,13 +66,35 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@item.Id</td>
-                                <td>@item.UserName</td>
-                                <td>@item.Roles</td>
-                                <td>@item.Email</td>
-                                <td>@item.DateOfParticipation</td>
-                                <td>@item.Status</td>
+                                <td>@Html.DisplayFor(model => item.Id)</td>
+                                <td>@Html.DisplayFor(model => item.UserName)</td>
                                 <td>
+                                    @{
+                                        var role = item.Roles.FirstOrDefault(x => x.Id == item.Id);
+                                        @Html.DisplayFor(model => role.Name);
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(model => item.Email)</td>
+                                <td>@Html.DisplayFor(model => item.DateOfParticipation)</td>
+                                <td>
+                                    @{
+                                        if (item.Status == null)
+                                        {
+                                            <p class="text-info">Chưa kích hoạt</p>
+
+                                        }
+                                        else if (item.Status == true)
+                                        {
+                                            <p class="text-success">Đã kích hoạt</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-danger">Khóa</p>
+                                        }
+                                    }
+                                </td>
+                                <td width="20%">
+                                    <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
                                     <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
                                     <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
                                 </td>
@@ -80,7 +102,7 @@
                         }
                     </tbody>
                 </table>
-                @*@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))*@
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
             </div>
         }
     </div>
