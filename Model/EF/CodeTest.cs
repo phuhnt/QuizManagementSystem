@@ -12,6 +12,8 @@ namespace Model.EF
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
+        public int? TestID { get; set; }
+
         public int? Code { get; set; }
 
         public DateTime? CreatedDay { get; set; }

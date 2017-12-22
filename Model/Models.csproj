@@ -88,6 +88,7 @@
     <Compile Include="DAO\UserDAO.cs" />
     <Compile Include="DAO\UserRoleDAO.cs" />
     <Compile Include="EF\Answer.cs" />
+    <Compile Include="EF\CategoryQuiz.cs" />
     <Compile Include="EF\Class.cs" />
     <Compile Include="EF\CodeTest.cs" />
     <Compile Include="EF\Exam.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="EF\Role.cs" />
     <Compile Include="EF\ScoreLadder.cs" />
     <Compile Include="EF\Subject.cs" />
+    <Compile Include="EF\sysdiagram.cs" />
     <Compile Include="EF\Test.cs" />
     <Compile Include="EF\TestResultDetail.cs" />
     <Compile Include="EF\User.cs" />
@@ -124,6 +126,7 @@
       <DependentUpon>201712211635436_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

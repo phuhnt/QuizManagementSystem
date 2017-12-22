@@ -1,7 +1,9 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
+@using Model.DAO;
 
 @model PagedList.IPagedList<Model.EF.User>
+
 
 @{
     ViewBag.Title = "Quản lý người dùng";
@@ -30,14 +32,18 @@
     </script>
 }
 
+
 <!-- Example DataTables Card-->
 <div class="card mb-3">
     <div class="card-header">
         <i class="fa fa-table"></i> Danh sách người dùng
+        <a class="btn btn-primary" href="/admin/user/create">Thêm người dùng</a>
     </div>
     <div class="card-body">
+
         @using (Html.BeginForm("Index", "user", FormMethod.Get))
         {
+
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
@@ -70,8 +76,8 @@
                                 <td>@Html.DisplayFor(model => item.UserName)</td>
                                 <td>
                                     @{
-                                        var role = item.Roles.FirstOrDefault(x => x.Id == item.Id);
-                                        @Html.DisplayFor(model => role.Name);
+                                        var _role = new RolesDAO().FindRoleById(item.RoleID);
+                                        <span>@_role.Name</span>
                                     }
                                 </td>
                                 <td>@Html.DisplayFor(model => item.Email)</td>
@@ -80,16 +86,16 @@
                                     @{
                                         if (item.Status == null)
                                         {
-                                            <p class="text-info">Chưa kích hoạt</p>
+                                            <p class="badge badge-pill badge-info">Chưa kích hoạt</p>
 
                                         }
                                         else if (item.Status == true)
                                         {
-                                            <p class="text-success">Đã kích hoạt</p>
+                                            <p class="badge badge-pill badge-success">Đã kích hoạt</p>
                                         }
                                         else
                                         {
-                                            <p class="text-danger">Khóa</p>
+                                            <p class="badge badge-pill badge-danger">Khóa</p>
                                         }
                                     }
                                 </td>

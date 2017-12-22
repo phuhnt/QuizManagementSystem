@@ -20,7 +20,7 @@ namespace Model.EF
 
         public int? SubjectsID { get; set; }
 
-        public int? Category { get; set; }
+        public int? CategoryID { get; set; }
 
         public int? KindID { get; set; }
 
@@ -39,6 +39,8 @@ namespace Model.EF
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Answer> Answers { get; set; }
+
+        public virtual CategoryQuiz CategoryQuiz { get; set; }
 
         public virtual Kind Kind { get; set; }
 

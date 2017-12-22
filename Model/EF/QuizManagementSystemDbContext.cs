@@ -13,6 +13,7 @@ namespace Model.EF
         }
 
         public virtual DbSet<Answer> Answers { get; set; }
+        public virtual DbSet<CategoryQuiz> CategoryQuizs { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
         public virtual DbSet<CodeTest> CodeTests { get; set; }
         public virtual DbSet<Exam> Exams { get; set; }
@@ -23,6 +24,7 @@ namespace Model.EF
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<ScoreLadder> ScoreLadders { get; set; }
         public virtual DbSet<Subject> Subjects { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<TestResultDetail> TestResultDetails { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -33,6 +35,11 @@ namespace Model.EF
                 .Property(e => e.CorrectAnswer)
                 .IsFixedLength();
 
+            modelBuilder.Entity<CategoryQuiz>()
+                .HasMany(e => e.Questions)
+                .WithOptional(e => e.CategoryQuiz)
+                .HasForeignKey(e => e.CategoryID);
+
             modelBuilder.Entity<Exam>()
                 .Property(e => e.Link)
                 .IsFixedLength();
@@ -42,19 +49,9 @@ namespace Model.EF
                 .WithRequired(e => e.Question)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Role>()
-                .HasMany(e => e.Users)
-                .WithMany(e => e.Roles)
-                .Map(m => m.ToTable("UserRoles").MapLeftKey("RoleID").MapRightKey("UserID"));
-
             modelBuilder.Entity<Test>()
                 .Property(e => e.UserID)
                 .IsFixedLength();
-
-            modelBuilder.Entity<Test>()
-                .HasMany(e => e.CodeTests)
-                .WithOptional(e => e.Test)
-                .HasForeignKey(e => e.Code);
 
             modelBuilder.Entity<Test>()
                 .HasMany(e => e.QuestionTests)

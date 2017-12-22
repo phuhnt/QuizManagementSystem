@@ -21,14 +21,15 @@ namespace Model.DAO
             return db.Roles.ToList();
         }
 
-        public Role FindIdByName(string rolename)
+        public Role FindRoleIdByName(string rolename)
         {
             return db.Roles.SingleOrDefault(x => x.Name == rolename);
         }
 
-        public Role FindById(int? id)
+        public Role FindRoleById(int? id)
         {
             return db.Roles.Find(id);
         }
+
     }
 }

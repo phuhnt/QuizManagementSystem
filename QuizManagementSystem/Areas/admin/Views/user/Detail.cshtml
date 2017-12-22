@@ -1,0 +1,313 @@
+﻿@model Model.EF.User
+
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    Chi tiết người dùng
+}
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+@section jsFooter{
+    <!-- Custom scripts for this page-->
+    <script src="~/Assets/Admin/js/sb-admin-datatables.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="~/Assets/Admin/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('dataTable').dataTable();
+        });
+    </script>
+}
+
+<div>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px" href="/admin/user/edit/@Model.Id">Chỉnh sửa</a>
+</div>
+
+<div>
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin tài khoản</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <th scope="row" width="50%">Tên tài khoản</th>
+                <td width="50%">@Html.DisplayFor(model => model.UserName)</td>
+            </tr>
+            <tr>
+                <th scope="row">Loại tài khoản</th>
+                <td>
+                    @{
+                        if (Model.Role == null)
+                        {
+                            @Html.Display("Chưa cập nhật");
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Role.Name)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Trạng thái</th>
+                <td>
+                    @{
+
+                        if (Model.Status == null)
+                        {
+                            <p class="badge badge-pill badge-info">Chưa kích hoạt</p>
+
+                        }
+                        else if (Model.Status == true)
+                        {
+                            <p class="badge badge-pill badge-success">Đã kích hoạt</p>
+                        }
+                        else
+                        {
+                            <p class="badge badge-pill badge-danger">Khóa</p>
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày tham gia</th>
+                <td>@Html.DisplayFor(model => model.DateOfParticipation)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Thông tin người dùng</span>
+    @* Thông tin người dùng *@
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <th scope="row" width="50%">Họ và tên</th>
+                <td width="50%">
+                    @{
+                        if (String.IsNullOrEmpty(Model.FullName))
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.FullName)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày sinh</th>
+                <td>
+                    @{
+                        if (String.IsNullOrEmpty(Model.DayOfBirth.ToString()))
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.DayOfBirth)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Giới tính</th>
+                <td>
+                    @{
+                        if (String.IsNullOrEmpty(Model.Sex))
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Sex)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Địa chỉ email</th>
+                <td>
+                    @{
+                        if (String.IsNullOrEmpty(Model.Email))
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Email)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày sinh</th>
+                <td>
+                    @{
+                        if (String.IsNullOrEmpty(Model.DayOfBirth.ToString()))
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.DayOfBirth)
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Lớp</th>
+                <td>
+                    @{
+                        if (Model.ClassID == null)
+                        {
+                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.Class.Name)
+                        }
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<p type="button" class="btn btn-outline-primary">
+    @Html.ActionLink("<<Quay lại", "Index")
+</p>
+@*<div>
+        <h4>User</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Class.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Class.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Role.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Role.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UserName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UserName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PasswordHash)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PasswordHash)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.NewPasswordHash)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.NewPasswordHash)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DayOfBirth)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DayOfBirth)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Phone)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Phone)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DateOfParticipation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateOfParticipation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FullName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FullName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Sex)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Sex)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Avatar)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Avatar)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreateBy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreateBy)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ModifiedBy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ModifiedBy)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@

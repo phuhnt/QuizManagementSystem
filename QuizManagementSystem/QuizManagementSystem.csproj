@@ -303,6 +303,7 @@
     <Content Include="Areas\admin\Views\user\Index.cshtml" />
     <Content Include="Areas\admin\Views\user\Create.cshtml" />
     <Content Include="Areas\admin\Views\user\Edit.cshtml" />
+    <Content Include="Areas\admin\Views\user\Detail.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -314,6 +315,11 @@
     <Content Include="Assets\Login\js\jquery.backstretch.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\mycustom.js" />
     <Content Include="Assets\Login\js\placeholder.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

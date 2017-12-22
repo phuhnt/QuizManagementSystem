@@ -6,21 +6,24 @@ namespace Model.EF
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Role
+    [Table("CategoryQuiz")]
+    public partial class CategoryQuiz
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Role()
+        public CategoryQuiz()
         {
-            Users = new HashSet<User>();
+            Questions = new HashSet<Question>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(256)]
+        [StringLength(128)]
         public string Name { get; set; }
 
+        public DateTime? CreatedDay { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Question> Questions { get; set; }
     }
 }

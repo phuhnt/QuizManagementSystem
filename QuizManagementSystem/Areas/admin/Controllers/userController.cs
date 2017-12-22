@@ -10,7 +10,7 @@ using System.Data.Entity.Infrastructure;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class userController : Controller
+    public class userController : baseController
     {
         // GET: admin/user
         public ActionResult Index(int page = 1, int pageSize = 10)
@@ -30,7 +30,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User user, int RoleID)
+        public ActionResult Create(User user)
         {
             SetClassViewBag();
             var _userDao = new UserDAO();
@@ -43,25 +43,15 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
             if (ModelState.IsValid)
             {
-
-                var _roleDao = new RolesDAO();
+                var _userSession = QuizManagementSystem.Common.ConstantVariable.USER_SESSION.FirstOrDefault();
                 var _passWordHash = Encode.MD5Hash(user.PasswordHash);
                 int _id = 0;
 
                 user.PasswordHash = _passWordHash;
-                user.ConfirmPaswordHash = _passWordHash;
+                user.ConfirmPasswordHash = _passWordHash;
                 user.DateOfParticipation = DateTime.Now;
 
-                var _role = _roleDao.FindById(RoleID);
-
-                if (_role != null)
-                {
-                    _id = _userDao.Insert(user, _role);
-                }
-                else
-                {
-                    _id = _userDao.Insert(user);
-                }
+                _id = _userDao.Insert(user);
 
                 if (_id > 0)
                 {
@@ -69,7 +59,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("success", "Thêm người dùng thành công.");
+                    ModelState.AddModelError("success", "Thêm người không dùng thành công.");
                 }
             }
             SetRolesViewBag();
@@ -86,53 +76,91 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public ActionResult Edit(int id)
         {
             var _user = new UserDAO().GetUserById(id);
-            var _role = _user.Roles.FirstOrDefault(x => x.Id == _user.Id);
-            
 
             SetClassViewBag(_user.ClassID);
-            if (_role == null)
-            {
-                SetRolesViewBag();
-            }
-            else
-            {
-                SetRolesViewBag(_role.Id);
-            }
-            
+            SetRolesViewBag(_user.RoleID);
+
             return View(_user);
         }
 
 
         [HttpPost]
-        public ActionResult Edit(User user, int id, int? RoleID)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(User user)
         {
-            var _role = new RolesDAO().FindById(RoleID);
             var _userDao = new UserDAO();
-            var _user = _userDao.GetUserById(id);
 
-            if (ModelState.IsValid)
+
+            if (String.IsNullOrEmpty(user.NewPasswordHash))
             {
-                var _passWordHash = Encode.MD5Hash(user.PasswordHash);
-
-                _user.PasswordHash = _passWordHash;
-                _user.ConfirmPaswordHash = _passWordHash;
-                
-                var _result = _userDao.Update(_user, _role);
-                if (_result == true)
+                if (!String.IsNullOrEmpty(user.ConfirmPasswordHash))
                 {
-                    return RedirectToAction("Index", "user");
+                    ModelState.AddModelError("", "Vui lòng nhập vào mật khẩu mới.");
+                }
+            }
+            if (!String.IsNullOrEmpty(user.NewPasswordHash))
+            {
+                if (String.IsNullOrEmpty(user.ConfirmPasswordHash))
+                {
+                    ModelState.AddModelError("", "Vui lòng nhập lại mật khẩu mới.");
+                }
+            }
+            if (!String.IsNullOrEmpty(user.NewPasswordHash) && !String.IsNullOrEmpty(user.NewPasswordHash))
+            {
+                if (String.Equals(user.NewPasswordHash, user.ConfirmPasswordHash) == false)
+                {
+                    ModelState.AddModelError("", "Mật khẩu chưa trùng khớp.");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                    if (ModelState.IsValid)
+                    {
+                        var _newPassWordHash = Encode.MD5Hash(user.NewPasswordHash);
+
+                        user.PasswordHash = _newPassWordHash;
+
+                        var _result = _userDao.Update(user);
+                        if (_result == true)
+                        {
+                            SetAlert("Cập nhật người dùng thành công.", "success");
+                            return RedirectToAction("Index", "user");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                        }
+                    }
                 }
             }
-            else
+            if (String.IsNullOrEmpty(user.NewPasswordHash) && String.IsNullOrEmpty(user.NewPasswordHash))
             {
-                SetClassViewBag(user.ClassID);
-                SetRolesViewBag(RoleID);
+                if (ModelState.IsValid)
+                {
+                    var _result = _userDao.Update(user);
+                    if (_result == true)
+                    {
+                        SetAlert("Sửa user thành công", "success");
+                        //return RedirectToAction("Detail", "user");
+                        return Redirect("/admin/user/detail/" + user.Id);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                    }
+                }                
             }
-            return View("Edit");
+            SetClassViewBag(user.ClassID);
+            SetRolesViewBag(user.RoleID);
+            return View(user);
+        }
+
+        [HttpGet]
+        public ActionResult Detail(int id)
+        {
+            var _user = new UserDAO().GetUserById(id);
+            //SetClassViewBag(_user.ClassID);
+            //SetRolesViewBag(_user.RoleID);
+            return View(_user);
         }
 
         //Lấy danh sách lớp
