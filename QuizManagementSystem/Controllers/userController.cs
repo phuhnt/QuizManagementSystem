@@ -39,7 +39,7 @@ namespace QuizManagementSystem.Controllers
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
-                    return Redirect("/");
+                    return Redirect("/admin/home");
                 }
                 else if (_result == 0)
                 {

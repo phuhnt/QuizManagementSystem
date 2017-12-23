@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +23,13 @@ namespace Model.DAO
         {
             return db.Users.OrderByDescending(x => x.DateOfParticipation).ToPagedList(page, pageSize);
         }
+
+        public List<User> GetAllUser()
+        {
+            return db.Users.ToList();
+        }
+
+
         /// <summary>
         /// Insert
         /// </summary>
@@ -35,64 +44,73 @@ namespace Model.DAO
 
         public bool Update(User user)
         {
-            try
-            {
-                var _user = db.Users.Find(user.Id);
-                
-                //_user.RoleID = user.RoleID;
-                //_user.Status = user.Status;
+            var _user = db.Users.Find(user.Id);
 
-                //_user.FullName = user.FullName;
-                //_user.Sex = user.Sex;
-                //_user.Email = user.Email;
-                //_user.DayOfBirth = user.DayOfBirth;
-                //_user.Phone = user.Phone;
-                //_user.ClassID = user.ClassID;
-                db.Entry(_user).CurrentValues.SetValues(user);
-                //db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return true;
-            }
-            catch (DbUpdateException )
-            {
-                return false;
-            }
+            //_user.RoleID = user.RoleID;
+            //_user.Status = user.Status;
+
+            //_user.FullName = user.FullName;
+            //_user.Sex = user.Sex;
+            //_user.Email = user.Email;
+            //_user.DayOfBirth = user.DayOfBirth;
+            //_user.Phone = user.Phone;
+            //_user.ClassID = user.ClassID;
+
+            db.Entry(_user).CurrentValues.SetValues(user);
+            db.SaveChanges();
+            return true;
+
         }
 
-    public int Login(string userName, string passWordHash)
-    {
-        var result = db.Users.SingleOrDefault(x => x.UserName == userName);
-        if (result == null)
+        // Update khi không cập nhật mật khẩu mới
+        public bool Update(User user, string password)
         {
-            return 0; //Tài khoản không tồn tại
+            var _user = db.Users.Find(user.Id);
+
+            user.PasswordHash = _user.PasswordHash;
+            user.ConfirmPasswordHash = _user.PasswordHash;
+            user.NewPasswordHash = _user.NewPasswordHash;
+
+            db.Entry(_user).CurrentValues.SetValues(user);
+            db.SaveChanges();
+            return true;
+
         }
-        else
+
+        public int Login(string userName, string passWordHash)
         {
-            if (result.PasswordHash == passWordHash)
+            var result = db.Users.SingleOrDefault(x => x.UserName == userName);
+            if (result == null)
             {
-                return 1; //Đăng nhập đúng
+                return 0; //Tài khoản không tồn tại
             }
-            else if (result.Status == false)
-                return -1; //Tài khoản đang bị khóa
             else
-                return -2; //Đăng nhập sai
+            {
+                if (result.PasswordHash == passWordHash)
+                {
+                    return 1; //Đăng nhập đúng
+                }
+                else if (result.Status == false)
+                    return -1; //Tài khoản đang bị khóa
+                else
+                    return -2; //Đăng nhập sai
+            }
         }
-    }
 
-    public User GetUserByUserName(string userName)
-    {
-        return db.Users.SingleOrDefault(x => x.UserName == userName);
-    }
+        public User GetUserByUserName(string userName)
+        {
+            return db.Users.SingleOrDefault(x => x.UserName == userName);
+        }
 
-    public User GetUserById(int? id)
-    {
-        return db.Users.Find(id);
-    }
+        public User GetUserById(int? id)
+        {
+            return db.Users.Find(id);
+        }
 
-    public User IsUserNameExist(string userName)
-    {
-        return db.Users.SingleOrDefault(x => x.UserName == userName);
-    }
+        public User IsUserNameExist(string userName)
+        {
+            return db.Users.SingleOrDefault(x => x.UserName == userName);
+        }
 
-}
+    }
 }

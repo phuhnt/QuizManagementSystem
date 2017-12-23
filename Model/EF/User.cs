@@ -24,21 +24,20 @@
         [Display(Name = "Tên tài khoản")]
         [StringLength(128, ErrorMessage = "Số ký tự tối đa là 128.")]
         [MinLength(6, ErrorMessage = "Tài khoản phải có ít nhất 6 ký tự.")]
-        [RegularExpression("([A-Za-z0-9_@]{6,32})", ErrorMessage = "Tên tài khoản không hợp lệ")]
+        [RegularExpression("([A-Za-z0-9_@-]{6,32})", ErrorMessage = "Tên tài khoản không hợp lệ")]
         public string UserName { get; set; }
 
         [Display(Name = "Mật khẩu")]
-        [DataType(DataType.Password, ErrorMessage = "Mật khẩu không hợp lệ.")]
+        [RegularExpression("([A-Za-z0-9_@-]{6,32})", ErrorMessage = "Mật khẩu không hợp lệ")]
         [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
         public string PasswordHash { get; set; }
 
-        [NotMapped]
+        [RegularExpression("([A-Za-z0-9_@-]{6,32})", ErrorMessage = "Mật khẩu không hợp lệ")]
         [Display(Name = "Nhập lại mật khẩu")]
-        [DataType(DataType.Password, ErrorMessage = "Mật khẩu không hợp lệ.")]
-        [System.ComponentModel.DataAnnotations.Compare("PasswordHash", ErrorMessage = "Mật khẩu chưa trùng khớp.")]
         public string ConfirmPasswordHash { get; set; }
 
         [Display(Name = "Mật khẩu mới")]
+        [RegularExpression("([A-Za-z0-9_@-]{6,32})", ErrorMessage = "Mật khẩu không hợp lệ")]
         public string NewPasswordHash { get; set; }
 
         [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ.")]

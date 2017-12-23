@@ -83,8 +83,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAO\CategoryQuizDAO.cs" />
     <Compile Include="DAO\ClassDAO.cs" />
+    <Compile Include="DAO\KindQuizDAO.cs" />
+    <Compile Include="DAO\LevelQuizDAO.cs" />
+    <Compile Include="DAO\QuizDAO.cs" />
     <Compile Include="DAO\RolesDAO.cs" />
+    <Compile Include="DAO\SubjectDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
     <Compile Include="DAO\UserRoleDAO.cs" />
     <Compile Include="EF\Answer.cs" />

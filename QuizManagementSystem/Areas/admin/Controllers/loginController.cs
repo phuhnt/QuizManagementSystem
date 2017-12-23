@@ -53,5 +53,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             return View("Index");
         }
+
+        //Logout
+        public ActionResult logout()
+        {
+            Session[Common.ConstantVariable.USER_SESSION] = null;
+            return Redirect("/admin");
+        }
     }
 }

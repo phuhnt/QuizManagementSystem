@@ -1,4 +1,4 @@
-namespace Model.EF
+﻿namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -15,17 +15,20 @@ namespace Model.EF
             QuestionTests = new HashSet<QuestionTest>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? SubjectsID { get; set; }
 
+        [Display(Name ="Loại câu hỏi")]
         public int? CategoryID { get; set; }
 
         public int? KindID { get; set; }
 
         public int? LevelID { get; set; }
 
+        [Display(Name ="Nội dung câu hỏi")]
         [StringLength(1000)]
         public string ContentQuestion { get; set; }
 
@@ -35,6 +38,7 @@ namespace Model.EF
 
         public DateTime? DateCreated { get; set; }
 
+        [Display(Name ="Trạng thái")]
         public bool? Status { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

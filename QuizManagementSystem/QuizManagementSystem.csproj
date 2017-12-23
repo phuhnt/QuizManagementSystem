@@ -304,6 +304,11 @@
     <Content Include="Areas\admin\Views\user\Create.cshtml" />
     <Content Include="Areas\admin\Views\user\Edit.cshtml" />
     <Content Include="Areas\admin\Views\user\Detail.cshtml" />
+    <Content Include="Areas\admin\Views\quiz\Create.cshtml" />
+    <Content Include="Areas\admin\Views\quiz\Delete.cshtml" />
+    <Content Include="Areas\admin\Views\quiz\Details.cshtml" />
+    <Content Include="Areas\admin\Views\quiz\Edit.cshtml" />
+    <Content Include="Areas\admin\Views\quiz\Index.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -330,18 +335,21 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Data\RouteConfig.cs" />
     <Compile Include="Areas\admin\adminAreaRegistration.cs" />
     <Compile Include="Areas\admin\Controllers\baseController.cs" />
     <Compile Include="Areas\admin\Controllers\classController.cs" />
     <Compile Include="Areas\admin\Controllers\homeController.cs" />
     <Compile Include="Areas\admin\Controllers\loginController.cs" />
+    <Compile Include="Areas\admin\Controllers\quizController.cs" />
     <Compile Include="Areas\admin\Controllers\roleController.cs" />
     <Compile Include="Areas\admin\Controllers\userController.cs" />
     <Compile Include="Areas\admin\Models\AdminLoginModel.cs" />
     <Compile Include="Common\ConstantVariable.cs" />
     <Compile Include="Common\Encode.cs" />
     <Compile Include="Common\UserLogin.cs" />
+    <Compile Include="Controllers\ExampleController.cs" />
+    <Compile Include="Controllers\homeController.cs" />
     <Compile Include="Controllers\userController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -357,6 +365,11 @@
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\user\Login.cshtml" />
+    <Content Include="Views\Example\Create.cshtml" />
+    <Content Include="Views\Example\Delete.cshtml" />
+    <Content Include="Views\Example\Details.cshtml" />
+    <Content Include="Views\Example\Edit.cshtml" />
+    <Content Include="Views\Example\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -365,10 +378,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Areas\admin\Views\base\" />
     <Folder Include="Areas\admin\Views\class\" />
     <Folder Include="Areas\admin\Views\role\" />
+    <Folder Include="Areas\App_Start\" />
+    <Folder Include="Views\home\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

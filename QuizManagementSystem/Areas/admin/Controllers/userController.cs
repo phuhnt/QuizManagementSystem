@@ -7,6 +7,7 @@ using Model.EF;
 using Model.DAO;
 using QuizManagementSystem.Common;
 using System.Data.Entity.Infrastructure;
+using System.Net;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -73,10 +74,18 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         /// <returns></returns>
         /// 
         [HttpGet]
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            var _user = new UserDAO().GetUserById(id);
 
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var _user = new UserDAO().GetUserById(id);
+            if (_user == null)
+            {
+                return HttpNotFound();
+            }
             SetClassViewBag(_user.ClassID);
             SetRolesViewBag(_user.RoleID);
 
@@ -86,38 +95,26 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(User user)
+        public ActionResult Edit([Bind(Include = "Id,UserName,PasswordHash,NewPasswordHash,ConfirmPasswordHash,Email,DayOfBirth,Phone,DateOfParticipation,FullName,Sex,ClassID,Avatar,Status,RoleID,CreateBy,ModifiedBy")]User user)
         {
             var _userDao = new UserDAO();
+            var _userCurr = _userDao.GetUserById(user.Id);
 
-
-            if (String.IsNullOrEmpty(user.NewPasswordHash))
+            if (!String.IsNullOrEmpty(user.NewPasswordHash) && !String.IsNullOrEmpty(user.ConfirmPasswordHash))
             {
-                if (!String.IsNullOrEmpty(user.ConfirmPasswordHash))
-                {
-                    ModelState.AddModelError("", "Vui lòng nhập vào mật khẩu mới.");
-                }
-            }
-            if (!String.IsNullOrEmpty(user.NewPasswordHash))
-            {
-                if (String.IsNullOrEmpty(user.ConfirmPasswordHash))
-                {
-                    ModelState.AddModelError("", "Vui lòng nhập lại mật khẩu mới.");
-                }
-            }
-            if (!String.IsNullOrEmpty(user.NewPasswordHash) && !String.IsNullOrEmpty(user.NewPasswordHash))
-            {
-                if (String.Equals(user.NewPasswordHash, user.ConfirmPasswordHash) == false)
+                if (String.Compare(user.NewPasswordHash, user.ConfirmPasswordHash, true) != 0)
                 {
                     ModelState.AddModelError("", "Mật khẩu chưa trùng khớp.");
                 }
-                else
+                else // Update user có cập nhật mật khẩu mới
                 {
                     if (ModelState.IsValid)
                     {
                         var _newPassWordHash = Encode.MD5Hash(user.NewPasswordHash);
 
-                        user.PasswordHash = _newPassWordHash;
+                        user.PasswordHash = _newPassWordHash; //Gán mật khẩu mới vào cột PasswordHash
+                        user.NewPasswordHash = _userCurr.PasswordHash; //Gán mật khẩu cũ vào NewPasswordHash
+                        user.ConfirmPasswordHash = _newPassWordHash; 
 
                         var _result = _userDao.Update(user);
                         if (_result == true)
@@ -132,14 +129,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     }
                 }
             }
-            if (String.IsNullOrEmpty(user.NewPasswordHash) && String.IsNullOrEmpty(user.NewPasswordHash))
+            else if (String.IsNullOrEmpty(user.NewPasswordHash) && String.IsNullOrEmpty(user.ConfirmPasswordHash)) // Ko cập nhật mật khẩu
             {
                 if (ModelState.IsValid)
                 {
-                    var _result = _userDao.Update(user);
+                    var _result = _userDao.Update(user, null);
                     if (_result == true)
                     {
-                        SetAlert("Sửa user thành công", "success");
+                        //SetAlert("Sửa user thành công", "success");
                         //return RedirectToAction("Detail", "user");
                         return Redirect("/admin/user/detail/" + user.Id);
                     }
@@ -147,8 +144,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     {
                         ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
                     }
-                }                
+                }
             }
+            else
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào mật khẩu mới và xác nhận mật khẩu vào ô bên dưới.");
+            }
+
             SetClassViewBag(user.ClassID);
             SetRolesViewBag(user.RoleID);
             return View(user);

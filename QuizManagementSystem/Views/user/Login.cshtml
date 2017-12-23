@@ -1,4 +1,5 @@
-﻿
+﻿@model QuizManagementSystem.Models.LoginModel
+
 @{
     Layout = null;
 }
@@ -51,24 +52,35 @@
                             <div class="form-top-left">
                                 <h3>Đăng nhập</h3>
                                 <p>Nhập vào tài khoản và mật khẩu vào bên dưới</p>
+                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-top-right">
                                 <i class="fa fa-key"></i>
                             </div>
                         </div>
-                        <div class="form-bottom">
-                            <form role="form" action="" method="post" class="login-form">
-                                <div class="form-group">
-                                    <label class="sr-only" for="form-username">Username</label>
-                                    <input type="text" name="form-username" placeholder="Tên tài khoản" class="form-username form-control" id="form-username">
-                                </div>
-                                <div class="form-group">
-                                    <label class="sr-only" for="form-password">Password</label>
-                                    <input type="password" name="form-password" placeholder="Mật khẩu" class="form-password form-control" id="form-password">
-                                </div>
-                                <button type="submit" class="btn">Đăng nhập</button>
-                            </form>
-                        </div>
+                        @using (Html.BeginForm("Login", "user", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-bottom">
+                                <form role="form" action="" method="post" class="login-form">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2 sr-only" })
+                                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-username form-control" })
+                                        @*@Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })*@
+                                        @*<label class="sr-only" for="form-username">Username</label>
+                                        <input type="text" name="form-username" placeholder="Tên tài khoản" class="form-username form-control" id="form-username">*@
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2 sr-only" })
+                                        @Html.TextBoxFor(model => model.Password, new { @class = "form-password form-control" , @type = "password"})
+                                        @*@Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })*@
+                                        @*<label class="sr-only" for="form-password">Password</label>
+                                        <input type="password" name="form-password" placeholder="Mật khẩu" class="form-password form-control" id="form-password">*@
+                                    </div>
+                                    <button type="submit" class="btn">Đăng nhập</button>
+                                </form>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
