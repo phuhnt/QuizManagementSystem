@@ -31,7 +31,12 @@
                 });
             });
         });
+
+        CKEDITOR.replace('txtContentQuestion', {
+            customConfig: '~/Assets/Admin/js/plugins/ckeditor/config.js',
+        });
     </script>
+     
 }
 
 @using (Html.BeginForm())
@@ -85,7 +90,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ContentQuestion, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ContentQuestion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.ContentQuestion, new { htmlAttributes = new { @class = "form-control", @id = "txtContentQuestion" } })
                 @Html.ValidationMessageFor(model => model.ContentQuestion, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -120,6 +125,4 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+

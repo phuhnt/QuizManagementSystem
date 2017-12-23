@@ -69,6 +69,7 @@
         [Display(Name = "Lớp")]
         public int? ClassID { get; set; }
 
+        [Display(Name ="Ảnh đại diện")]
         [StringLength(500)]
         public string Avatar { get; set; }
 
