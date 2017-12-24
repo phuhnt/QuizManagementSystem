@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace QuizManagementSystem.Common
 {
     public static class Encode
     {
+        const string htmlTagPattern = "<.*?>";
+
         public static string MD5Hash(string text)
         {
             MD5 md5 = new MD5CryptoServiceProvider();
@@ -28,6 +31,11 @@ namespace QuizManagementSystem.Common
             }
 
             return strBuilder.ToString();
+        }
+
+        public static string StripHTML(string html)
+        {
+            return Regex.Replace(html, htmlTagPattern, string.Empty);
         }
     }
 }

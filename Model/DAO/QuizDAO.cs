@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Model.EF;
+using PagedList;
 
 namespace Model.DAO
 {
@@ -25,6 +26,12 @@ namespace Model.DAO
             return questions.ToList();
         }
 
+        public IEnumerable<Question> GetAllQuizPageList(int page = 1, int pageSize = 10)
+        {
+            return db.Questions.OrderByDescending(x => x.DateCreated).ToPagedList(page, pageSize);
+        }
+
+
         public Question FindQuizById(int? id)
         {
             return db.Questions.Find(id);
@@ -38,7 +45,13 @@ namespace Model.DAO
             return quiz.Id;
         }
 
-       
+        public bool Update(Question quiz)
+        {
+            var _quizCurrent = FindQuizById(quiz.Id);
+            db.Entry(_quizCurrent).CurrentValues.SetValues(quiz);
+            db.SaveChanges();
+            return true;
+        }
 
     }
 }

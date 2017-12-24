@@ -14,6 +14,8 @@ namespace Model.EF
             QuestionTests = new HashSet<QuestionTest>();
         }
 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? SubjectsID { get; set; }
@@ -27,8 +29,15 @@ namespace Model.EF
         [StringLength(1000)]
         public string ContentQuestion { get; set; }
 
+
+        [StringLength(1000)]
+        public string ContentQuestionEncode { get; set; }
+
         [StringLength(500)]
         public string AnswerText { get; set; }
+
+        [StringLength(500)]
+        public string AnswerTextEncode { get; set; }
 
         [StringLength(128)]
         public string KeyAnswer { get; set; }
@@ -36,6 +45,10 @@ namespace Model.EF
         public int? UserID { get; set; }
 
         public DateTime? DateCreated { get; set; }
+
+        public string ModifiedBy { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
 
         public bool? Status { get; set; }
 

@@ -1,76 +1,107 @@
-﻿@model IEnumerable<Model.EF.Question>
+﻿@model PagedList.IPagedList<Model.EF.Question>
+@using PagedList;
+@using PagedList.Mvc;
+@using Model.DAO;
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Quản lý câu hỏi";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CategoryQuiz.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Kind.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Level.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User.UserName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SubjectsID)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ContentQuestion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryQuiz.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Kind.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Level.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.UserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SubjectsID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ContentQuestion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateCreated)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+@section breadcrumb{
+    Danh sách câu hỏi
 }
 
-</table>
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+
+@section jsFooter{
+    <!-- Custom scripts for this page-->
+    <script src="~/Assets/Admin/js/sb-admin-datatables.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="~/Assets/Admin/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('dataTable').dataTable();
+        });
+    </script>
+}
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-table"></i> Danh sách câu hỏi
+        <a class="btn btn-primary" href="/admin/quiz/create">Thêm câu hỏi</a>
+    </div>
+    <div class="card-body">
+
+        @using (Html.BeginForm("Index", "quiz", FormMethod.Get))
+        {
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nội dung câu hỏi</th>
+                            <th>Loại câu hỏi</th>
+                            <th>Cấp độ</th>
+                            <th>Trạng thái</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nội dung câu hỏi</th>
+                            <th>Loại câu hỏi</th>
+                            <th>Cấp độ</th>
+                            <th>Trạng thái</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(model => item.Id)</td>
+                                <td>@Html.DisplayFor(model => item.ContentQuestionEncode)</td>
+                                <td>@Html.DisplayFor(model => item.CategoryQuiz.Name)</td>
+                                <td>@Html.DisplayFor(model => item.Level.Name)</td>
+                                <td>
+                                    @{
+                                        if (item.Status == null)
+                                        {
+                                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                                        }
+                                        else if (item.Status == true)
+                                        {
+                                            <p class="badge badge-pill badge-success">Đang hoạt động</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="badge badge-pill badge-danger">Ngừng hoạt động</p>
+                                        }
+                                    }
+                                </td>
+                                <td width="19%">
+                                    <a class="btn btn-info" href="/admin/quiz/details/@item.Id">Chi tiết</a>
+                                    <a class="btn btn-warning" href="/admin/quiz/edit/@item.Id">Sửa</a>
+                                    <a class="btn btn-danger" href="/admin/quiz/delete/@item.Id">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+        }
+    </div>
+</div>

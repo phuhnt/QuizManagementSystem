@@ -119,8 +119,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         var _result = _userDao.Update(user);
                         if (_result == true)
                         {
-                            SetAlert("Cập nhật người dùng thành công.", "success");
-                            return RedirectToAction("Index", "user");
+                            //SetAlert("Cập nhật người dùng thành công.", "success");
+                            //return RedirectToAction("Index", "user");
+                            return Redirect("/admin/user/detail/" + user.Id);
                         }
                         else
                         {

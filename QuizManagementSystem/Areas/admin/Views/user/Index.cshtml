@@ -44,70 +44,70 @@
         @using (Html.BeginForm("Index", "user", FormMethod.Get))
         {
 
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên tài khoản</th>
-                            <th>Loại tài khoản</th>
-                            <th>Email</th>
-                            <th>Ngày đăng ký</th>
-                            <th>Kích hoạt</th>
-                            <th>Chức năng</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>ID</th>
-                            <th>Tên tài khoản</th>
-                            <th>Loại tài khoản</th>
-                            <th>Email</th>
-                            <th>Ngày đăng ký</th>
-                            <th>Kích hoạt</th>
-                            <th>Chức năng</th>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+            <div class="table-responsive">             
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
                             <tr>
-                                <td>@Html.DisplayFor(model => item.Id)</td>
-                                <td>@Html.DisplayFor(model => item.UserName)</td>
-                                <td>
-                                    @{
-                                        var _role = new RolesDAO().FindRoleById(item.RoleID);
-                                        <span>@_role.Name</span>
-                                    }
-                                </td>
-                                <td>@Html.DisplayFor(model => item.Email)</td>
-                                <td>@Html.DisplayFor(model => item.DateOfParticipation)</td>
-                                <td>
-                                    @{
-                                        if (item.Status == null)
-                                        {
-                                            <p class="badge badge-pill badge-info">Chưa kích hoạt</p>
-
-                                        }
-                                        else if (item.Status == true)
-                                        {
-                                            <p class="badge badge-pill badge-success">Đã kích hoạt</p>
-                                        }
-                                        else
-                                        {
-                                            <p class="badge badge-pill badge-danger">Khóa</p>
-                                        }
-                                    }
-                                </td>
-                                <td width="20%">
-                                    <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
-                                    <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
-                                    <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
-                                </td>
+                                <th>ID</th>
+                                <th>Tên tài khoản</th>
+                                <th>Loại tài khoản</th>
+                                <th>Email</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Kích hoạt</th>
+                                <th>Chức năng</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên tài khoản</th>
+                                <th>Loại tài khoản</th>
+                                <th>Email</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Kích hoạt</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(model => item.Id)</td>
+                                    <td>@Html.DisplayFor(model => item.UserName)</td>
+                                    <td>
+                                        @{
+                                            var _role = new RolesDAO().FindRoleById(item.RoleID);
+                                            <span>@_role.Name</span>
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(model => item.Email)</td>
+                                    <td>@Html.DisplayFor(model => item.DateOfParticipation)</td>
+                                    <td>
+                                        @{
+                                            if (item.Status == null)
+                                            {
+                                                <p class="badge badge-pill badge-info">Chưa kích hoạt</p>
+
+                                            }
+                                            else if (item.Status == true)
+                                            {
+                                                <p class="badge badge-pill badge-success">Đã kích hoạt</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="badge badge-pill badge-danger">Khóa</p>
+                                            }
+                                        }
+                                    </td>
+                                    <td width="20%">
+                                        <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
+                                        <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
+                                        <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
             </div>
         }

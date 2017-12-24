@@ -18,10 +18,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         
 
         // GET: admin/quiz
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
             var _quizDao = new QuizDAO();
-            var _model = _quizDao.GetAllQuiz();
+            var _model = _quizDao.GetAllQuizPageList();
             return View(_model);
         }
 
@@ -47,7 +47,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetCategoryViewBag();
             SetKindViewBag();
             SetLevelViewBag();
-            SetUserViewBag();
             SetSubjectViewBag();
             SetClassViewBag();
 
@@ -57,47 +56,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // POST: admin/quiz/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ValidateInput(false)]
+        //[ValidateInput(false)]
         public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
         {
             var _quizDao = new QuizDAO();
 
-            //Kiểm tra nội dung câu hỏi, đáp án câu hỏi và đáp án đúng nhập vào có hợp lệ không
-            if (String.IsNullOrEmpty(question.ContentQuestion))
-            {
-                ModelState.AddModelError("", "Nội dung câu hỏi không được để trống.");
-            }
-
-            if (String.IsNullOrEmpty(question.AnswerText))
-            {
-                ModelState.AddModelError("", "Đáp án lựa chọn cho câu hỏi không được để trống.");
-            }
-
-            if (String.IsNullOrEmpty(question.KeyAnswer))
-            {
-                ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
-            }
-            else
-            {
-                if (question.KeyAnswer.Length == 1)
-                {
-                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}"))
-                    {
-                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
-                    }
-                }
-                else
-                {
-                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}[,]"))
-                    {
-                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
-                    }
-                }
-                
-            }
-
+            CheckInputQuiz(question);
             
-
             if (ModelState.IsValid)
             {
                 var _session = Session["USER_SESSION"] as UserLogin;
@@ -105,7 +70,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     question.UserID = _session.UserID;
                 }
-                
+                //question.ContentQuestionEncode = HttpContext.Server.HtmlEncode(question.ContentQuestion);
+                question.ContentQuestionEncode = Common.Encode.StripHTML(question.ContentQuestion);
+                //question.AnswerTextEncode = HttpContext.Server.HtmlEncode(question.AnswerText);
+                question.AnswerTextEncode = Common.Encode.StripHTML(question.AnswerText);
+                question.KeyAnswer = question.KeyAnswer.ToUpper();
                 question.DateCreated = DateTime.Now;
                 _quizDao.Insert(question);               
                 return RedirectToAction("Index", "quiz");
@@ -114,7 +83,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetCategoryViewBag(question.CategoryID);
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
-            SetUserViewBag(question.UserID);
             SetSubjectViewBag(question.SubjectsID);
             SetClassViewBag(question);
             return View(question);
@@ -130,33 +98,64 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _quizDao = new QuizDAO();
             var _quiz = _quizDao.FindQuizById(id);
 
+            //var _subDao = new SubjectDAO();
+            //var _subj = _subDao.GetSubjectById(_quiz.SubjectsID);
+
+            //var _classDao = new ClassDAO();
+            //var _class = _classDao.GetClassById(_subj.ClassID);
+
             if (_quiz == null)
             {
                 return HttpNotFound();
             }
 
+            SetClassViewBag(_quiz);
+            SetSubjectViewBag(_quiz.SubjectsID);
             SetCategoryViewBag(_quiz.CategoryID);
             SetKindViewBag(_quiz.KindID);
             SetLevelViewBag(_quiz.LevelID);
-            SetUserViewBag(_quiz.UserID);
+                     
             return View(_quiz);
         }
 
         // POST: admin/quiz/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerID,UserID,DateCreated,Status")] Question question)
+        [ValidateInput(false)]
+        public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    db.Entry(question).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-            //ViewBag.CategoryID = new SelectList(db.CategoryQuizs, "Id", "Name", question.CategoryID);
-            //ViewBag.KindID = new SelectList(db.Kinds, "Id", "Name", question.KindID);
-            //ViewBag.LevelID = new SelectList(db.Levels, "Id", "Name", question.LevelID);
-            //ViewBag.UserID = new SelectList(db.Users, "Id", "UserName", question.UserID);
+            if (ModelState.IsValid)
+            {
+                var _session = Session["USER_SESSION"] as UserLogin;
+                var _quizDao = new QuizDAO();
+
+                //question.ContentQuestionEncode = HttpContext.Server.HtmlEncode(question.ContentQuestion);
+                //question.AnswerTextEncode = HttpContext.Server.HtmlEncode(question.AnswerText);
+                question.ContentQuestionEncode = Common.Encode.StripHTML(question.ContentQuestion);
+                question.AnswerTextEncode = Common.Encode.StripHTML(question.AnswerText);
+                question.KeyAnswer = question.KeyAnswer.ToUpper();
+
+                if (_session != null)
+                {
+                    question.ModifiedBy = _session.UserName;
+                }
+                
+                question.ModifiedDate = DateTime.Now;
+
+                var _result =  _quizDao.Update(question);
+
+                if (_result == true)
+                {
+                    //return RedirectToAction("Index", "quiz");
+                    return RedirectToAction("details/"+question.Id);
+                }
+                
+            }
+            SetCategoryViewBag(question.CategoryID);
+            SetKindViewBag(question.KindID);
+            SetLevelViewBag(question.LevelID);
+            SetSubjectViewBag(question.SubjectsID);
+            SetClassViewBag(question);
             return View(question);
         }
 
@@ -258,5 +257,46 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return Json(new SelectList(subjects.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
+        private void CheckInputQuiz(Question question)
+        {
+            // Kiểm tra có chọn lớp, môn học hay chưa?
+            if (question.SubjectsID == 0)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn môn học");
+            }
+
+            //Kiểm tra nội dung câu hỏi, đáp án câu hỏi và đáp án đúng nhập vào có hợp lệ không
+            if (String.IsNullOrEmpty(question.ContentQuestion))
+            {
+                ModelState.AddModelError("", "Nội dung câu hỏi không được để trống.");
+            }
+
+            if (String.IsNullOrEmpty(question.AnswerText))
+            {
+                ModelState.AddModelError("", "Đáp án lựa chọn cho câu hỏi không được để trống.");
+            }
+
+            if (String.IsNullOrEmpty(question.KeyAnswer))
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
+            }
+            else
+            {
+                if (question.KeyAnswer.Length == 1)
+                {
+                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}"))
+                    {
+                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                    }
+                }
+                else
+                {
+                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}[,]"))
+                    {
+                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                    }
+                }
+            }
+        }
     }
 }
