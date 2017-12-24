@@ -9,7 +9,6 @@ namespace Model.EF
     [Table("CodeTest")]
     public partial class CodeTest
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public int? TestID { get; set; }

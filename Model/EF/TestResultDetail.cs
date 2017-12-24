@@ -9,7 +9,6 @@ namespace Model.EF
     [Table("TestResultDetail")]
     public partial class TestResultDetail
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public double? Score { get; set; }

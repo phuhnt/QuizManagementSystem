@@ -29,9 +29,9 @@ namespace Model.DAO
             return db.Classes.Include(c => c.Subjects).ToList();
         }
 
-        public Class GetClassBySubjectID(Subject sub)
+        public Class GetClassById(int? id)
         {
-            return db.Classes.FirstOrDefault(x => x.Id == sub.Id);
+            return db.Classes.Find(id);
         }
     }
 }

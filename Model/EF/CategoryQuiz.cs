@@ -1,4 +1,4 @@
-﻿namespace Model.EF
+namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -15,11 +15,8 @@
             Questions = new HashSet<Question>();
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Display(Name="Loại câu hỏi")]
         [StringLength(128)]
         public string Name { get; set; }
 

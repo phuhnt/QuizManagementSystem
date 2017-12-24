@@ -1264,7 +1264,6 @@
     <Content Include="Areas\admin\Views\login\Index.cshtml" />
     <Content Include="Areas\admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\admin\Views\home\Index.cshtml" />
-    <Content Include="Areas\admin\Views\Shared\_NavbarRight.cshtml" />
     <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\font-awesome\fonts\fontawesome-webfont.woff" />
@@ -1395,6 +1394,7 @@
     <Content Include="Assets\Admin\js\plugins\ckeditor\samples\toolbarconfigurator\font\fontello.woff" />
     <Content Include="Assets\Admin\js\plugins\ckeditor\samples\toolbarconfigurator\lib\codemirror\LICENSE" />
     <Content Include="Assets\Admin\js\plugins\ckeditor\skins\moono-lisa\readme.md" />
+    <Content Include="Areas\admin\Views\Shared\_NavbarRight.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />

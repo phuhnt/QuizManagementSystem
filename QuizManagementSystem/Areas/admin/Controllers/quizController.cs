@@ -4,10 +4,12 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
+using QuizManagementSystem.Common;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -55,11 +57,56 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // POST: admin/quiz/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerID,UserID,DateCreated,Status")] Question question)
+        [ValidateInput(false)]
+        public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
         {
             var _quizDao = new QuizDAO();
+
+            //Kiểm tra nội dung câu hỏi, đáp án câu hỏi và đáp án đúng nhập vào có hợp lệ không
+            if (String.IsNullOrEmpty(question.ContentQuestion))
+            {
+                ModelState.AddModelError("", "Nội dung câu hỏi không được để trống.");
+            }
+
+            if (String.IsNullOrEmpty(question.AnswerText))
+            {
+                ModelState.AddModelError("", "Đáp án lựa chọn cho câu hỏi không được để trống.");
+            }
+
+            if (String.IsNullOrEmpty(question.KeyAnswer))
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
+            }
+            else
+            {
+                if (question.KeyAnswer.Length == 1)
+                {
+                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}"))
+                    {
+                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                    }
+                }
+                else
+                {
+                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}[,]"))
+                    {
+                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                    }
+                }
+                
+            }
+
+            
+
             if (ModelState.IsValid)
             {
+                var _session = Session["USER_SESSION"] as UserLogin;
+                if (_session != null)
+                {
+                    question.UserID = _session.UserID;
+                }
+                
+                question.DateCreated = DateTime.Now;
                 _quizDao.Insert(question);               
                 return RedirectToAction("Index", "quiz");
             }

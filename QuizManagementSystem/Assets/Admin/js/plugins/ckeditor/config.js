@@ -11,7 +11,7 @@ CKEDITOR.editorConfig = function( config ) {
     config.extraPlugins = 'syntaxhighlight';
     config.syntaxhighlight_lang = 'csharp';
     config.syntaxhighlight_hideControls = true;
-    confog.language = 'vi';
+    config.language = 'vi';
     config.filebrowserBrowserUrl = '';
     config.filebrowserImageBrowserUrl = '~/Assets/Admin/js/plugins/ckfinder.html?Type=Images';
     config.flashbrowserFlashBrowserUrl = '~/Assets/Admin/js/plugins/ckfinder.html?Type=Flash';

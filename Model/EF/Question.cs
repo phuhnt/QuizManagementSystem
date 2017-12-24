@@ -1,4 +1,4 @@
-﻿namespace Model.EF
+namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -11,38 +11,33 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Question()
         {
-            Answers = new HashSet<Answer>();
             QuestionTests = new HashSet<QuestionTest>();
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? SubjectsID { get; set; }
 
-        [Display(Name ="Loại câu hỏi")]
         public int? CategoryID { get; set; }
 
         public int? KindID { get; set; }
 
         public int? LevelID { get; set; }
 
-        [Display(Name ="Nội dung câu hỏi")]
         [StringLength(1000)]
         public string ContentQuestion { get; set; }
 
-        public int? AnswerID { get; set; }
+        [StringLength(500)]
+        public string AnswerText { get; set; }
+
+        [StringLength(128)]
+        public string KeyAnswer { get; set; }
 
         public int? UserID { get; set; }
 
         public DateTime? DateCreated { get; set; }
 
-        [Display(Name ="Trạng thái")]
         public bool? Status { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Answer> Answers { get; set; }
 
         public virtual CategoryQuiz CategoryQuiz { get; set; }
 

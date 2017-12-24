@@ -1,91 +1,106 @@
 ﻿@model Model.EF.Question
+@using Model.DAO;
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Chi tiết câu hỏi | Quiz Management System";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+@section breadcrumb{
+    Chi tiết câu hỏi
+}
 
 <div>
-    <h4>Question</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.CategoryQuiz.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CategoryQuiz.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Kind.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Kind.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Level.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Level.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.User.UserName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.User.UserName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SubjectsID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SubjectsID)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ContentQuestion)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ContentQuestion)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AnswerID)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AnswerID)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.DateCreated)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DateCreated)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-
-    </dl>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px" href="/admin/user/edit/@Model.Id">Chỉnh sửa</a>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+
+<div>
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin chung</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            @{ 
+                var _subj = new SubjectDAO();
+                var _nameSubj = _subj.GetSubjectById(Model.SubjectsID);
+                var _classDao = new ClassDAO();
+                var _class = _classDao.GetClassById(_nameSubj.ClassID);
+            }
+            <tr>
+                <th scope="row" width="50%">Lớp</th>
+                <td width="50%">
+                    @{
+
+                        <p>@_class.Name</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Môn học</th>
+                <td width="50%">
+                    @{
+                        
+                        <p>@_nameSubj.Name</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Loại câu hỏi</th>
+                <td>
+                    @Html.DisplayFor(model => model.CategoryQuiz.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Thể loại câu hỏi</th>
+                <td>
+                    @Html.DisplayFor(model => model.Kind.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Cấp độ</th>
+                <td>@Html.DisplayFor(model => model.Level.Name)</td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày tạo</th>
+                <td>
+                    @Html.DisplayFor(model => model.DateCreated)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Tạo bởi</th>
+                <td>
+                    @Html.DisplayFor(model => model.User.UserName)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Chỉnh sửa bởi</th>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Nội dung câu hỏi</span>
+    @* Câu hỏi câu hỏi*@
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <td>
+                    @Model.ContentQuestion
+                    <br>
+                    @Html.DisplayFor(model => model.KeyAnswer)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-bordered table-dark">
+        <tr>
+            <th scope="row" width="30%">Đáp án đúng</th>
+            <td>
+                @Html.DisplayFor(model => model.KeyAnswer)
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<p class="btn btn-outline-info">
+    @Html.ActionLink("<<Quay lại", "Index")
 </p>

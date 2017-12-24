@@ -14,7 +14,6 @@ namespace Model.EF
             Tests = new HashSet<Test>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [StringLength(128)]
