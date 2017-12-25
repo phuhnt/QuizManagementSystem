@@ -86,6 +86,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 return HttpNotFound();
             }
+            _user.ConfirmPasswordHash = null;
             SetClassViewBag(_user.ClassID);
             SetRolesViewBag(_user.RoleID);
 
@@ -114,7 +115,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
                         user.PasswordHash = _newPassWordHash; //Gán mật khẩu mới vào cột PasswordHash
                         user.NewPasswordHash = _userCurr.PasswordHash; //Gán mật khẩu cũ vào NewPasswordHash
-                        user.ConfirmPasswordHash = _newPassWordHash; 
+                        user.ConfirmPasswordHash = null; 
 
                         var _result = _userDao.Update(user);
                         if (_result == true)

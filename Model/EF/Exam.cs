@@ -14,6 +14,8 @@ namespace Model.EF
             Tests = new HashSet<Test>();
         }
 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [StringLength(128)]
@@ -28,6 +30,13 @@ namespace Model.EF
         public string Link { get; set; }
 
         public int? UserID { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        [StringLength(128)]
+        public string ModifiedBy { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
 
         public virtual User User { get; set; }
 

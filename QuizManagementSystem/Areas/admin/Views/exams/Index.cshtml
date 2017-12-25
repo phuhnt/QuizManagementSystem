@@ -1,0 +1,120 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using Model.DAO;
+
+@model PagedList.IPagedList<Model.EF.Exam>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+@section breadcrumb{
+    Danh sách kỳ thi
+}
+
+
+@section jsFooter{
+    <!-- Custom scripts for this page-->
+    <script src="~/Assets/Admin/js/sb-admin-datatables.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="~/Assets/Admin/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('dataTable').dataTable();
+        });
+    </script>
+}
+
+
+<!-- Example DataTables Card-->
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-table"></i> Danh sách người dùng
+        <a class="btn btn-primary" href="/admin/exams/create">Thêm kỳ thi</a>
+    </div>
+    <div class="card-body">
+
+        @using (Html.BeginForm("Index", "exams", FormMethod.Get))
+        {
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Kỳ thi</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
+                            <th>Người tạo</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Kỳ thi</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
+                            <th>Người tạo</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(model => item.Id)</td>
+                                <td>@Html.DisplayFor(model => item.Titile)</td>                            
+                                <td>@Html.DisplayFor(model => item.CreatedDate)</td>                                
+                                <td>
+                                    @{
+                                        if (item.Status == null)
+                                        {
+                                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                                        }
+                                        else if (item.Status == true)
+                                        {
+                                            <p class="badge badge-pill badge-success">Hoạt động</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="badge badge-pill badge-danger">Đóng</p>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @{ 
+                                        var _userDao = new UserDAO();
+                                        
+                                        <p>
+                                            @{ 
+                                                if (_userDao.GetUserById(item.UserID) != null)
+                                                {
+                                                    @_userDao.GetUserById(item.UserID).UserName;
+                                                }
+                                            }
+                                        </p>
+                                    }
+                                </td>
+                                <td width="20%">
+                                    <a class="btn btn-info" href="/admin/exams/detail/@item.Id">Chi tiết</a>
+                                    <a class="btn btn-warning" href="/admin/exams/edit/@item.Id">Sửa</a>
+                                    <a class="btn btn-danger" href="/admin/exams/delete/@item.Id">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,91 @@
+﻿@model Model.EF.Exam
+@using Model.DAO
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    Chi tiết kỳ thi
+}
+
+<div>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px" href="/admin/exams/edit/@Model.Id">Chỉnh sửa</a>
+</div>
+
+
+<div>
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin kỳ thi</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            @{
+                var _userDao = new UserDAO();
+            }
+            <tr>
+                <th scope="row" width="50%">Kỳ thi</th>
+                <td width="50%">
+                    @{
+
+                        <p>@Model.Titile</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Ghi chú</th>
+                <td width="50%">
+                    @{
+
+                        <p>@Model.Note</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Trạng thái</th>
+                <td>
+                    @{
+
+                        if (Model.Status == null)
+                        {
+                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                        }
+                        else if (Model.Status == true)
+                        {
+                            <p class="badge badge-pill badge-success">Hoạt động</p>
+                        }
+                        else
+                        {
+                            <p class="badge badge-pill badge-danger">Đóng</p>
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Người tạo</th>
+                <td>
+                    <p>@_userDao.GetUserById(Model.Id).UserName</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày tạo</th>
+                <td>@Html.DisplayFor(model => model.CreatedDate)</td>
+            </tr>
+            <tr>
+                <th scope="row">Chỉnh sửa bởi</th>
+                <td>
+                    @Html.DisplayFor(model => model.ModifiedBy)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ngày chỉnh sửa</th>
+                <td>
+                    @Html.DisplayFor(model => model.ModifiedDate)
+                </td>
+            </tr>
+           
+        </tbody>
+    </table>
+
+<p class="btn btn-outline-info">
+    @Html.ActionLink("<<Quay lại", "Index")
+</p>
