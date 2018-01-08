@@ -34,6 +34,11 @@ namespace Model.EF
                 .WithOptional(e => e.CategoryQuiz)
                 .HasForeignKey(e => e.CategoryID);
 
+            modelBuilder.Entity<Class>()
+                .HasMany(e => e.Exams)
+                .WithMany(e => e.Classes)
+                .Map(m => m.ToTable("Examinee").MapLeftKey("ClassID").MapRightKey("ExamID"));
+
             modelBuilder.Entity<Exam>()
                 .Property(e => e.Link)
                 .IsFixedLength();

@@ -98,6 +98,7 @@
     <Compile Include="DAO\QuizDAO.cs" />
     <Compile Include="DAO\RolesDAO.cs" />
     <Compile Include="DAO\SubjectDAO.cs" />
+    <Compile Include="DAO\TestDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
     <Compile Include="DAO\UserRoleDAO.cs" />
     <Compile Include="EF\CategoryQuiz.cs" />

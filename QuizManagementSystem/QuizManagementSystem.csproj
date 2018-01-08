@@ -1207,6 +1207,17 @@
     <Content Include="Assets\Admin\vendor\chart.js\Chart.bundle.min.js" />
     <Content Include="Assets\Admin\vendor\chart.js\Chart.js" />
     <Content Include="Assets\Admin\vendor\chart.js\Chart.min.js" />
+    <Content Include="Assets\Admin\vendor\chosen\css\chosen.css" />
+    <Content Include="Assets\Admin\vendor\chosen\css\chosen.min.css" />
+    <Content Include="Assets\Admin\vendor\chosen\css\prism.css" />
+    <Content Include="Assets\Admin\vendor\chosen\css\style.css" />
+    <Content Include="Assets\Admin\vendor\chosen\js\chosen.jquery.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\chosen.jquery.min.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\chosen.proto.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\chosen.proto.min.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\init.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\init.proto.js" />
+    <Content Include="Assets\Admin\vendor\chosen\js\prism.js" />
     <Content Include="Assets\Admin\vendor\datatables\dataTables.bootstrap4.css" />
     <Content Include="Assets\Admin\vendor\datatables\dataTables.bootstrap4.js" />
     <Content Include="Assets\Admin\vendor\datatables\jquery.dataTables.js" />
@@ -1400,6 +1411,11 @@
     <Content Include="Areas\admin\Views\exams\Details.cshtml" />
     <Content Include="Areas\admin\Views\exams\Edit.cshtml" />
     <Content Include="Areas\admin\Views\exams\Index.cshtml" />
+    <Content Include="Areas\admin\Views\tests\Create.cshtml" />
+    <Content Include="Areas\admin\Views\tests\Delete.cshtml" />
+    <Content Include="Areas\admin\Views\tests\Details.cshtml" />
+    <Content Include="Areas\admin\Views\tests\Edit.cshtml" />
+    <Content Include="Areas\admin\Views\tests\Index.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1435,6 +1451,7 @@
     <Compile Include="Areas\admin\Controllers\loginController.cs" />
     <Compile Include="Areas\admin\Controllers\quizController.cs" />
     <Compile Include="Areas\admin\Controllers\roleController.cs" />
+    <Compile Include="Areas\admin\Controllers\testsController.cs" />
     <Compile Include="Areas\admin\Controllers\userController.cs" />
     <Compile Include="Areas\admin\Models\AdminLoginModel.cs" />
     <Compile Include="Common\ConstantVariable.cs" />

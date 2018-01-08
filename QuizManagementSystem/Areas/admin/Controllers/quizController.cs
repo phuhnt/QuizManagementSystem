@@ -56,6 +56,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // POST: admin/quiz/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         //[ValidateInput(false)]
         public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
         {

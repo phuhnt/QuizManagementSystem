@@ -33,5 +33,18 @@ namespace Model.DAO
         {
             return db.Classes.Find(id);
         }
+
+        public int[] GetAllClassID()
+        {
+            List<Class> listClass = GetAll();
+            int[] result = new int[listClass.Count];
+            int i = 0;
+            foreach (var item in listClass)
+            {               
+                result[i] = item.Id;
+                i++;
+            }
+            return result;
+        }
     }
 }

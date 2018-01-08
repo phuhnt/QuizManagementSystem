@@ -14,6 +14,7 @@ namespace Model.EF
         {
             Subjects = new HashSet<Subject>();
             Users = new HashSet<User>();
+            Exams = new HashSet<Exam>();
         }
 
         public int Id { get; set; }
@@ -28,5 +29,8 @@ namespace Model.EF
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<User> Users { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Exam> Exams { get; set; }
     }
 }

@@ -16,8 +16,6 @@ namespace Model.EF
             TestResultDetails = new HashSet<TestResultDetail>();
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]

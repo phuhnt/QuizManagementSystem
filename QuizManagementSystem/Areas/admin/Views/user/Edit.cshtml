@@ -56,7 +56,7 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
+    @Html.HiddenFor(model => model.Id)
     <div class="form-horizontal">
         <h4>Cập nhật thông tin tài khoản</h4>
         <hr />
@@ -65,7 +65,17 @@
 
         @Html.Label("Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            <img id="avatar" src="~/Data/userdefault.png" alt="avatar" />
+            @{
+                if (Model.Avatar != null)
+                {
+                    <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px"/>
+                }
+                else
+                {
+                    <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px"/>
+                }
+            }
+
             @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control", @id = "txtImage", @readonly = "readonly" }, id = "txtImage" })
             <input class="btn btn-outline-primary" id="btnSelectImage" type="file" />
             @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger", @id = "errImage" })

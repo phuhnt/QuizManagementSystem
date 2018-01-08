@@ -38,13 +38,22 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 return HttpNotFound();
             }
+            SetUserViewBag(_exam.UserID);
+            var _listClass = _examDao.GetClassSelected(_exam);
+            int[] _selectedClassID = new int[_listClass.Count];
+            for (int i=0; i < _listClass.Count; i++)
+            {
+                _selectedClassID[i] = _listClass[i].Id;
+            }
+            SetClassViewBag(_selectedClassID);
             return View(_exam);
         }
 
         // GET: admin/exams/Create
         [HttpGet]
         public ActionResult Create()
-        {        
+        {
+            SetClassViewBag(null);
             return View();
         }
 
@@ -53,18 +62,24 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Titile,Note,Status,Link,UserID")] Exam exam)
+        public ActionResult Create(Exam exam)
         {
             if (String.IsNullOrEmpty(exam.Titile))
             {
                 ModelState.AddModelError("", "Tiêu đề kỳ thi không được để trống.");
             }
 
+            if (exam.SelectedClassID == null)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn thí sinh cho kỳ thi này.");
+            }
+
             if (ModelState.IsValid)
             {
-                var _session = Session["USER_SESSION"] as LoginModel;
+                var _session = Session[Common.ConstantVariable.USER_SESSION] as Common.UserLogin;
                 var _userDao = new UserDAO();
                 var _examDao = new ExamDAO();
+               
                 if (_session != null)
                 {
                     exam.UserID = _userDao.GetUserByUserName(_session.UserName).Id;
@@ -72,8 +87,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 
                 exam.CreatedDate = DateTime.Now;
 
-                var _result = _examDao.Insert(exam);
-                if (_result > 0)
+                var _result = _examDao.Insert(exam, exam.SelectedClassID);
+                if (_result)
                 {
                     return RedirectToAction("/details/" + exam.Id);
                 }
@@ -84,24 +99,32 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
 
             SetUserViewBag(exam.UserID);
-           
+            SetClassViewBag(exam.SelectedClassID);
             return View(exam);
         }
 
-        // GET: admin/exams/Edit/5
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //Exam exam = db.Exams.Find(id);
-            //if (exam == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //ViewBag.UserID = new SelectList(db.Users, "Id", "UserName", exam.UserID);
-            return View("exam");
+            var _examDao = new ExamDAO();
+            var _exam = _examDao.GetExamById(id);
+            if (_exam == null)
+            {
+                return HttpNotFound();
+            }
+            var _listClass = _examDao.GetClassSelected(_exam);
+            int[] _selectedClassID = new int[_listClass.Count];
+            for (int i = 0; i < _listClass.Count; i++)
+            {
+                _selectedClassID[i] = _listClass[i].Id;
+            }
+            _exam.SelectedClassID = _selectedClassID;
+            SetClassViewBag(_exam.SelectedClassID);
+            return View(_exam);
         }
 
         // POST: admin/exams/Edit/5
@@ -147,11 +170,33 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return RedirectToAction("Index");
         }
 
-        private void SetUserViewBag(int? selectedID = null)
+        public void SetUserViewBag(int? selectedID = null)
         {
             var _userDao = new UserDAO();
 
             ViewBag.UserID = new SelectList(_userDao.GetAllUser(), "Id", "UserName", selectedID);
+        }
+
+        public void SetClassViewBag(int[] selectedID)
+        {
+            var _classDao = new ClassDAO();
+            ViewBag.SelectedClassID = new SelectList(_classDao.GetAll(), "Id", "Name", selectedID);
+        }
+
+        public JsonResult GetClassSelected(int? id)
+        {
+            var _examDao = new ExamDAO();
+            var _classDao = new ClassDAO();
+
+            var _exam = _examDao.GetExamById(id);
+            var _listClass = _examDao.GetClassSelected(_exam);
+            int[] _selectedClassID = new int[_listClass.Count];
+            for (int i = 0; i < _listClass.Count; i++)
+            {
+                _selectedClassID[i] = _listClass[i].Id;
+            }
+            _exam.SelectedClassID = _selectedClassID;
+            return Json(_exam.SelectedClassID, JsonRequestBehavior.AllowGet);
         }
     }
 }

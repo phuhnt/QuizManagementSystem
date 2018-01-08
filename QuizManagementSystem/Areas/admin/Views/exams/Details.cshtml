@@ -20,6 +20,7 @@
         <tbody>
             @{
                 var _userDao = new UserDAO();
+                var _examDao = new ExamDAO();
             }
             <tr>
                 <th scope="row" width="50%">Kỳ thi</th>
@@ -36,6 +37,26 @@
                     @{
 
                         <p>@Model.Note</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Thí sinh</th>
+                <td>
+                    @{
+                        var _listClass = _examDao.GetClassSelected(Model.Id);
+                        if (_listClass == null)
+                        {
+                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                        }
+                        else
+                        {
+                            foreach (var i in _listClass)
+                            {
+                                <p class="badge badge-pill badge-success">@i.Name</p>
+                            }
+                        }
                     }
                 </td>
             </tr>
@@ -63,7 +84,16 @@
             <tr>
                 <th scope="row">Người tạo</th>
                 <td>
-                    <p>@_userDao.GetUserById(Model.Id).UserName</p>
+                    @{
+                        if (Model.UserID == null)
+                        {
+                            <p>null</p>
+                        }
+                        else
+                        {
+                            <p>@_userDao.GetUserById(Model.UserID).UserName</p>
+                        }
+                    }
                 </td>
             </tr>
             <tr>
@@ -82,10 +112,10 @@
                     @Html.DisplayFor(model => model.ModifiedDate)
                 </td>
             </tr>
-           
+
         </tbody>
     </table>
-
+</div>
 <p class="btn btn-outline-info">
     @Html.ActionLink("<<Quay lại", "Index")
 </p>

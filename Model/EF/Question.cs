@@ -14,8 +14,6 @@ namespace Model.EF
             QuestionTests = new HashSet<QuestionTest>();
         }
 
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? SubjectsID { get; set; }
@@ -28,7 +26,6 @@ namespace Model.EF
 
         [StringLength(1000)]
         public string ContentQuestion { get; set; }
-
 
         [StringLength(1000)]
         public string ContentQuestionEncode { get; set; }
