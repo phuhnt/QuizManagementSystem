@@ -24,6 +24,18 @@ namespace Model.DAO
             return db.Users.OrderByDescending(x => x.DateOfParticipation).ToPagedList(page, pageSize);
         }
 
+        public IEnumerable<User> GetAllUserPageList(string searchString, int page = 1, int pageSize = 10)
+        {
+            IQueryable<User> model = db.Users.OrderByDescending(x => x.DateOfParticipation);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.UserName.Contains(searchString) ||
+                                    x.Role.Name.Contains(searchString) ||
+                                    x.Email.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.DateOfParticipation).ToPagedList(page, pageSize);
+        }
+
         public List<User> GetAllUser()
         {
             return db.Users.ToList();

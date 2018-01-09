@@ -1,7 +1,7 @@
 ﻿@model Model.EF.Test
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Tạo đề thi";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,10 +17,8 @@
         <h4>Thông tin đề thi</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
         <div class="form-group">
-            @Html.LabelFor(model => model.CodeTestID, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Mã đề", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.CodeTestID, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.CodeTestID, "", new { @class = "text-danger" })

@@ -23,13 +23,26 @@
                 width: "100%"
             });
 
-            var exID = $('ExamID').val();
-            $.getJSON("/admin/exams/GetClassSelected", { id: exID }, function (data) {
-                $.each(data, function (i, item) {
-                    $('#Test').append($('<option></option>').val(item.Value).text(item.Text));
+            var exID = $('#ExamID').val();
+            var selClass = [];
+            $('#multiSelectClass').load(function () {
+                $.getJSON("/admin/exams/GetClassSelected", { id: exID }, function (data) {
+                    var items = [];
+                    $.each(data, function (i, item) {
+                        $('#multiSelectClass').val(item.Value).trigger('chosen:updated');
+                        alert("" + item + "");
+                    });
+                    selClass = items;
                 });
             });
-
+                                  
+            for (i = 0; i < selClass.length; i++)
+            {
+                $('#multiSelectClass').val([selClass[i]]).trigger('chosen:updated');
+            }
+            
+            //$('#multiSelectClass').val(selClass).trigger('chosen:updated');
+            
             //var classArr = selectedClass.split(',');
             //for (var i = 0; i < classArr.length; i++) {
             //    classArr[i] = classArr[i].replace(/^\s*/, "").replace(/\s*$/, "");
@@ -50,7 +63,7 @@
         <h4>Thông tin kỳ thi</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id, new { @id = "ExamID" });
+        @Html.HiddenFor(model => model.Id, new { htmlAttributes = new { @id="ExamID" }, id = "ExamID" })
         <div class="form-group">
             @Html.Label("Tiêu đề kỳ thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -70,7 +83,7 @@
         <div class="form-group">
             @Html.Label("Thí sinh", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.SelectedClassID, null, "Chọn tất cả", new { htmlAttributes = new { @class = "form-control", @style = "width: 100%" }, id = "multiSelectClass", multiple = "multiple", data_placeholder = "--- Chọn thí sinh ---", width = "100%" })
+                @Html.DropDownListFor(model => model.SelectedClassID, null, "Chọn tất cả", new { htmlAttributes = new { @class = "form-control", @style = "width: 100%", @id = "multiSelectClass" }, id = "multiSelectClass", multiple = "multiple", data_placeholder = "--- Chọn thí sinh ---", width = "100%" })
                 @Html.ValidationMessageFor(model => model.SelectedClassID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -83,16 +96,7 @@
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                 </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Test", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.DropDownList("", null, new { @id = "Test"})
-                </div>
-            </div>
-        </div>
+        </div>      
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Cập nhật" class="btn btn-success" />

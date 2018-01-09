@@ -6,31 +6,49 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Trang chủ">
                 <a class="nav-link" href="/admin/home">
                     <i class="fa fa-fw fa-dashboard"></i>
                     <span class="nav-link-text">Trang chủ</span>
                 </a>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Quản lý người dùng">
                 <a class="nav-link" href="/admin/user">
                     <i class="fa fa-fw fa-user-circle"></i>
                     <span class="nav-link-text">Quản lý người dùng</span>
                 </a>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Charts">
-                <a class="nav-link" href="charts.html">
-                    <i class="fa fa-fw fa-area-chart"></i>
-                    <span class="nav-link-text">Charts</span>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Lớp học">
+                <a class="nav-link" href="/admin/class">
+                    <i class="fa fa-fw fa fa-users"></i>
+                    <span class="nav-link-text">Quản lý lớp học</span>
                 </a>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Tables">
-                <a class="nav-link" href="tables.html">
-                    <i class="fa fa-fw fa-table"></i>
-                    <span class="nav-link-text">Tables</span>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Quản lý môn học">
+                <a class="nav-link" href="/admin/subject">
+                    <i class="fa fa-fw fa-book"></i>
+                    <span class="nav-link-text">Quản lý môn học</span>
                 </a>
             </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Quản lý kỳ thi">
+                <a class="nav-link" href="/admin/exams">
+                    <i class="fa fa-fw fa-pencil-square-o"></i>
+                    <span class="nav-link-text">Quản lý kỳ thi</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Quản lý đề thi">
+                <a class="nav-link" href="/admin/test">
+                    <i class="fa fa-fw fa-file-word-o"></i>
+                    <span class="nav-link-text">Quản lý đề thi</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Quản lý câu hỏi">
+                <a class="nav-link" href="/admin/quiz">
+                    <i class="fa fa-fw fa-question-circle-o"></i>
+                    <span class="nav-link-text">Quản lý câu hỏi</span>
+                </a>
+            </li>
+            @*<li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
                 <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseComponents" data-parent="#exampleAccordion">
                     <i class="fa fa-fw fa-wrench"></i>
                     <span class="nav-link-text">Components</span>
@@ -100,7 +118,7 @@
                     <i class="fa fa-fw fa-link"></i>
                     <span class="nav-link-text">Link</span>
                 </a>
-            </li>
+            </li>*@
         </ul>
         <ul class="navbar-nav sidenav-toggler">
             <li class="nav-item">
@@ -111,20 +129,8 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <form class="form-inline my-2 my-lg-0 mr-lg-2">
-                    <div class="input-group">
-                        <input class="form-control" type="text" placeholder="Search for...">
-                        <span class="input-group-btn">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                    </div>
-                </form>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                    <i class="fa fa-fw fa-sign-out"></i>Logout
+                    <i class="fa fa-fw fa-sign-out"></i>Đăng xuất
                 </a>
             </li>
         </ul>

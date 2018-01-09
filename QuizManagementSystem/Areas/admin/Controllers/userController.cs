@@ -14,10 +14,18 @@ namespace QuizManagementSystem.Areas.admin.Controllers
     public class userController : baseController
     {
         // GET: admin/user
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        //public ActionResult Index(int page = 1, int pageSize = 10)
+        //{
+        //    var _dao = new UserDAO();
+        //    var _model = _dao.GetAllUserPageList(page, pageSize);
+        //    return View(_model);
+        //}
+
+        public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
             var _dao = new UserDAO();
-            var _model = _dao.GetAllUserPageList(page, pageSize);
+            var _model = _dao.GetAllUserPageList(searchString, page, pageSize);
+            ViewBag.SearchString = searchString;
             return View(_model);
         }
 
