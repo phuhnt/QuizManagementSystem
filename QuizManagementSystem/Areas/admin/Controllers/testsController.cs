@@ -10,7 +10,7 @@ using Model.EF;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class testsController : Controller
+    public class testsController : baseController
     {
         private QuizManagementSystemDbContext db = new QuizManagementSystemDbContext();
 

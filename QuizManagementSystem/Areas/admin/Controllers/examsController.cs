@@ -12,7 +12,7 @@ using QuizManagementSystem.Models;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class examsController : Controller
+    public class examsController : baseController
     {
         
 

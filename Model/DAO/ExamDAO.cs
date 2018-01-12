@@ -76,5 +76,10 @@ namespace Model.DAO
             var exam = GetExamById(id);
             return exam.Classes.ToList();
         }
+
+        public List<Exam> GetAllExamActive()
+        {
+            return db.Exams.Where(x => x.Status == true).ToList();
+        }
     }
 }

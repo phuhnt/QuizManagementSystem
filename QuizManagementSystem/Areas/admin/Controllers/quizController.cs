@@ -13,15 +13,23 @@ using QuizManagementSystem.Common;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class quizController : Controller
+    public class quizController : baseController
     {
-        
+
 
         // GET: admin/quiz
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        //public ActionResult Index(int page = 1, int pageSize = 10)
+        //{
+        //    var _quizDao = new QuizDAO();
+        //    var _model = _quizDao.GetAllQuizPageList();
+        //    return View(_model);
+        //}
+
+        public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
             var _quizDao = new QuizDAO();
-            var _model = _quizDao.GetAllQuizPageList();
+            var _model = _quizDao.GetAllQuizPageList(searchString, page, pageSize);
+            ViewBag.SearchString = searchString;
             return View(_model);
         }
 
@@ -71,12 +79,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     question.UserID = _session.UserID;
                 }
-                //question.ContentQuestionEncode = HttpContext.Server.HtmlEncode(question.ContentQuestion);
-                question.ContentQuestionEncode = Common.Encode.StripHTML(question.ContentQuestion);
-                //question.AnswerTextEncode = HttpContext.Server.HtmlEncode(question.AnswerText);
-                question.AnswerTextEncode = Common.Encode.StripHTML(question.AnswerText);
+                question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
+                question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
                 question.KeyAnswer = question.KeyAnswer.ToUpper();
                 question.DateCreated = DateTime.Now;
+                question.ModifiedDate = question.DateCreated;
                 _quizDao.Insert(question);               
                 return RedirectToAction("Index", "quiz");
             }

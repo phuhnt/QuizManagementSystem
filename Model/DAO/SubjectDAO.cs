@@ -25,6 +25,11 @@ namespace Model.DAO
             return db.Subjects.Find(id);
         }
 
+        public Subject GetSubjectByName(string name)
+        {
+            return db.Subjects.SingleOrDefault(x => x.Name.Contains(name));
+        }
+
         public List<Subject> GetSubjectByClassID(int? id)
         {
             return db.Subjects.Where(x => x.ClassID == id).ToList();

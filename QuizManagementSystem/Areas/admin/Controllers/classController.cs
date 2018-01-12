@@ -8,7 +8,7 @@ using Model.EF;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class classController : Controller
+    public class classController : baseController
     {
 
         // GET: admin/class

@@ -31,13 +31,16 @@
                 </li>
                 <li class="breadcrumb-item active">@RenderSection("breadcrumb", required: true)</li>
             </ol>
-            @RenderBody()
-            @*<div class="row">
-                <div class="col-12">
-                    <h1>Blank</h1>
-                    <p>This is an example of a blank page that you can use as a starting point for creating new ones.</p>
+            @if (TempData["AlertMessage"] != null)
+            {
+                <div class="alert @TempData["AlertType"] alert-dismissible fade show hide" id="AlertBox" role="alert">
+                    @TempData["AlertMessage"]
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </div>*@
+            }
+            @RenderBody()
         </div>
         <!-- /.container-fluid-->
         <!-- /.content-wrapper-->
@@ -65,7 +68,7 @@
                     <div class="modal-body">Vui lòng chọn OK để đăng xuất khỏi hệ thống.</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <a class="btn btn-primary" href="/admin/login">OK</a>
+                        <a class="btn btn-primary" href="/admin/logout">OK</a>
                     </div>
                 </div>
             </div>
@@ -83,7 +86,7 @@
         <!-- CK Editor -->
         <script src="~/Assets/Admin/js/plugins/ckeditor/ckeditor.js"></script>
         <!-- Custom scripts for all pages-->
-        <script src="~/Assets/Admin/js/sb-admin.min.js"></script>
+        <script src="~/Assets/Admin/js/sb-admin.js"></script>
         @RenderSection("jsFooter", required: false)
 
     </div>

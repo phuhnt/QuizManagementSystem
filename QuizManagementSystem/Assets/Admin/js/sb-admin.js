@@ -42,4 +42,7 @@
     }, 1000, 'easeInOutExpo');
     event.preventDefault();
   });
+  //Custom ->> Phú
+  $('AlertBox').removeClass('hide');
+  $('AlertBox').delay(3000).slideUp(500);
 })(jQuery); // End of use strict

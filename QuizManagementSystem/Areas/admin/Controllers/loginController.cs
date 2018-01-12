@@ -34,21 +34,25 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
                     return RedirectToAction("Index", "home");
                 }
-                else if (_result == 0)
+                else if (_result == ConstantVariable.NotExist)
                 {
                     ModelState.AddModelError("", "Tài khoản không tồn tại!");
                 }
-                else if (_result == -1)
+                else if (_result == ConstantVariable.IsLocked)
                 {
                     ModelState.AddModelError("", "Tài khoản đang bị khóa!");
                 }
-                else if (_result == -2)
+                else if (_result == ConstantVariable.Incorrect)
                 {
                     ModelState.AddModelError("", "Tài khoản hoặc mật khẩu chưa đúng!");
                 }
+                else if (_result == ConstantVariable.NotHaveAccess)
+                {
+                    ModelState.AddModelError("", "Tài khoản của bạn không có quyền truy cập!");
+                }
                 else
                 {
-                    ModelState.AddModelError("", "Thông tin đăng nhập không đúng!");
+                    ModelState.AddModelError("", "Có lỗi! Đăng nhập không thành công!");
                 }
             }
             return View("Index");
@@ -57,7 +61,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         //Logout
         public ActionResult logout()
         {
-            Session[Common.ConstantVariable.USER_SESSION] = null;
+            Session[ConstantVariable.USER_SESSION] = null;
             return Redirect("/admin");
         }
     }

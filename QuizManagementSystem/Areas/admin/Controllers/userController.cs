@@ -52,18 +52,22 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var _userSession = QuizManagementSystem.Common.ConstantVariable.USER_SESSION.FirstOrDefault();
+                var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
                 var _passWordHash = Encode.MD5Hash(user.PasswordHash);
                 int _id = 0;
 
                 user.PasswordHash = _passWordHash;
                 user.ConfirmPasswordHash = _passWordHash;
                 user.DateOfParticipation = DateTime.Now;
-
+                if (_userSession != null)
+                {
+                    user.CreateBy = _userSession.UserName;
+                }
                 _id = _userDao.Insert(user);
 
                 if (_id > 0)
                 {
+                    SetAlert("Thêm người dùng thành công.", "success");
                     return RedirectToAction("Index", "user");
                 }
                 else
@@ -128,7 +132,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         var _result = _userDao.Update(user);
                         if (_result == true)
                         {
-                            //SetAlert("Cập nhật người dùng thành công.", "success");
+                            SetAlert("Cập nhật người dùng thành công.", "success");
                             //return RedirectToAction("Index", "user");
                             return Redirect("/admin/user/detail/" + user.Id);
                         }
@@ -146,7 +150,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     var _result = _userDao.Update(user, null);
                     if (_result == true)
                     {
-                        //SetAlert("Sửa user thành công", "success");
+                        SetAlert("Sửa thông tin người dùng thành công.", "success");
                         //return RedirectToAction("Detail", "user");
                         return Redirect("/admin/user/detail/" + user.Id);
                     }
@@ -174,6 +178,28 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             //SetRolesViewBag(_user.RoleID);
             return View(_user);
         }
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var _user = new UserDAO().GetUserById(id);
+            if (_user == null)
+            {
+                return HttpNotFound();
+            }
+            return View(_user);
+        }
+
+        // POST: Example/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirmed(int id)
+        //{
+            
+        //}
 
         //Lấy danh sách lớp
         public void SetClassViewBag(int? selectedID = null)

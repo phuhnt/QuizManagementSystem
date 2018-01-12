@@ -27,6 +27,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 TempData["AlertType"] = "alert-success";
             }
+            else if (type == "info")
+            {
+                TempData["AlertType"] = "alert-info";
+            }
             else if (type == "warning")
             {
                 TempData["AlertType"] = "alert-warning";

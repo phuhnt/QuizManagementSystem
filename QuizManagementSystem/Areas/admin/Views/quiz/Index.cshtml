@@ -8,9 +8,6 @@
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
-
-
 @section breadcrumb{
     Danh sách câu hỏi
 }
@@ -43,14 +40,19 @@
 
         @using (Html.BeginForm("Index", "quiz", FormMethod.Get))
         {
-
+            <div class="input-group col-6" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nội dung câu hỏi</th>
-                            <th>Loại câu hỏi</th>
+                            <th>Môn học</th>
                             <th>Cấp độ</th>
                             <th>Trạng thái</th>
                             <th>Chức năng</th>
@@ -60,7 +62,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Nội dung câu hỏi</th>
-                            <th>Loại câu hỏi</th>
+                            <th>Môn học</th>
                             <th>Cấp độ</th>
                             <th>Trạng thái</th>
                             <th>Chức năng</th>
@@ -72,7 +74,12 @@
                             <tr>
                                 <td>@Html.DisplayFor(model => item.Id)</td>
                                 <td>@Html.DisplayFor(model => item.ContentQuestionEncode)</td>
-                                <td>@Html.DisplayFor(model => item.CategoryQuiz.Name)</td>
+                                <td>
+                                    @{
+                                        var _subDao = new SubjectDAO();
+                                        <p>@_subDao.GetSubjectById(item.SubjectsID).Name</p>
+                                    }
+                                </td>
                                 <td>@Html.DisplayFor(model => item.Level.Name)</td>
                                 <td>
                                     @{
@@ -100,7 +107,7 @@
                         }
                     </tbody>
                 </table>
-                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
             </div>
         }
     </div>

@@ -15,5 +15,10 @@ namespace Model.DAO
             db = new QuizManagementSystemDbContext();
         }
 
+        public List<Test> GetAllTestActive()
+        {
+            return null;
+            //return db.Tests.Where(x => x.Status == true).ToList();
+        }
     }
 }

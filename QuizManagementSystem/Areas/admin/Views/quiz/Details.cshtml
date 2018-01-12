@@ -18,7 +18,7 @@
     <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin chung</span>
     <table class="table table-bordered table-dark">
         <tbody>
-            @{ 
+            @{
                 var _subj = new SubjectDAO();
                 var _nameSubj = _subj.GetSubjectById(Model.SubjectsID);
                 var _classDao = new ClassDAO();
@@ -37,7 +37,7 @@
                 <th scope="row" width="50%">Môn học</th>
                 <td width="50%">
                     @{
-                        
+
                         <p>@_nameSubj.Name</p>
                     }
                 </td>
@@ -83,9 +83,8 @@
         <tbody>
             <tr>
                 <td>
-                    @Model.ContentQuestionEncode
-                    <br>
-                    @Model.AnswerTextEncode
+                    @Html.Raw(@Model.ContentQuestion)
+                    @Html.Raw(@Model.AnswerText)
                 </td>
             </tr>
         </tbody>

@@ -8,7 +8,7 @@ using Model.DAO;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class roleController : Controller
+    public class roleController : baseController
     {
         // GET: admin/role
         public ActionResult Index()

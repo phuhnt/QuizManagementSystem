@@ -7,6 +7,14 @@ namespace QuizManagementSystem.Common
 {
     public static class ConstantVariable
     {
+        //Session
         public static string USER_SESSION = "USER_SESSION";
+
+
+        //Account
+        public static int NotExist          =  0; // Tài khoản không tồn tại
+        public static int IsLocked          = -1; // Tài khoản đang bị khóa
+        public static int Incorrect         = -2; // Tài khoản hoặc mật khẩu chưa đúng
+        public static int NotHaveAccess     = -3; // Tài khoản không có quyền truy cập
     }
 }

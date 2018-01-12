@@ -26,11 +26,41 @@ namespace Model.DAO
             return questions.ToList();
         }
 
-        public IEnumerable<Question> GetAllQuizPageList(int page = 1, int pageSize = 10)
+        public List<Question> GetAllQuizActive()
         {
-            return db.Questions.OrderByDescending(x => x.DateCreated).ToPagedList(page, pageSize);
+            return db.Questions.Where(x => x.Status == true).ToList();
         }
 
+        public IEnumerable<Question> GetAllQuizPageList(int page = 1, int pageSize = 10)
+        {
+            return db.Questions.OrderByDescending(x => x.ModifiedDate).ToPagedList(page, pageSize);
+        }
+
+        public IEnumerable<Question> GetAllQuizPageList(string searchString, int page = 1, int pageSize = 10)
+        {
+            IQueryable<Question> model = db.Questions;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                var _subjDao = new SubjectDAO();
+                var _subj = new Subject();
+                _subj = _subjDao.GetSubjectByName(searchString);
+                if (_subj != null)
+                {                   
+                    model = model.Where(x => x.ContentQuestionEncode.Contains(searchString) ||
+                                             x.ContentQuestion.Contains(searchString) ||
+                                             x.Level.Name.Contains(searchString) ||
+                                             x.SubjectsID.ToString().Contains(_subj.Id.ToString()));
+                }
+                else
+                {
+                    model = model.Where(x => x.ContentQuestionEncode.Contains(searchString) ||
+                                             x.ContentQuestion.Contains(searchString) ||
+                                             x.Level.Name.Contains(searchString));
+                }
+               
+            }
+            return model.OrderByDescending(x => x.ModifiedDate).ToPagedList(page, pageSize);
+        }
 
         public Question FindQuizById(int? id)
         {

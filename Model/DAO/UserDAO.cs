@@ -26,7 +26,7 @@ namespace Model.DAO
 
         public IEnumerable<User> GetAllUserPageList(string searchString, int page = 1, int pageSize = 10)
         {
-            IQueryable<User> model = db.Users.OrderByDescending(x => x.DateOfParticipation);
+            IQueryable<User> model = db.Users;
             if (!String.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.UserName.Contains(searchString) ||
@@ -41,7 +41,10 @@ namespace Model.DAO
             return db.Users.ToList();
         }
 
-
+        public List<User> GetAllUserActive()
+        {
+            return db.Users.Where(x => x.Status == true).ToList();
+        }
         /// <summary>
         /// Insert
         /// </summary>
