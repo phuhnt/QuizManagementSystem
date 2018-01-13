@@ -1,0 +1,136 @@
+﻿@model Model.EF.Class
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Chi tiết lớp học";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    Chi tiết lớp học
+}
+
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+
+<div>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px" href="/admin/class/edit/@Model.Id">Chỉnh sửa</a>
+</div>
+
+<div>
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin chung</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <th scope="row" width="50%">Lớp</th>
+                <td width="50%">
+                    @{
+
+                        <p>@Model.Name</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Năm học</th>
+                <td width="50%">
+                    @{
+
+                        <p>@Model.SchoolYear.NameOfSchoolYear</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Số học sinh</th>
+                <td>
+                    @Model.Users.Count
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Danh sách học sinh</span>
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-table"></i> Danh sách học sinh của lớp học
+            <a class="btn btn-primary" href="/admin/class/create">Thêm lớp học</a>
+        </div>
+
+        <div class="card-body">
+            @using (Html.BeginForm("Details", "class", FormMethod.Get))
+            {
+                <div class="input-group col-6" style="margin-bottom: 20px;">
+                    <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên tài khoản</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Ngày sinh</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên tài khoản</th>
+                                <th>Họ và tên</th>
+                                <th>Giới tính</th>
+                                <th>Ngày sinh</th>
+                                <th>Email</th>
+                                <th>Số điện thoại</th>
+                                <th>Chức năng</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            @{
+                                int i = 0;
+                            }
+                            @foreach (var item in ViewBag.UserClass)
+                            {
+
+                                <tr>
+                                    <td>
+                                        @{
+                                            i++;
+                                            <span>@i</span>
+                                        }
+                                    </td>
+                                    <td>@item.UserName</td>
+                                    <td>@item.FullName</td>
+                                    <td>@item.Sex</td>
+                                    <td>@item.DayOfBirth</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.Phone</td>
+                                    <td width="20%">
+                                        <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
+                                        <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
+                                        <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @*@Html.PagedListPager(@ViewBag.UserClass, page => Url.Action("Details", new { page, @searchString = @ViewBag.SearchString }))*@
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<p class="btn btn-outline-info">
+    @Html.ActionLink("<<Quay lại", "Index")
+</p>

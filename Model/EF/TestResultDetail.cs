@@ -11,6 +11,12 @@ namespace Model.EF
     {
         public int Id { get; set; }
 
+        public int UserID { get; set; }
+
+        public int TestID { get; set; }
+
+        public int? ExamID { get; set; }
+
         public double? Score { get; set; }
 
         public int? NumberOfWrong { get; set; }
@@ -21,15 +27,14 @@ namespace Model.EF
 
         public int? TimeToTake { get; set; }
 
-        public DateTime? ActualStartTime { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? ActualTestDate { get; set; }
 
-        public DateTime? ActualEndTime { get; set; }
+        public TimeSpan? ActualStartTime { get; set; }
 
-        public TimeSpan? ActualExamTime { get; set; }
+        public TimeSpan? ActualEndTime { get; set; }
 
-        public int? UserID { get; set; }
-
-        public int? TestID { get; set; }
+        public virtual Exam Exam { get; set; }
 
         public virtual Test Test { get; set; }
 

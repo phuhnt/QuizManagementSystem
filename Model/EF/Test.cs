@@ -11,7 +11,6 @@ namespace Model.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Test()
         {
-            CodeTests = new HashSet<CodeTest>();
             QuestionTests = new HashSet<QuestionTest>();
             TestResultDetails = new HashSet<TestResultDetail>();
         }
@@ -28,7 +27,7 @@ namespace Model.EF
 
         public int? NumberOfQuestions { get; set; }
 
-        public TimeSpan? Time { get; set; }
+        public int? Time { get; set; }
 
         public int? NumberOfTurns { get; set; }
 
@@ -37,19 +36,28 @@ namespace Model.EF
         public int? ScoreLadderID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? TestDay { get; set; }
+        public DateTime? FromDate { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? ToDate { get; set; }
 
         public TimeSpan? StartTime { get; set; }
 
         public TimeSpan? EndTime { get; set; }
 
-        [StringLength(32)]
-        public string UserID { get; set; }
+        public int? CreatedBy { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        [StringLength(128)]
+        public string ModifiedBy { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
 
         public bool? Status { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CodeTest> CodeTests { get; set; }
+        [NotMapped]
+        public int QuizSelection { get; set; }
 
         public virtual Exam Exam { get; set; }
 
@@ -62,5 +70,7 @@ namespace Model.EF
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestResultDetail> TestResultDetails { get; set; }
+
+        public virtual User User { get; set; }
     }
 }

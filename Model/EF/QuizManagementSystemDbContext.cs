@@ -14,15 +14,16 @@ namespace Model.EF
 
         public virtual DbSet<CategoryQuiz> CategoryQuizs { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
-        public virtual DbSet<CodeTest> CodeTests { get; set; }
         public virtual DbSet<Exam> Exams { get; set; }
         public virtual DbSet<Kind> Kinds { get; set; }
         public virtual DbSet<Level> Levels { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionTest> QuestionTests { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<SchoolYear> SchoolYears { get; set; }
         public virtual DbSet<ScoreLadder> ScoreLadders { get; set; }
         public virtual DbSet<Subject> Subjects { get; set; }
+        public virtual DbSet<SystemLog> SystemLogs { get; set; }
         public virtual DbSet<TestResultDetail> TestResultDetails { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -49,18 +50,29 @@ namespace Model.EF
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Test>()
-                .Property(e => e.UserID)
-                .IsFixedLength();
-
-            modelBuilder.Entity<Test>()
                 .HasMany(e => e.QuestionTests)
                 .WithRequired(e => e.Test)
                 .HasForeignKey(e => e.QuestionID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Test>()
+                .HasMany(e => e.TestResultDetails)
+                .WithRequired(e => e.Test)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<User>()
                 .Property(e => e.Avatar)
                 .IsFixedLength();
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.TestResultDetails)
+                .WithRequired(e => e.User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Tests)
+                .WithOptional(e => e.User)
+                .HasForeignKey(e => e.CreatedBy);
         }
     }
 }

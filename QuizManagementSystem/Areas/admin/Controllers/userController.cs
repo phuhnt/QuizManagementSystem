@@ -206,7 +206,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var _classDao = new ClassDAO();
 
-            ViewBag.ClassID = new SelectList(_classDao.GetAll(), "Id", "Name", selectedID);
+            ViewBag.ClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", selectedID);
 
         }
 

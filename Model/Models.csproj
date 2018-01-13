@@ -97,13 +97,13 @@
     <Compile Include="DAO\LevelQuizDAO.cs" />
     <Compile Include="DAO\QuizDAO.cs" />
     <Compile Include="DAO\RolesDAO.cs" />
+    <Compile Include="DAO\SchoolYearDAO.cs" />
     <Compile Include="DAO\SubjectDAO.cs" />
     <Compile Include="DAO\TestDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
     <Compile Include="DAO\UserRoleDAO.cs" />
     <Compile Include="EF\CategoryQuiz.cs" />
     <Compile Include="EF\Class.cs" />
-    <Compile Include="EF\CodeTest.cs" />
     <Compile Include="EF\Exam.cs" />
     <Compile Include="EF\Kind.cs" />
     <Compile Include="EF\Level.cs" />
@@ -111,8 +111,10 @@
     <Compile Include="EF\QuestionTest.cs" />
     <Compile Include="EF\QuizManagementSystemDbContext.cs" />
     <Compile Include="EF\Role.cs" />
+    <Compile Include="EF\SchoolYear.cs" />
     <Compile Include="EF\ScoreLadder.cs" />
     <Compile Include="EF\Subject.cs" />
+    <Compile Include="EF\SystemLog.cs" />
     <Compile Include="EF\Test.cs" />
     <Compile Include="EF\TestResultDetail.cs" />
     <Compile Include="EF\User.cs" />
@@ -138,6 +140,7 @@
       <DependentUpon>201712240849390_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

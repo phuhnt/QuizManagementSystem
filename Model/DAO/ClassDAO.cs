@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Model.EF;
 using Model.DAO;
+using PagedList;
 
 namespace Model.DAO
 {
@@ -19,9 +20,26 @@ namespace Model.DAO
             db = new QuizManagementSystemDbContext();
         }
 
-        public List<Class> GetAll()
+        public List<Class> GetAllClass()
+        {
+            return db.Classes.ToList();
+        }
+
+        public List<Class> GetAllClassActive()
         {
             return db.Classes.Where(x => x.Status == true).ToList();
+        }
+
+        public IEnumerable<Class> GetAllClassPageList(string searchString, int page = 1, int pageSize = 10)
+        {
+
+            IQueryable<Class> model = db.Classes;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Name.Contains(searchString) ||                                    
+                                    x.SchoolYear.NameOfSchoolYear.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.Name).ToPagedList(page, pageSize);
         }
 
         public List<Class>GetAllBySubjectID(int? id)
@@ -36,7 +54,7 @@ namespace Model.DAO
 
         public int[] GetAllClassID()
         {
-            List<Class> listClass = GetAll();
+            List<Class> listClass = GetAllClass();
             int[] result = new int[listClass.Count];
             int i = 0;
             foreach (var item in listClass)

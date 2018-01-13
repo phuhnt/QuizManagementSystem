@@ -180,7 +180,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public void SetClassViewBag(int[] selectedID)
         {
             var _classDao = new ClassDAO();
-            ViewBag.SelectedClassID = new SelectList(_classDao.GetAll(), "Id", "Name", selectedID);
+            ViewBag.SelectedClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", selectedID);
         }
 
         public JsonResult GetClassSelected(int? id)

@@ -45,6 +45,21 @@ namespace Model.DAO
         {
             return db.Users.Where(x => x.Status == true).ToList();
         }
+
+        public List<User> GetAllUserByClass (string searchString, Class c)
+        {
+            IQueryable<User> model = db.Users;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.UserName.Contains(searchString) ||
+                                    x.FullName.Contains(searchString)      ||
+                                    x.Sex.Contains(searchString)           ||                                    
+                                    x.Email.Contains(searchString)         ||
+                                    x.Phone.Contains(searchString));
+            }
+            return model.Where(x => x.ClassID == c.Id).OrderByDescending(x => x.UserName).ToList();
+        }
+
         /// <summary>
         /// Insert
         /// </summary>

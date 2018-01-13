@@ -1416,6 +1416,11 @@
     <Content Include="Areas\admin\Views\tests\Details.cshtml" />
     <Content Include="Areas\admin\Views\tests\Edit.cshtml" />
     <Content Include="Areas\admin\Views\tests\Index.cshtml" />
+    <Content Include="Areas\admin\Views\class\Create.cshtml" />
+    <Content Include="Areas\admin\Views\class\Delete.cshtml" />
+    <Content Include="Areas\admin\Views\class\Details.cshtml" />
+    <Content Include="Areas\admin\Views\class\Edit.cshtml" />
+    <Content Include="Areas\admin\Views\class\Index.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1489,7 +1494,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\admin\Views\base\" />
-    <Folder Include="Areas\admin\Views\class\" />
     <Folder Include="Areas\admin\Views\role\" />
     <Folder Include="Views\home\" />
   </ItemGroup>

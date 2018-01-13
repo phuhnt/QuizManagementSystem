@@ -62,7 +62,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public ActionResult logout()
         {
             Session[ConstantVariable.USER_SESSION] = null;
-            return Redirect("/admin");
+            return Redirect("/admin/login");
         }
     }
 }
