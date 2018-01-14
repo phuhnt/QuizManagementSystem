@@ -107,6 +107,21 @@ namespace Model.DAO
 
         }
 
+        public bool Delete(int? id)
+        {
+            try
+            {
+                var _user = db.Users.Find(id);
+                db.Users.Remove(_user);
+                db.SaveChanges();
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
         public int Login(string userName, string passWordHash)
         {
             var result = db.Users.SingleOrDefault(x => x.UserName == userName);

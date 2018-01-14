@@ -57,14 +57,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,SchoolYearID,Status")] Class @class)
         {
-            if (ModelState.IsValid)
-            {
-                db.Classes.Add(@class);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    db.Classes.Add(@class);
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
 
-            ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
+            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
             return View(@class);
         }
 
@@ -80,7 +80,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
+            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
             return View(@class);
         }
 
@@ -97,7 +97,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
+            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
             return View(@class);
         }
 

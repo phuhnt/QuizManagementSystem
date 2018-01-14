@@ -32,13 +32,15 @@
             });
         });
 
+        CKFinder.setupCKEditor(null, 'Assets/Admin/js/plugins/ckfinder/');
         CKEDITOR.replace('txtContentQuestion', {
-            customConfig: '~/Assets/Admin/js/plugins/ckeditor/config.js',
+            customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
         });
 
         CKEDITOR.replace('txtAnswer', {
-            customConfig: '~/Assets/Admin/js/plugins/ckeditor/config.js',
+            customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
         });
+        
     </script>
 
 }

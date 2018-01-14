@@ -83,6 +83,18 @@
 
     <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Thông tin người dùng</span>
     @* Thông tin người dùng *@
+    <div class="text-center">
+        @{
+            if (Model.Avatar != null)
+            {
+                <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px" />
+            }
+            else
+            {
+                <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px" />
+            }
+        }
+    </div>
     <table class="table table-bordered table-dark">
         <tbody>
             <tr>
@@ -110,7 +122,7 @@
                         }
                         else
                         {
-                            @Html.DisplayFor(model => model.DayOfBirth)
+                            <span>@Model.DayOfBirth.Value.ToShortDateString()</span>
                         }
                     }
                 </td>
@@ -141,21 +153,6 @@
                         else
                         {
                             @Html.DisplayFor(model => model.Email)
-                        }
-                    }
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Ngày sinh</th>
-                <td>
-                    @{
-                        if (String.IsNullOrEmpty(Model.DayOfBirth.ToString()))
-                        {
-                            <span class="badge badge-pill badge-info">Chưa cập nhật</span>
-                        }
-                        else
-                        {
-                            @Html.DisplayFor(model => model.DayOfBirth)
                         }
                     }
                 </td>

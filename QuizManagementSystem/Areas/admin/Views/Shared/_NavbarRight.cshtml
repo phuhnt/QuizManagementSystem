@@ -132,8 +132,9 @@
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (_userSession != null)
             {
-                <div class="dropdown pull-right">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown">
+                    <img src="@_userSession.Avatar" class="img-circle"/>
+                    <button class="btn btn-secondary dropdown-toggle float-right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Xin chào, @_userSession.UserName!
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

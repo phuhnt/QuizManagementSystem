@@ -32,7 +32,7 @@ namespace Model.DAO
 
         public List<Subject> GetSubjectByClassID(int? id)
         {
-            return db.Subjects.Where(x => x.ClassID == id).ToList();
+            return db.Subjects.Where(x => x.GradeID == id).ToList();
         }
     }
 }

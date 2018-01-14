@@ -32,6 +32,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            SetGradeViewBag();
             SetClassViewBag();
             SetRolesViewBag();
             return View();
@@ -40,41 +41,38 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(User user)
-        {
+        {         
+            if (CheckInputUser(user) == true)
+            {
+                var _userDao = new UserDAO();
+                if (ModelState.IsValid)
+                {
+                    var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+                    var _passWordHash = Encode.MD5Hash(user.PasswordHash);
+                    int _id = 0;
+
+                    user.PasswordHash = _passWordHash;
+                    user.ConfirmPasswordHash = _passWordHash;
+                    user.DateOfParticipation = DateTime.Now;
+                    if (_userSession != null)
+                    {
+                        user.CreateBy = _userSession.UserName;
+                    }
+                    _id = _userDao.Insert(user);
+
+                    if (_id > 0)
+                    {
+                        SetAlert("Thêm người dùng thành công.", "success");
+                        return RedirectToAction("Index", "user");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("success", "Thêm người không dùng thành công.");
+                    }
+                }
+            }
+            SetGradeViewBag();
             SetClassViewBag();
-            var _userDao = new UserDAO();
-
-            // Kiểm tra username có tồn tại trong cơ sở dữ liệu chưa?
-            if (_userDao.IsUserNameExist(user.UserName) != null)
-            {
-                ModelState.AddModelError("", "Tên tài khoản đã tồn tại.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
-                var _passWordHash = Encode.MD5Hash(user.PasswordHash);
-                int _id = 0;
-
-                user.PasswordHash = _passWordHash;
-                user.ConfirmPasswordHash = _passWordHash;
-                user.DateOfParticipation = DateTime.Now;
-                if (_userSession != null)
-                {
-                    user.CreateBy = _userSession.UserName;
-                }
-                _id = _userDao.Insert(user);
-
-                if (_id > 0)
-                {
-                    SetAlert("Thêm người dùng thành công.", "success");
-                    return RedirectToAction("Index", "user");
-                }
-                else
-                {
-                    ModelState.AddModelError("success", "Thêm người không dùng thành công.");
-                }
-            }
             SetRolesViewBag();
             return View(user);
         }
@@ -99,7 +97,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 return HttpNotFound();
             }
             _user.ConfirmPasswordHash = null;
+            var _class = new ClassDAO().GetClassById(_user.ClassID);
+            var _grade = new GradeDAO().GetByClass(_class);
+            
             SetClassViewBag(_user.ClassID);
+            SetGradeViewBag(_grade.Id);
             SetRolesViewBag(_user.RoleID);
 
             return View(_user);
@@ -164,7 +166,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 ModelState.AddModelError("", "Vui lòng nhập vào mật khẩu mới và xác nhận mật khẩu vào ô bên dưới.");
             }
-
+            var _class = new ClassDAO().GetClassById(user.ClassID);
+            var _grade = new GradeDAO().GetByClass(_class);
+            SetGradeViewBag(_grade.Id);
             SetClassViewBag(user.ClassID);
             SetRolesViewBag(user.RoleID);
             return View(user);
@@ -179,6 +183,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(_user);
         }
 
+        [HttpDelete]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -190,7 +195,22 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 return HttpNotFound();
             }
-            return View(_user);
+            if (CheckDeleteUser(_user) == true)
+            {
+                if (ModelState.IsValid)
+                {
+                    var _result = new UserDAO().Delete(_user.Id);
+                    if (_result)
+                    {
+                        SetAlert("Xóa người dùng thành công", "success");
+                    }
+                    else
+                    {
+                        SetAlert("Xóa người dùng không thành công", "warning");
+                    }
+                }
+            }           
+            return PartialView("Delete", new UserDAO().GetAllUserPageList());
         }
 
         // POST: Example/Delete/5
@@ -198,8 +218,90 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         //[ValidateAntiForgeryToken]
         //public ActionResult DeleteConfirmed(int id)
         //{
-            
+
         //}
+
+        private bool CheckInputUser(User user)
+        {
+            var _userDao = new UserDAO();
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Người dùng không tồn tại.");
+                return false;
+            }
+            // Kiểm tra username có tồn tại trong cơ sở dữ liệu chưa?
+            else if (_userDao.IsUserNameExist(user.UserName) != null)
+            {
+                ModelState.AddModelError("", "Tên tài khoản đã tồn tại.");
+                return false;
+            }
+            else if (String.IsNullOrEmpty(user.UserName))
+            {
+                ModelState.AddModelError("", "Tên tài khoản không được để trống");
+                return false;
+            }
+            else if (String.IsNullOrEmpty(user.PasswordHash))
+            {
+                ModelState.AddModelError("", "Mật khẩu không được để trống");
+                return false;
+            }
+            else if (String.IsNullOrEmpty(user.ConfirmPasswordHash))
+            {
+                ModelState.AddModelError("", "Vui lòng nhập lại mật khẩu");
+                return false;
+            }
+            else if(String.Compare(user.PasswordHash, user.ConfirmPasswordHash, false) != 0)
+            {
+                ModelState.AddModelError("", "Xác nhận lại mật khẩu chưa đúng");
+                return false;
+            }
+            else if (user.RoleID <= 0 || user.RoleID == null)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn loại tài khoản");
+                return false;
+            }
+            else if (String.IsNullOrEmpty(user.FullName))
+            {
+                ModelState.AddModelError("", "Họ và tên không được để trống");
+                return false;
+            }
+            else if (String.IsNullOrEmpty(user.DayOfBirth.ToString()))
+            {
+                ModelState.AddModelError("", "Ngày sinh không được để trống");
+                return false;
+            }
+            else if (user.RoleID == 3)
+            {
+                if (user.ClassID <= 0 || user.ClassID == null)
+                {
+                    ModelState.AddModelError("", "Vui lòng chọn lớp");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool CheckDeleteUser (User user)
+        {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+
+            // Kiểm tra người dùng được xóa hiện đang login hay ko?
+            if (user.Id == _userSession.UserID)
+            {
+                ModelState.AddModelError("", "Không thể xóa người dùng này");
+                return false;
+            }
+
+            return true;
+        }
+
+        public void SetGradeViewBag(int? selectedID = null)
+        {
+            var _gradeDao = new GradeDAO();
+
+            ViewBag.GradeID = new SelectList(_gradeDao.GetAll(), "Id", "GradeName", selectedID);
+
+        }
 
         //Lấy danh sách lớp
         public void SetClassViewBag(int? selectedID = null)
@@ -218,6 +320,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             ViewBag.RoleID = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
         }
 
+        public JsonResult FillClass(int? gradeId)
+        {
+            var _classDao = new ClassDAO();
+
+            var classes = _classDao.GetAllClassByGradeId(gradeId);
+
+            return Json(new SelectList(classes.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
+        }
 
     }
 }

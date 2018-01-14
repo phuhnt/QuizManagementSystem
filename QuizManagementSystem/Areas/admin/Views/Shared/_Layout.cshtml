@@ -11,14 +11,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Admin - Quiz Management System</title>
+    <title>@ViewBag.Title | Quiz Management System</title>
     <!-- Bootstrap core CSS-->
     <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap-grid.min.css" rel="stylesheet" />
     <!-- Custom fonts for this template-->
     <link href="~/Assets/Admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!-- Custom styles for this template-->
     <link href="~/Assets/Admin/css/sb-admin.css" rel="stylesheet">
     @RenderSection("linkHeader", required: false)
+    @RenderSection("jsHeader", required: false)
 </head>
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
     @RenderPage("_NavbarRight.cshtml")
@@ -47,7 +49,7 @@
         <footer class="sticky-footer">
             <div class="container">
                 <div class="text-center">
-                    <small>Copyright UIT © Quiz Management System 2017</small>
+                    <small>Copyright UIT © Quiz Management System 2018</small>
                 </div>
             </div>
         </footer>
@@ -68,7 +70,7 @@
                     <div class="modal-body">Bạn có chắc rằng muốn thoát khỏi hệ thống</div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button>
-                        <a class="btn btn-primary" href="/admin/login/logout">OK</a>                    
+                        <a class="btn btn-primary" href="/admin/login/logout">OK</a>
                     </div>
                 </div>
             </div>
@@ -76,8 +78,7 @@
         <!-- Bootstrap core JavaScript-->
         <script src="~/Assets/Admin/vendor/jquery/jquery.min.js"></script>
         <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-        @*<script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>*@
-        <script src="~/Scripts/bootstrap.min.js"></script>
+        <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>
         <!-- Core plugin JavaScript-->
         <script src="~/Assets/Admin/vendor/jquery-easing/jquery.easing.min.js"></script>
         <script src="~/Assets/Admin/js/sb-admin-datatables.min.js"></script>
@@ -85,8 +86,12 @@
         <script src="~/Assets/Admin/js/plugins/ckfinder/ckfinder.js"></script>
         <!-- CK Editor -->
         <script src="~/Assets/Admin/js/plugins/ckeditor/ckeditor.js"></script>
+        <!-- Ajax JS -->
+        <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+        <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
         <!-- Custom scripts for all pages-->
         <script src="~/Assets/Admin/js/sb-admin.js"></script>
+        <script src="~/Scripts/mycustom.js"></script>
         @RenderSection("jsFooter", required: false)
 
     </div>

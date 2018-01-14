@@ -10,14 +10,10 @@
 }
 
 @section jsFooter{
-    <script type="text/javascript">
-        $(function () { // will trigger when the document is ready
-            $('.datepicker').datepicker(
-                {
-                    language: 'vi',
-                    format: 'dd/MM/yyyy'
-                })
-        });
+    <script>
+        $(document).ready(function () {
+            $("#dob").val("@Model.DayOfBirth.Value.ToString("yyyy-MM-dd")");
+         });
     </script>
     <script>
         $(document).ready(function () {
@@ -29,7 +25,7 @@
                 };
                 finder.popup();
             })
-        })
+        });
     </script>
     <script>
         function readURL(input) {
@@ -44,6 +40,22 @@
         }
         $("#btnSelectImage").change(function () {
             readURL(this);
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var classes = $('#ClassID');
+
+            $('#GradeID').change(function () {
+                var id = $(this).val();
+                $('#ClassID').html(null);
+
+                $.getJSON("/admin/user/FillClass", { gradeId: id }, function (data) {
+                    $.each(data, function (i, item) {
+                        classes.append($('<option></option>').val(item.Value).text(item.Text));
+                    });
+                });
+            });
         });
     </script>
 
@@ -68,11 +80,11 @@
             @{
                 if (Model.Avatar != null)
                 {
-                    <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px"/>
+                    <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px" />
                 }
                 else
                 {
-                    <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px"/>
+                    <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px" />
                 }
             }
 
@@ -117,7 +129,12 @@
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <div class="checkbox">
-                    @Html.EditorFor(model => model.Status)
+                    @Html.DropDownList("Status", new List<SelectListItem>
+                           {
+                               new SelectListItem{ Text = "Kích hoạt", Value = "True"},
+                               new SelectListItem{ Text = "Khóa", Value = "False"}
+                           }, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -130,6 +147,14 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DayOfBirth, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "dob" } })
+                @Html.ValidationMessageFor(model => model.DayOfBirth, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -151,14 +176,6 @@
         </div>
 
         <div class="form-group">
-            @Html.Label("Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DayOfBirth, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DayOfBirth, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.Label("Số điện thoại", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
@@ -167,28 +184,19 @@
         </div>
 
         <div class="form-group">
-            @Html.Label("Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Khối", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ClassID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
+                @Html.DropDownList("GradeID", null, "---Chọn----", htmlAttributes: new { @class = "form-control", @id = "GradeID" })
             </div>
         </div>
 
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.CreateBy, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.CreateBy, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.CreateBy, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
-
-        @*<div class="form-group">
-                @Html.LabelFor(model => model.ModifiedBy, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ModifiedBy, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.ModifiedBy, "", new { @class = "text-danger" })
-                </div>
-            </div>*@
+        <div class="form-group">
+            @Html.Label("Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ClassID, null, "---Chọn----", htmlAttributes: new { @class = "form-control", @id = "ClassID" })
+                @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

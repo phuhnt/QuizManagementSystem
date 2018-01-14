@@ -14,7 +14,7 @@ namespace Model.EF
             Tests = new HashSet<Test>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [StringLength(256)]
@@ -25,9 +25,9 @@ namespace Model.EF
 
         public bool? Status { get; set; }
 
-        public int? ClassID { get; set; }
+        public int? GradeID { get; set; }
 
-        public virtual Class Class { get; set; }
+        public virtual Grade Grade { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Test> Tests { get; set; }

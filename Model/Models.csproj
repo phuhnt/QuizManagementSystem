@@ -93,6 +93,7 @@
     <Compile Include="DAO\CategoryQuizDAO.cs" />
     <Compile Include="DAO\ClassDAO.cs" />
     <Compile Include="DAO\ExamDAO.cs" />
+    <Compile Include="DAO\GradeDAO.cs" />
     <Compile Include="DAO\KindQuizDAO.cs" />
     <Compile Include="DAO\LevelQuizDAO.cs" />
     <Compile Include="DAO\QuizDAO.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="EF\CategoryQuiz.cs" />
     <Compile Include="EF\Class.cs" />
     <Compile Include="EF\Exam.cs" />
+    <Compile Include="EF\Grade.cs" />
     <Compile Include="EF\Kind.cs" />
     <Compile Include="EF\Level.cs" />
     <Compile Include="EF\Question.cs" />

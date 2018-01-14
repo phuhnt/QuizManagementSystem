@@ -8,15 +8,14 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 
-    config.extraPlugins = 'syntaxhighlight';
-    config.syntaxhighlight_lang = 'csharp';
-    config.syntaxhighlight_hideControls = true;
-    config.language = 'vi';
-    config.filebrowserBrowserUrl = '';
-    config.filebrowserImageBrowserUrl = '~/Assets/Admin/js/plugins/ckfinder.html?Type=Images';
-    config.flashbrowserFlashBrowserUrl = '~/Assets/Admin/js/plugins/ckfinder.html?Type=Flash';
-    config.filebrowserUploadUrl = '~/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash';
-    config.filebrowserImageUploadUrl = '~/Data/';
-    config.filebrowserFlashUploadUrl = '~/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash';
-    CKFinder.setupCKEditor(null, '~/Assets/Admin/js/plugins/ckfinder/');
+    //config.extraPlugins = 'syntaxhighlight';
+    //config.syntaxhighlight_lang = 'csharp';
+    //config.syntaxhighlight_hideControls = true;
+        config.language = 'vi';
+        config.filebrowserBrowseUrl = '/Assets/Admin/js/plugins/ckfinder/ckfinder.html';
+        config.filebrowserImageBrowseUrl = '/Assets/Admin/js/plugins/ckfinder/ckfinder.html?type=Images';
+        config.filebrowserFlashBrowseUrl = '/Assets/Admin/js/plugins/ckfinder/ckfinder.html?type=Flash';
+        config.filebrowserUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files';
+        config.filebrowserImageUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images';
+        config.filebrowserFlashUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash';
 };

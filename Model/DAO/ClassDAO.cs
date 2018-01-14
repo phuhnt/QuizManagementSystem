@@ -37,15 +37,15 @@ namespace Model.DAO
             if (!String.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.Name.Contains(searchString) ||                                    
-                                    x.SchoolYear.NameOfSchoolYear.Contains(searchString));
+                                    x.Grade.SchoolYear.NameOfSchoolYear.Contains(searchString));
             }
             return model.OrderByDescending(x => x.Name).ToPagedList(page, pageSize);
         }
 
-        public List<Class>GetAllBySubjectID(int? id)
-        {
-            return db.Classes.Include(c => c.Subjects).ToList();
-        }
+        //public List<Class>GetAllBySubjectID(int? id)
+        //{
+        //    return db.Classes.Include(c => c.Subjects).ToList();
+        //}
 
         public Class GetClassById(int? id)
         {
@@ -63,6 +63,11 @@ namespace Model.DAO
                 i++;
             }
             return result;
+        }
+
+        public List<Class> GetAllClassByGradeId(int? id)
+        {
+            return db.Classes.Where(x => x.GradeID == id).ToList();
         }
     }
 }

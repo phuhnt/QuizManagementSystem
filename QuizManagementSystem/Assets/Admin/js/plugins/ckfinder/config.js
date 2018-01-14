@@ -13,5 +13,11 @@ CKFinder.customConfig = function( config )
 	// config.uiColor = '#BDE31E';
 	// config.language = 'fr';
 	// config.removePlugins = 'basket';
-
+    config.language = 'vi';
+    config.filebrowserBrowseUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/ckfinder.html'";
+    config.filebrowserImageBrowseUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/ckfinder.html?type=Images'";
+    config.filebrowserFlashBrowseUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/ckfinder.html?type=Flash'";
+    config.filebrowserUploadUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files'";
+    config.filebrowserImageUploadUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images'";
+    config.filebrowserFlashUploadUrl = "'" + location.hostname + "/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash'";
 };

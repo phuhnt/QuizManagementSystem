@@ -75,7 +75,7 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr id="row_@item.Id">
                                 <td>@Html.DisplayFor(model => item.Id)</td>
                                 <td>@Html.DisplayFor(model => item.UserName)</td>
                                 <td>
@@ -106,7 +106,12 @@
                                 <td width="20%">
                                     <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
                                     <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
-                                    <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
+                                    @Ajax.ActionLink("Xóa", "Delete", new { @id = item.Id }, new AjaxOptions
+                                    {
+                                        Confirm = "Bạn có muốn xóa người dùng này?",
+                                        HttpMethod = "Delete",
+                                        OnComplete = "$('#row_" + item.Id + "').remove()"
+                                    }, new { @class = "btn btn-danger" })
                                 </td>
                             </tr>
                         }

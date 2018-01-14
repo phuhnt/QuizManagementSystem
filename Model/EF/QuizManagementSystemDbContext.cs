@@ -15,6 +15,7 @@ namespace Model.EF
         public virtual DbSet<CategoryQuiz> CategoryQuizs { get; set; }
         public virtual DbSet<Class> Classes { get; set; }
         public virtual DbSet<Exam> Exams { get; set; }
+        public virtual DbSet<Grade> Grades { get; set; }
         public virtual DbSet<Kind> Kinds { get; set; }
         public virtual DbSet<Level> Levels { get; set; }
         public virtual DbSet<Question> Questions { get; set; }

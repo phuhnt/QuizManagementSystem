@@ -12,7 +12,7 @@ namespace Model.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public SchoolYear()
         {
-            Classes = new HashSet<Class>();
+            Grades = new HashSet<Grade>();
         }
 
         public int Id { get; set; }
@@ -27,6 +27,6 @@ namespace Model.EF
         public bool? bit { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<Grade> Grades { get; set; }
     }
 }
