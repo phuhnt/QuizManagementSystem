@@ -18,7 +18,11 @@
 
 
 <div>
-    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px" href="/admin/class/edit/@Model.Id">Chỉnh sửa</a>
+    <a class="btn btn-danger right pull-right" style="margin-bottom: 10px" href="/admin/class/delete/@Model.Id">Xóa lớp học</a>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px; margin-right: 10px" href="/admin/class/edit/@Model.Id">Chỉnh sửa lớp học</a>
+    <a class="btn btn-primary right pull-right" href="/admin/class/create" style="margin-bottom: 10px; margin-right: 10px">Thêm lớp học</a>
+
+
 </div>
 
 <div>
@@ -39,7 +43,7 @@
                 <td width="50%">
                     @{
 
-                        <p>@Model.SchoolYear.NameOfSchoolYear</p>
+                        <p>@Model.Grade.SchoolYear.NameOfSchoolYear</p>
                     }
                 </td>
             </tr>
@@ -55,8 +59,7 @@
     <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Danh sách học sinh</span>
     <div class="card mb-3">
         <div class="card-header">
-            <i class="fa fa-table"></i> Danh sách học sinh của lớp học
-            <a class="btn btn-primary" href="/admin/class/create">Thêm lớp học</a>
+            <i class="fa fa-table"></i> Danh sách học sinh của @Model.Name
         </div>
 
         <div class="card-body">
@@ -111,13 +114,17 @@
                                     <td>@item.UserName</td>
                                     <td>@item.FullName</td>
                                     <td>@item.Sex</td>
-                                    <td>@item.DayOfBirth</td>
+                                    <td>
+                                        @{
+                                            DateTime _dob = @item.DayOfBirth;
+                                            <span>@_dob.ToShortDateString()</span>
+                                        }
+                                    </td>
                                     <td>@item.Email</td>
                                     <td>@item.Phone</td>
-                                    <td width="20%">
+                                    <td width="15%">
                                         <a class="btn btn-info" href="/admin/user/detail/@item.Id">Chi tiết</a>
                                         <a class="btn btn-warning" href="/admin/user/edit/@item.Id">Sửa</a>
-                                        <a class="btn btn-danger" href="/admin/user/delete/@item.Id">Xóa</a>
                                     </td>
                                 </tr>
                             }

@@ -13,8 +13,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class classController : baseController
     {
-        private QuizManagementSystemDbContext db = new QuizManagementSystemDbContext();
-
+        
         // GET: admin/class
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
@@ -44,9 +43,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         // GET: admin/class/Create
+        [HttpGet]
         public ActionResult Create()
         {
-            ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear");
+            SetSchoolYearViewBag();
+            SetGradeViewBag();
             return View();
         }
 
@@ -55,33 +56,48 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,SchoolYearID,Status")] Class @class)
+        public ActionResult Create(Class _class)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    db.Classes.Add(@class);
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-
-            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
-            return View(@class);
+            var _classDao = new ClassDAO();
+            if (CheckInputClass(_class))
+            {
+                if (ModelState.IsValid)
+                {
+                    var _result = _classDao.Insert(_class);
+                    if (_result > 0)
+                    {
+                        SetAlert("Thêm lớp học thành công", "success");
+                        return Redirect("/admin/class/details/" + _result);
+                    }
+                    else
+                    {
+                        SetAlert("Thêm lớp học không thành công", "danger");
+                        return RedirectToAction("Index");
+                    }
+                }               
+            }
+        
+            SetSchoolYearViewBag();
+            SetGradeViewBag();
+            return View(_class);
         }
 
         // GET: admin/class/Edit/5
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Class @class = db.Classes.Find(id);
-            if (@class == null)
+            Class _class = new ClassDAO().GetClassById(id);
+            if (_class == null)
             {
                 return HttpNotFound();
-            }
-            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
-            return View(@class);
+            }          
+            SetGradeViewBag(_class.GradeID);
+            SetSchoolYearViewBag(_class.Grade.SchoolYear.Id);
+            return View(_class);
         }
 
         // POST: admin/class/Edit/5
@@ -89,16 +105,27 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,SchoolYearID,Status")] Class @class)
+        public ActionResult Edit([Bind(Include = "Id,Name,GradeID,Status,SchoolYearID")] Class _class)
         {
-            if (ModelState.IsValid)
+            if (CheckInputClass(_class))
             {
-                db.Entry(@class).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    var _result = new ClassDAO().Update(_class);
+                    if (_result)
+                    {
+                        SetAlert("Cập nhật thông tin lớp học thành công", "success");
+                        return Redirect("/admin/class/details/" + _class.Id);
+                    }
+                    else
+                    {
+                        SetAlert("Cập nhật thông tin lớp học không thành công", "warning");
+                        return Redirect("/admin/class");
+                    }
+                }
             }
-            //ViewBag.SchoolYearID = new SelectList(db.SchoolYears, "Id", "NameOfSchoolYear", @class.SchoolYearID);
-            return View(@class);
+            
+            return View(_class);
         }
 
         // GET: admin/class/Delete/5
@@ -108,12 +135,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Class @class = db.Classes.Find(id);
-            if (@class == null)
+            Class _class = new ClassDAO().GetClassById(id);
+            if (_class == null)
             {
                 return HttpNotFound();
             }
-            return View(@class);
+            return View(_class);
         }
 
         // POST: admin/class/Delete/5
@@ -121,19 +148,84 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Class @class = db.Classes.Find(id);
-            db.Classes.Remove(@class);
-            db.SaveChanges();
+            var _result = new ClassDAO().Delete(id);
+            if (_result)
+            {
+                SetAlert("Xóa lớp học thành công", "success");
+            }
+            else
+            {
+                SetAlert("Lỗi: lớp học tồn tại học sinh. Không thể xóa lớp học này.", "warning");
+            }
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            //if (disposing)
+            //{
+            //    db.Dispose();
+            //}
+            //base.Dispose(disposing);
+        }
+
+        private bool CheckInputClass(Class _class)
+        {
+            var _classDao = new ClassDAO();
+            if (_class.GradeID <= 0 || _class.GradeID == null)
             {
-                db.Dispose();
+                ModelState.AddModelError("", "Vui lòng chọn năm học");
+                ModelState.AddModelError("", "Vui lòng chọn khối lớp");
+                return false;
             }
-            base.Dispose(disposing);
+            if (String.IsNullOrEmpty(_class.Name))
+            {
+                ModelState.AddModelError("", "Tên lớp không được để trống");
+                return false;
+            }
+            else
+            {
+                if (_classDao.IsExistNameClass(_class))
+                {
+                    ModelState.AddModelError("", "Tên lớp đã tồn tại");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+
+        private void SetGradeViewBag(int? selectedID = null)
+        {
+            ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", selectedID);
+        }
+
+        private void SetSchoolYearViewBag(int? selectedID = null)
+        {
+            ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", selectedID);
+        }
+
+        //public void SetSchoolYearViewBag(Class c)
+        //{
+
+        //    var _grade = new GradeDAO().GetByClass(c);
+        //    if (_grade == null)
+        //    {
+        //        ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear");
+        //    }
+        //    else
+        //    {
+        //        ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", _grade.SchoolYearID);
+        //    }
+
+        //}
+
+        public JsonResult FillGrades(int? schoolyearId)
+        {
+            var grades = new GradeDAO().GetAllBySchoolYear(schoolyearId);
+
+            return Json(new SelectList(grades.ToArray(), "Id", "GradeName"), JsonRequestBehavior.AllowGet);
         }
     }
 }

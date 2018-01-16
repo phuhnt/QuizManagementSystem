@@ -132,6 +132,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         user.ConfirmPasswordHash = null; 
 
                         var _result = _userDao.Update(user);
+                        var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+                        _userSession.Avatar = null;
+                        _userSession.Avatar = user.Avatar;
+                        
                         if (_result == true)
                         {
                             SetAlert("Cập nhật người dùng thành công.", "success");

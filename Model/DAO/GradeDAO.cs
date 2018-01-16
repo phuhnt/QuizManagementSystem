@@ -24,5 +24,11 @@ namespace Model.DAO
         {
             return db.Grades.Where(x => x.Id == c.GradeID).FirstOrDefault();
         }
+
+        public List<Grade> GetAllBySchoolYear(int? schoolyearID)
+        {
+            return db.Grades.Where(x => x.SchoolYearID == schoolyearID).ToList();
+        }
+
     }
 }

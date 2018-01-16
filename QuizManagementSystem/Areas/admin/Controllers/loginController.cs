@@ -30,6 +30,15 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     var _userSession = new UserLogin();
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;
+                    _userSession.RoleID = _user.RoleID;
+                    if (_user.Avatar != null)
+                    {
+                        _userSession.Avatar = _user.Avatar;
+                    }
+                     else   
+                    {
+                        _userSession.Avatar = "/Data/images/avatardefault.png";
+                    }
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
 
                     return RedirectToAction("Index", "home");

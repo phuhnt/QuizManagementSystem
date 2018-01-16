@@ -1,7 +1,7 @@
 ﻿@model Model.EF.User
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Chỉnh sưa ngươi dùng | Quiz Management System";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -27,7 +27,7 @@
             })
         });
     </script>
-    <script>
+    <script>        
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -38,7 +38,7 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
-        $("#btnSelectImage").change(function () {
+        $('#btnSelectImage').change(function () {
             readURL(this);
         });
     </script>
@@ -65,7 +65,7 @@
 
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "user", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.Id)
@@ -89,7 +89,7 @@
             }
 
             @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control", @id = "txtImage", @readonly = "readonly" }, id = "txtImage" })
-            <input class="btn btn-outline-primary" id="btnSelectImage" type="file" />
+            <input class="btn btn-outline-primary" name="btnSelectImage" id="btnSelectImage" type="file" />
             @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger", @id = "errImage" })
         </div>
 
@@ -130,10 +130,10 @@
             <div class="col-md-10">
                 <div class="checkbox">
                     @Html.DropDownList("Status", new List<SelectListItem>
-                           {
-                               new SelectListItem{ Text = "Kích hoạt", Value = "True"},
-                               new SelectListItem{ Text = "Khóa", Value = "False"}
-                           }, new { @class = "form-control" })
+                               {
+                                   new SelectListItem{ Text = "Kích hoạt", Value = "True"},
+                                   new SelectListItem{ Text = "Khóa", Value = "False"}
+                               }, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                 </div>
@@ -197,7 +197,6 @@
                 @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Cập nhật" class="btn btn-success" />

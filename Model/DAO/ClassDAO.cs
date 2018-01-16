@@ -20,6 +20,44 @@ namespace Model.DAO
             db = new QuizManagementSystemDbContext();
         }
 
+        public int Insert(Class c)
+        {
+            db.Classes.Add(c);
+            db.SaveChanges();
+            return c.Id;
+        }
+
+        public bool Update(Class c)
+        {
+            var _class = db.Classes.Find(c.Id);
+            db.Entry(_class).CurrentValues.SetValues(c);
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool Delete(Class c)
+        {
+            if (c.Users.Count > 0)
+            {
+                return false;
+            }
+            db.Classes.Remove(c);
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
+            var _class = GetClassById(id);
+            if (_class.Users.Count > 0)
+            {
+                return false;
+            }
+            db.Classes.Remove(_class);
+            db.SaveChanges();
+            return true;
+        }
+
         public List<Class> GetAllClass()
         {
             return db.Classes.ToList();
@@ -69,5 +107,13 @@ namespace Model.DAO
         {
             return db.Classes.Where(x => x.GradeID == id).ToList();
         }
+
+        public bool IsExistNameClass(Class c)
+        {
+            if (db.Classes.Where(x => x.Name == c.Name).FirstOrDefault() != null)
+                return true;
+            return false;
+        }
+
     }
 }

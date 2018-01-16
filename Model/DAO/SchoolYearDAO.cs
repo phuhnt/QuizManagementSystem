@@ -26,5 +26,10 @@ namespace Model.DAO
         {
             return db.SchoolYears.Find(id);
         }
+
+        public List<SchoolYear> GetAll()
+        {
+            return db.SchoolYears.ToList();
+        }
     }
 }

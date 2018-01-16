@@ -55,7 +55,7 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@Html.DisplayFor(model => item.SchoolYear.NameOfSchoolYear)</td>
+                                <td>@Html.DisplayFor(model => item.Grade.SchoolYear.NameOfSchoolYear)</td>
                                 <td>@Html.DisplayFor(model => item.Name)</td>
                                 <td>@Html.DisplayFor(model => item.Users.Count)</td>
                                 <td>

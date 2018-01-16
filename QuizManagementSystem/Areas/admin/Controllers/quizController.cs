@@ -241,7 +241,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _subjectDao = new SubjectDAO();
             var _sub = _subjectDao.GetSubjectById(quiz.SubjectsID);
 
-            //ViewBag.ClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", _sub.ClassID);
+            ViewBag.ClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", _sub.Grade.Classes);
         }
 
         public void SetClassViewBag()
