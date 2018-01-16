@@ -59,6 +59,10 @@ namespace Model.DAO
             }
             return model.Where(x => x.ClassID == c.Id).OrderByDescending(x => x.UserName).ToList();
         }
+        public List<User> GetAllUserByClass(int? id)
+        {
+            return db.Users.Where(x => x.ClassID == id).ToList();
+        }
 
         /// <summary>
         /// Insert

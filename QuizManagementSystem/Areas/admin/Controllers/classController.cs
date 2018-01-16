@@ -8,6 +8,8 @@ using System.Web;
 using System.Web.Mvc;
 using Model.EF;
 using Model.DAO;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -167,6 +169,38 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             //    db.Dispose();
             //}
             //base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        public FileResult ExportToExcelFile(int? id)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[6] {
+                new DataColumn("STT"),
+                new DataColumn("Họ và tên"),
+                new DataColumn("Giới tính"),
+                new DataColumn("Ngày sinh"),
+                new DataColumn("Email"),
+                new DataColumn("Số điện thoại")
+            });
+
+            var _class = new ClassDAO().GetClassById(id);
+            var _student = new UserDAO().GetAllUserByClass(id);
+            
+            for (int i = 0; i < _student.Count; i++)
+            {
+                dt.Rows.Add(i + 1, _student[i].FullName, _student[i].Sex, _student[i].DayOfBirth.Value.ToShortDateString(), _student[i].Email, _student[i].Phone);
+            }
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+              
+                wb.Worksheets.Add(dt, "" + _class.Name);
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Danh sach lop " + _class.Name + ".xlsx");
+                }
+            }
         }
 
         private bool CheckInputClass(Class _class)

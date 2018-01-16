@@ -21,8 +21,11 @@
     <a class="btn btn-danger right pull-right" style="margin-bottom: 10px" href="/admin/class/delete/@Model.Id">Xóa lớp học</a>
     <a class="btn btn-warning right pull-right" style="margin-bottom: 10px; margin-right: 10px" href="/admin/class/edit/@Model.Id">Chỉnh sửa lớp học</a>
     <a class="btn btn-primary right pull-right" href="/admin/class/create" style="margin-bottom: 10px; margin-right: 10px">Thêm lớp học</a>
-
-
+    @using (Html.BeginForm("ExportToExcelFile", "class", FormMethod.Post))
+    {
+        @Html.HiddenFor(model => model.Id)
+        <input type="submit" value="Xuất danh sách lớp" class="btn btn-success pull-right" style="margin-right: 10px" />
+    }
 </div>
 
 <div>
@@ -61,7 +64,6 @@
         <div class="card-header">
             <i class="fa fa-table"></i> Danh sách học sinh của @Model.Name
         </div>
-
         <div class="card-body">
             @using (Html.BeginForm("Details", "class", FormMethod.Get))
             {
