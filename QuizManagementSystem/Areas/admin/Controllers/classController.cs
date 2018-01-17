@@ -73,7 +73,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     }
                     else
                     {
-                        SetAlert("Thêm lớp học không thành công", "danger");
+                        SetAlert("Thêm lớp học không thành công", "warning");
                         return RedirectToAction("Index");
                     }
                 }               

@@ -1,0 +1,79 @@
+﻿@model Model.EF.Subject
+
+@{
+    ViewBag.Title = "Xóa môn học | Quiz Management System";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    Xóa môn học
+}
+
+<h3>Bạn thực sự muốn xóa môn học này?</h3>
+<div>
+
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin chung</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <th scope="row" width="50%">Năm học</th>
+                <td width="50%">
+                    @Html.DisplayFor(model => model.Grade.SchoolYear.NameOfSchoolYear)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Khối</th>
+                <td width="50%">
+                    @Html.DisplayFor(model => model.Grade.GradeName)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Môn học</th>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ghi chú</th>
+                <td>
+                    @Html.DisplayFor(model => model.Note)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Môn học</th>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Trạng thái</th>
+                <td>
+                    @{
+                        if (Model.Status == null)
+                        {
+                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                        }
+                        else if (Model.Status == true)
+                        {
+                            <p class="badge badge-pill badge-success">Hoạt động</p>
+                        }
+                        else
+                        {
+                            <p class="badge badge-pill badge-danger">Không hoạt động</p>
+                        }
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-danger" /> |
+            <a class="btn btn-dark" href="/admin/subjects">Hủy</a>
+        </div>
+    }
+</div>

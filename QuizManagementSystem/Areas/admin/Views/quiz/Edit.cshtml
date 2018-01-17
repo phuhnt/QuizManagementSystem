@@ -14,7 +14,7 @@
         $(document).ready(function () {
             var subj = $('#SubjectsID');
 
-            $('#ClassID').change(function () {
+            $('#GradeID').change(function () {
                 var id = $(this).val();
                 $('#SubjectsID').html(null);
                 subj.append($('<option></option>').val(0).text("--- Chọn ---"))
@@ -47,9 +47,9 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
-            @Html.Label("Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Khối lớp", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ClassID", null, "--- Chọn ---", new { htmlAttributes = new { @class = "form-control", @id = "ClassID" } })
+                @Html.DropDownList("GradeID", null, "--- Chọn ---", htmlAttributes: new { @class = "form-control", @id = "GradeID" })
             </div>
         </div>
 
@@ -57,7 +57,7 @@
             @Html.Label("Môn học", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @*@Html.DropDownListFor(model => model.SubjectsID, new SelectList(Enumerable.Empty<SelectListItem>(), "Id", "Name"), "--- Chọn ---", new { htmlAttributes = new { @class = "form-control", @id = "SubjectsID" } })*@
-                @Html.DropDownListFor(model => model.SubjectsID, null, "--- Chọn ---", new { htmlAttributes = new { @class = "form-control", @id = "SubjectsID" }, id = "SubjectsID" })
+                @Html.DropDownListFor(model => model.SubjectsID, null, "--- Chọn ---", htmlAttributes : new { @class = "form-control", @id = "SubjectsID" })
                 @Html.ValidationMessageFor(model => model.SubjectsID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -114,22 +114,24 @@
         <div class="form-group">
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Status)
-                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-                </div>
+                @Html.DropDownList("Status", new List<SelectListItem>
+                   {
+                       new SelectListItem{ Text = "Hoạt động", Value = "True"},
+                       new SelectListItem{ Text = "Không hoạt động", Value = "False"}
+                   }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Cập nhật" class="btn btn-success" />
+                <input type="submit" value="Cập nhật" class="btn btn-success pull-right" style="width: 100px"/>
+                <a class="btn btn-info" href="/admin/quiz">Quay lại</a>
             </div>
         </div>
     </div>
 }
-<p class="btn btn-outline-info">
-    @Html.ActionLink("<< Quay lại", "Index")
-</p>
 
+<br />
+<br />
 

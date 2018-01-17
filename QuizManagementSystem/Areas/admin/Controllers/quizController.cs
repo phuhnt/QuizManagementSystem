@@ -56,7 +56,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetKindViewBag();
             SetLevelViewBag();
             SetSubjectViewBag();
-            SetClassViewBag();
+            SetGradeViewBag();
 
             return View();
         }
@@ -65,7 +65,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        //[ValidateInput(false)]
         public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
         {
             var _quizDao = new QuizDAO();
@@ -92,7 +91,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
             SetSubjectViewBag(question.SubjectsID);
-            SetClassViewBag(question);
+            SetGradeViewBag(question);
             return View(question);
         }
 
@@ -117,7 +116,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 return HttpNotFound();
             }
 
-            SetClassViewBag(_quiz);
+            SetGradeViewBag(_quiz);
             SetSubjectViewBag(_quiz.SubjectsID);
             SetCategoryViewBag(_quiz.CategoryID);
             SetKindViewBag(_quiz.KindID);
@@ -130,17 +129,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
+        public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,Status")] Question question)
         {
             if (ModelState.IsValid)
             {
                 var _session = Session["USER_SESSION"] as UserLogin;
                 var _quizDao = new QuizDAO();
-
-                //question.ContentQuestionEncode = HttpContext.Server.HtmlEncode(question.ContentQuestion);
-                //question.AnswerTextEncode = HttpContext.Server.HtmlEncode(question.AnswerText);
-                question.ContentQuestionEncode = Common.Encode.StripHTML(question.ContentQuestion);
-                question.AnswerTextEncode = Common.Encode.StripHTML(question.AnswerText);
+                question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
+                question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
                 question.KeyAnswer = question.KeyAnswer.ToUpper();
 
                 if (_session != null)
@@ -155,7 +151,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 if (_result == true)
                 {
                     //return RedirectToAction("Index", "quiz");
-                    return RedirectToAction("details/"+question.Id);
+                    return Redirect("/admin/quiz/details/" + question.Id);
                 }
                 
             }
@@ -163,23 +159,24 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
             SetSubjectViewBag(question.SubjectsID);
-            SetClassViewBag(question);
+            SetGradeViewBag(question);
             return View(question);
         }
 
         // GET: admin/quiz/Delete
+        [HttpGet]
         public ActionResult Delete(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Question question = db.Questions.Find(id);
-            //if (question == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Question question = new QuizDAO().GetById(id);
+            if (question == null)
+            {
+                return HttpNotFound();
+            }
+            return View(question);
         }
 
         // POST: admin/quiz/Delete/10
@@ -187,9 +184,31 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            //Question question = db.Questions.Find(id);
-            //db.Questions.Remove(question);
-            //db.SaveChanges();
+            var _quizDao = new QuizDAO();
+            var _quiz = _quizDao.GetById(id);
+            var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (_session != null)
+            {
+                if (_quiz.UserID == _session.UserID)
+                {
+                    var _result = _quizDao.Delete(_quiz);
+                    if (_result)
+                    {
+                        SetAlert("Xóa câu hỏi thành công", "success");
+                        return Redirect("/admin/quiz");
+                    }
+                    else
+                    {
+                        SetAlert("Xóa câu hỏi không thành công | Lỗi: Câu hỏi này đã được dùng trong đề thi.", "warning");
+                        return Redirect("/admin/quiz");
+                    }
+                }
+                else
+                {
+                    SetAlert("Xóa câu hỏi không thành công | Lỗi: Bạn không có quyền xóa câu hỏi này", "warning");
+                    return Redirect("/admin/quiz");
+                }
+            }
             return RedirectToAction("Index");
         }
   
@@ -234,22 +253,15 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             ViewBag.SubjectsID = new SelectList(_sub.GetAllSubjects(), "Id", "Name", selectedID);
         }
 
-        //Lấy danh sách lớp
-        public void SetClassViewBag(Question quiz)
+        public void SetGradeViewBag(Question quiz)
         {
-            var _classDao = new ClassDAO();
-            var _subjectDao = new SubjectDAO();
-            var _sub = _subjectDao.GetSubjectById(quiz.SubjectsID);
-
-            ViewBag.ClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", _sub.Grade.Classes);
+            var _sub = new SubjectDAO().GetSubjectById(quiz.SubjectsID);
+            ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", _sub.GradeID);
         }
 
-        public void SetClassViewBag()
-        {
-            var _classDao = new ClassDAO();
-
-            ViewBag.ClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name");
-
+        public void SetGradeViewBag(int? selectedID = null)
+        {    
+            ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", selectedID);
         }
 
         //Lấy danh sách môn học theo lớp đã chọn

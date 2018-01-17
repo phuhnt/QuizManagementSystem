@@ -5,12 +5,14 @@
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
+@section breadcrumb{
+    Chỉnh sửa môn học
+}
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Test</h4>
         <hr />

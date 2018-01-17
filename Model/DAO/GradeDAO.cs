@@ -30,5 +30,10 @@ namespace Model.DAO
             return db.Grades.Where(x => x.SchoolYearID == schoolyearID).ToList();
         }
 
+        public Grade GetBySubject(Subject s)
+        {
+            return db.Grades.Where(x => x.Id == s.GradeID).FirstOrDefault();
+        }
+
     }
 }

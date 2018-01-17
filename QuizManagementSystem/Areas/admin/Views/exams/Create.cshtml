@@ -19,11 +19,11 @@
 
     <script src="~/Assets/Admin/vendor/chosen/js/chosen.jquery.min.js"></script>
     <script>
-        $((function(){
+        $((function () {
             $('#multiSelectClass').chosen({
                 width: "100%"
-            });           
-        }));      
+            });
+        }));
     </script>
 
 }
@@ -57,28 +57,28 @@
             @Html.Label("Thí sinh", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.SelectedClassID, null, "Chọn tất cả", new { htmlAttributes = new { @class = "form-control", @style = "width: 100%" }, id = "multiSelectClass", multiple = "multiple", data_placeholder = "--- Chọn thí sinh ---", width = "100%" })
-                @Html.ValidationMessageFor(model => model.SelectedClassID, "", new { @class = "text-danger" })      
+                @Html.ValidationMessageFor(model => model.SelectedClassID, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Status)
-                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-                </div>
+                @Html.DropDownList("Status", new List<SelectListItem>
+                   {
+                       new SelectListItem{ Text = "Mở", Value = "True"},
+                       new SelectListItem{ Text = "Đóng", Value = "False"}
+                   }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Tạo" class="btn btn-primary" />
+                <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px"/>
+                <a class="btn btn-info pull-left" href="/admin/exams">Quay lại</a>
             </div>
         </div>
     </div>
 }
 
-<div class="btn btn-outline-info">
-    @Html.ActionLink("<<Quay lại", "Index")
-</div>

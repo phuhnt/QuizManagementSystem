@@ -19,17 +19,15 @@
     <table class="table table-bordered table-dark">
         <tbody>
             @{
-                var _subj = new SubjectDAO();
-                var _nameSubj = _subj.GetSubjectById(Model.SubjectsID);
-                var _classDao = new ClassDAO();
-                var _class = _classDao.GetClassById(_nameSubj.ClassID);
+                var _subj = new SubjectDAO().GetSubjectById(Model.SubjectsID);
+                var _grade = new GradeDAO().GetBySubject(_subj);
             }
             <tr>
-                <th scope="row" width="50%">Lớp</th>
+                <th scope="row" width="50%">Khối</th>
                 <td width="50%">
                     @{
 
-                        <p>@_class.Name</p>
+                        <p>@_grade.GradeName</p>
                     }
                 </td>
             </tr>
@@ -38,7 +36,7 @@
                 <td width="50%">
                     @{
 
-                        <p>@_nameSubj.Name</p>
+                        <p>@_subj.Name</p>
                     }
                 </td>
             </tr>
@@ -72,13 +70,14 @@
             </tr>
             <tr>
                 <th scope="row">Chỉnh sửa bởi</th>
-                <td></td>
+                <td>
+                    @Html.DisplayFor(model => model.ModifiedBy)
+                </td>
             </tr>
         </tbody>
     </table>
 
     <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem">Nội dung câu hỏi</span>
-    @* Câu hỏi câu hỏi*@
     <table class="table table-bordered table-dark">
         <tbody>
             <tr>

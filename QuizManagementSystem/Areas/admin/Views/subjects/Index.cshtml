@@ -1,21 +1,20 @@
 ﻿@using PagedList;
 @using PagedList.Mvc;
 @using Model.DAO;
-
-@model PagedList.IPagedList<Model.EF.Exam>
+@model PagedList.IPagedList<Model.EF.Subject>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Quản lý môn học | Quiz Management System";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    <a href="/admin/subjects">Quản lý môn học</a>
 }
 
 @section linkHeader{
     <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
     <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
-}
-
-@section breadcrumb{
-    Danh sách kỳ thi
 }
 
 
@@ -32,37 +31,42 @@
     </script>
 }
 
-
-<!-- Example DataTables Card-->
 <div class="card mb-3">
     <div class="card-header">
-        <i class="fa fa-table"></i> Danh sách người dùng
-        <a class="btn btn-primary" href="/admin/exams/create">Thêm kỳ thi</a>
+        <i class="fa fa-table"></i> Danh sách môn học
+        <a class="btn btn-primary" href="/admin/subjects/create">Thêm môn học</a>
     </div>
     <div class="card-body">
 
-        @using (Html.BeginForm("Index", "exams", FormMethod.Get))
+        @using (Html.BeginForm("Index", "subjects", FormMethod.Get))
         {
-
+            <div class="input-group col-6" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Kỳ thi</th>
-                            <th>Ngày tạo</th>
+                            <th>Năm học</th>
+                            <th>Khối</th>
+                            <th>Môn học</th>
+                            <th>Ghi chú</th>
                             <th>Trạng thái</th>
-                            <th>Người tạo</th>
                             <th>Chức năng</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th>ID</th>
-                            <th>Kỳ thi</th>
-                            <th>Ngày tạo</th>
+                            <th>Năm học</th>
+                            <th>Khối</th>
+                            <th>Môn học</th>
+                            <th>Ghi chú</th>
                             <th>Trạng thái</th>
-                            <th>Người tạo</th>
                             <th>Chức năng</th>
                         </tr>
                     </tfoot>
@@ -71,8 +75,10 @@
                         {
                             <tr>
                                 <td>@Html.DisplayFor(model => item.Id)</td>
-                                <td>@Html.DisplayFor(model => item.Titile)</td>                            
-                                <td>@Html.DisplayFor(model => item.CreatedDate)</td>                                
+                                <td>@Html.DisplayFor(model => item.Grade.SchoolYear.NameOfSchoolYear)</td>
+                                <td>@Html.DisplayFor(model => item.Grade.GradeName)</td>
+                                <td>@Html.DisplayFor(model => item.Name)</td>
+                                <td>@Html.DisplayFor(model => item.Note)</td>
                                 <td>
                                     @{
                                         if (item.Status == null)
@@ -82,38 +88,24 @@
                                         }
                                         else if (item.Status == true)
                                         {
-                                            <p class="badge badge-pill badge-success">Mở</p>
+                                            <p class="badge badge-pill badge-success">Hoạt động</p>
                                         }
                                         else
                                         {
-                                            <p class="badge badge-pill badge-danger">Đóng</p>
+                                            <p class="badge badge-pill badge-danger">Không hoạt động</p>
                                         }
                                     }
                                 </td>
-                                <td>
-                                    @{ 
-                                        var _userDao = new UserDAO();
-                                        
-                                        <p>
-                                            @{ 
-                                                if (_userDao.GetUserById(item.UserID) != null)
-                                                {
-                                                    @_userDao.GetUserById(item.UserID).UserName;
-                                                }
-                                            }
-                                        </p>
-                                    }
-                                </td>
-                                <td width="20%">
-                                    <a class="btn btn-info" href="/admin/exams/details/@item.Id">Chi tiết</a>
-                                    <a class="btn btn-warning" href="/admin/exams/edit/@item.Id">Sửa</a>
-                                    <a class="btn btn-danger" href="/admin/exams/delete/@item.Id">Xóa</a>
+                                <td width="19%">
+                                    <a class="btn btn-info" href="/admin/subjects/details/@item.Id">Chi tiết</a>
+                                    <a class="btn btn-warning" href="/admin/subjects/edit/@item.Id">Sửa</a>
+                                    <a class="btn btn-danger" href="/admin/subjects/delete/@item.Id">Xóa</a>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
             </div>
         }
     </div>

@@ -1458,6 +1458,11 @@
     <Content Include="Assets\Admin\vendor\bootstrap\js\bootstrap.bundle.min.js.map" />
     <Content Include="Assets\Admin\vendor\bootstrap\js\bootstrap.js.map" />
     <Content Include="Assets\Admin\vendor\bootstrap\js\bootstrap.min.js.map" />
+    <Content Include="Areas\admin\Views\subjects\Create.cshtml" />
+    <Content Include="Areas\admin\Views\subjects\Delete.cshtml" />
+    <Content Include="Areas\admin\Views\subjects\Details.cshtml" />
+    <Content Include="Areas\admin\Views\subjects\Edit.cshtml" />
+    <Content Include="Areas\admin\Views\subjects\Index.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1495,6 +1500,7 @@
     <Compile Include="Areas\admin\Controllers\loginController.cs" />
     <Compile Include="Areas\admin\Controllers\quizController.cs" />
     <Compile Include="Areas\admin\Controllers\roleController.cs" />
+    <Compile Include="Areas\admin\Controllers\subjectsController.cs" />
     <Compile Include="Areas\admin\Controllers\testsController.cs" />
     <Compile Include="Areas\admin\Controllers\userController.cs" />
     <Compile Include="Areas\admin\Models\AdminLoginModel.cs" />

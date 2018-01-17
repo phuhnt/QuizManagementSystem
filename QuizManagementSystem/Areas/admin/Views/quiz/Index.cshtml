@@ -9,7 +9,7 @@
 }
 
 @section breadcrumb{
-    Danh sách câu hỏi
+    <a href="/admin/quiz">Danh sách câu hỏi</a>
 }
 
 @section linkHeader{
@@ -73,7 +73,7 @@
                         {
                             <tr>
                                 <td>@Html.DisplayFor(model => item.Id)</td>
-                                <td>@Html.DisplayFor(model => item.ContentQuestionEncode)</td>
+                                <td>@Html.Raw(item.ContentQuestion + item.AnswerText)</td>
                                 <td>
                                     @{
                                         var _subDao = new SubjectDAO();
@@ -90,11 +90,11 @@
                                         }
                                         else if (item.Status == true)
                                         {
-                                            <p class="badge badge-pill badge-success">Đang hoạt động</p>
+                                            <p class="badge badge-pill badge-success">Hoạt động</p>
                                         }
                                         else
                                         {
-                                            <p class="badge badge-pill badge-danger">Ngừng hoạt động</p>
+                                            <p class="badge badge-pill badge-danger">Không hoạt động</p>
                                         }
                                     }
                                 </td>

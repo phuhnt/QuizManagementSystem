@@ -197,15 +197,16 @@
                 @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
             </div>
         </div>
+        <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Cập nhật" class="btn btn-success" />
+                <input type="submit" value="Cập nhật" class="btn btn-success pull-right" style="width: 100px"/>
+                <a class="btn btn-info pull-left" href="/admin/user">Quay lại</a>
             </div>
         </div>
     </div>
 }
-
-<div class="btn btn-outline-info">
-    @Html.ActionLink("<<Quay lại", "Index")
-</div>
+<br />
+<br />
+<br />
 

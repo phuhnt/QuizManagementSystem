@@ -1,0 +1,81 @@
+﻿@model Model.EF.Subject
+
+@{
+    ViewBag.Title = "Chi tiết môn học | Quiz Management System";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section breadcrumb{
+    Chi tiết môn học
+}
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+
+<div>
+    <a class="btn btn-danger right pull-right" style="margin-bottom: 10px" href="/admin/subjects/delete/@Model.Id">Xóa môn học</a>
+    <a class="btn btn-warning right pull-right" style="margin-bottom: 10px; margin-right: 10px" href="/admin/subjects/edit/@Model.Id">Chỉnh sửa môn học</a>
+    <a class="btn btn-primary right pull-right" href="/admin/subjects/create" style="margin-bottom: 10px; margin-right: 10px">Thêm môn học</a>
+</div>
+
+<div>
+    <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Thông tin chung</span>
+    <table class="table table-bordered table-dark">
+        <tbody>
+            <tr>
+                <th scope="row" width="50%">Năm học</th>
+                <td width="50%">
+                    @Html.DisplayFor(model => model.Grade.SchoolYear.NameOfSchoolYear)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Khối</th>
+                <td width="50%">
+                    @Html.DisplayFor(model => model.Grade.GradeName)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Môn học</th>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Ghi chú</th>
+                <td>
+                    @Html.DisplayFor(model => model.Note)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Môn học</th>
+                <td>
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Trạng thái</th>
+                <td>
+                    @{
+                        if (Model.Status == null)
+                        {
+                            <p class="badge badge-pill badge-info">Chưa thiết lập</p>
+
+                        }
+                        else if (Model.Status == true)
+                        {
+                            <p class="badge badge-pill badge-success">Hoạt động</p>
+                        }
+                        else
+                        {
+                            <p class="badge badge-pill badge-danger">Không hoạt động</p>
+                        }
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<a class="btn btn-info" href="/admin/subjects">Quay lại</a>
