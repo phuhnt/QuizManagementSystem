@@ -53,6 +53,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            SetSchoolYearViewBag();
             SetClassViewBag(null);
             return View();
         }
@@ -97,7 +98,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     ModelState.AddModelError("", "Thêm kỳ thi không thành công.");
                 }
             }
-
+            SetSchoolYearViewBag();
             SetUserViewBag(exam.UserID);
             SetClassViewBag(exam.SelectedClassID);
             return View(exam);
@@ -183,6 +184,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             ViewBag.SelectedClassID = new SelectList(_classDao.GetAllClass(), "Id", "Name", selectedID);
         }
 
+        private void SetSchoolYearViewBag(int? selectedID = null)
+        {
+            ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", selectedID);
+        }
+
         public JsonResult GetClassSelected(int? id)
         {
             var _examDao = new ExamDAO();
@@ -197,6 +203,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             _exam.SelectedClassID = _selectedClassID;
             return Json(_exam.SelectedClassID, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult FillClasses(int? schoolyearId)
+        {
+            var classes = new ClassDAO().GetAllBySchoolYear(schoolyearId);            
+            return Json(new SelectList(classes.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
     }
 }

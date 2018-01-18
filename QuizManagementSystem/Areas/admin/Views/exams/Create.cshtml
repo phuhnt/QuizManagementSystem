@@ -19,11 +19,31 @@
 
     <script src="~/Assets/Admin/vendor/chosen/js/chosen.jquery.min.js"></script>
     <script>
-        $((function () {
+        $(document).ready(function () {
             $('#multiSelectClass').chosen({
                 width: "100%"
             });
-        }));
+            $('#multiSelectClass').empty();
+            $('#multiSelectClass').trigger("chosen:updated");
+            $('#SchoolYearID').change(function () {
+                $('#multiSelectClass').empty();              
+                var id = $(this).val();
+                $.getJSON("/admin/exams/FillClasses", { schoolyearId: id }, function (data, status) {
+                    if (status == "success") {
+                        $('#multiSelectClass').append($('<option></option>').val("0").text("Chọn tất cả"));
+                        $.each(data, function (i, item) {                           
+                            $('#multiSelectClass').append($('<option></option>').val(item.Value).text(item.Text))
+                        })                       
+                        $('#multiSelectClass').trigger("chosen:updated");
+                    }                   
+                });      
+            });           
+        });
+
+        CKFinder.setupCKEditor(null, 'Assets/Admin/js/plugins/ckfinder/');
+        CKEDITOR.replace('txtNote', {
+            customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
+        });
     </script>
 
 }
@@ -38,6 +58,12 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
+            @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SchoolYearID", null, "--- Chọn ---", htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
+            </div>
+        </div>
+        <div class="form-group">
             @Html.Label("Tiêu đề kỳ thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Titile, new { htmlAttributes = new { @class = "form-control" } })
@@ -48,7 +74,7 @@
         <div class="form-group">
             @Html.Label("Ghi chú", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control", @id = "txtNote" } })
                 @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -56,7 +82,7 @@
         <div class="form-group">
             @Html.Label("Thí sinh", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.SelectedClassID, null, "Chọn tất cả", new { htmlAttributes = new { @class = "form-control", @style = "width: 100%" }, id = "multiSelectClass", multiple = "multiple", data_placeholder = "--- Chọn thí sinh ---", width = "100%" })
+                @Html.DropDownList("SelectedClassID", null, "Chọn tất cả", new { htmlAttributes = new { @class = "form-control", @style = "width: 100%" }, id = "multiSelectClass", multiple = "multiple", data_placeholder = "--- Chọn thí sinh ---", width = "100%" })
                 @Html.ValidationMessageFor(model => model.SelectedClassID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -65,17 +91,17 @@
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Status", new List<SelectListItem>
-                   {
-                       new SelectListItem{ Text = "Mở", Value = "True"},
-                       new SelectListItem{ Text = "Đóng", Value = "False"}
-                   }, new { @class = "form-control" })
+               {
+                   new SelectListItem{ Text = "Mở", Value = "True"},
+                   new SelectListItem{ Text = "Đóng", Value = "False"}
+               }, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px"/>
+                <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px" />
                 <a class="btn btn-info pull-left" href="/admin/exams">Quay lại</a>
             </div>
         </div>

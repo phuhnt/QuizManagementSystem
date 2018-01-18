@@ -9,6 +9,62 @@
     Tạo đề thi
 }
 
+@section jsFooter{
+    <script>
+        $(document).ready(function () {
+            var grades = $('#GradeID');
+
+            $('#SchoolYearID').change(function () {
+                var id = $(this).val();
+                $('#GradeID').html(null);
+                $.getJSON("/admin/tests/FillGrades", { schoolyearId: id }, function (data) {
+                    grades.append($('<option></option>').val("0").text(""));
+                    $.each(data, function (i, item) {
+                        grades.append($('<option></option>').val(item.Value).text(item.Text));
+                    });
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            var subj = $('#SubjectID');
+
+            $('#GradeID').change(function () {
+                var id = $(this).val();
+                $('#SubjectID').html(null);
+                $.getJSON("/admin/tests/FillSubjects", { gradeId: id }, function (data) {
+                    $.each(data, function (i, item) {
+                        subj.append($('<option></option>').val(item.Value).text(item.Text));
+                    });
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            var examinee = $('#ExamineeID');
+
+            $('#ExamID').change(function () {
+                var id = $(this).val();
+                var str = "";
+                examinee.html('');
+                $.getJSON("/admin/tests/FillExaminee", { examsId: id }, function (data) {
+                    $.each(data, function (i, item) {
+                        str += item.Text;
+                        if (item.Text != null)
+                        {
+                            str += ", "
+                        }
+                    });
+                    examinee.val(str);
+                });
+               
+            });
+        });
+    </script>
+
+}
+
+
 @using (Html.BeginForm("Create", "tests", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
@@ -17,19 +73,42 @@
         <h4>Thông tin đề thi</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
         <div class="form-group">
             @Html.Label("Kỳ thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("ExamID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("ExamID", null, htmlAttributes: new { @class = "form-control", @id = "ExamID" })
                 @Html.ValidationMessageFor(model => model.ExamID, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        <div class="form-group">
+            @Html.Label("Thí sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("ExamineeID", null, htmlAttributes: new { @class = "form-control", @id = "ExamineeID", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SchoolYearID", null, htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Khối", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("GradeID", null, htmlAttributes: new { @class = "form-control", @id = "GradeID" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Môn thi", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SubjectID", null, htmlAttributes: new { @class = "form-control", @id = "SubjectID" })
+                @Html.ValidationMessageFor(model => model.SubjectID, "", new { @class = "text-danger" })
+            </div>
+        </div>
         <div class="form-group">
             @Html.Label("Mã đề", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.CodeTestID, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.CodeTest, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
                 @Html.ValidationMessageFor(model => model.CodeTestID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -41,15 +120,6 @@
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.Label("Môn thi", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SubjectID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SubjectID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
         <div class="form-group">
             @Html.Label("Số câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -63,11 +133,11 @@
             <div class="col-md-10">
                 <div class="checkbox">
                     @Html.DropDownList("QuizSelection", new List<SelectListItem>
-                           {
-                               new SelectListItem{ Text = "Ngẫu nhiên", Value = "1"},
-                               new SelectListItem{ Text = "Câu hỏi mới nhất", Value = "2"},
-                               new SelectListItem{ Text = "Thủ công", Value = "3"}
-                           }, new { @class = "form-control" })
+                                   {
+                                       new SelectListItem{ Text = "Ngẫu nhiên", Value = "1"},
+                                       new SelectListItem{ Text = "Câu hỏi mới nhất", Value = "2"},
+                                       new SelectListItem{ Text = "Thủ công", Value = "3"}
+                                   }, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -100,7 +170,7 @@
         <div class="form-group">
             @Html.Label("Ngày bắt đầu thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
                 @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -108,21 +178,21 @@
         <div class="form-group">
             @Html.Label("Ngày kết thúc thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
                 @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.Label("Giờ mở đề", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Giờ mở đề (HH:mm AM | PM)", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control", @type = "time" } })
                 @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.Label("Giờ đóng đề", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Giờ đóng đề (HH:mm AM | PM)", htmlAttributes: new { @class = "control-label col-md-2", @type = "time" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
@@ -134,10 +204,10 @@
             <div class="col-md-10">
                 <div class="checkbox">
                     @Html.DropDownList("Status", new List<SelectListItem>
-                           {
-                               new SelectListItem{ Text = "Mở", Value = "True"},
-                               new SelectListItem{ Text = "Đóng", Value = "False"}
-                           }, "Trạng thái", new { @class = "form-control" })
+                                   {
+                                       new SelectListItem{ Text = "Mở", Value = "True"},
+                                       new SelectListItem{ Text = "Đóng", Value = "False"}
+                                   }, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                 </div>
             </div>

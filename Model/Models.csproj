@@ -99,6 +99,7 @@
     <Compile Include="DAO\QuizDAO.cs" />
     <Compile Include="DAO\RolesDAO.cs" />
     <Compile Include="DAO\SchoolYearDAO.cs" />
+    <Compile Include="DAO\ScoreLadderDAO.cs" />
     <Compile Include="DAO\SubjectDAO.cs" />
     <Compile Include="DAO\TestDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />

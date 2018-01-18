@@ -115,5 +115,15 @@ namespace Model.DAO
             return false;
         }
 
+        public List<Class> GetAllBySchoolYear(int? schoolyearID)
+        {
+            return db.Classes.Where(x => x.Grade.SchoolYearID == schoolyearID).ToList();
+        }
+
+        public List<Class> GetAllByExams(int? examsID)
+        {
+            return db.Classes.Where(x => x.Exams.Any(e => e.Id == examsID)).ToList();
+        }
+
     }
 }

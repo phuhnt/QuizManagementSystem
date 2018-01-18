@@ -20,6 +20,9 @@ namespace Model.EF
 
         public int CodeTestID { get; set; }
 
+        [NotMapped]
+        public string CodeTest { get; set; }
+
         [StringLength(500)]
         public string Title { get; set; }
 

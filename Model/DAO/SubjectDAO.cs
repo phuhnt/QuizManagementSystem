@@ -74,6 +74,11 @@ namespace Model.DAO
             return db.Subjects.Where(x => x.GradeID == _class.GradeID).ToList();
         }
 
+        public List<Subject> GetAllSubjectsByGrade(int? id)
+        {
+            return db.Subjects.Where(x => x.GradeID == id).ToList();
+        }
+
         public IEnumerable<Subject> GetAllSubjectsPageList(string searchString, int page = 1, int pageSize = 10)
         {
             IQueryable<Subject> model = db.Subjects;

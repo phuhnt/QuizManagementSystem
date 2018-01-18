@@ -16,5 +16,10 @@ namespace QuizManagementSystem.Common
         public static int IsLocked          = -1; // Tài khoản đang bị khóa
         public static int Incorrect         = -2; // Tài khoản hoặc mật khẩu chưa đúng
         public static int NotHaveAccess     = -3; // Tài khoản không có quyền truy cập
+
+        // Tests
+        public static int Random            =  0;
+        public static int QuizNew           =  1;
+        public static int Manual            =  2;
     }
 }
