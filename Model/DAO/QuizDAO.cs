@@ -40,13 +40,7 @@ namespace Model.DAO
         // Delete
         public bool Delete(Question quiz)
         {
-            var result = db.QuestionTests.Where(x => x.QuestionID == quiz.Id).FirstOrDefault();
-            if (result != null)
-            {
-                return false;
-            }
-            db.Questions.Remove(quiz);
-            db.SaveChanges();
+           
             return true;
         }
 
@@ -64,6 +58,12 @@ namespace Model.DAO
         public List<Question> GetAllQuizActive()
         {
             return db.Questions.Where(x => x.Status == true).ToList();
+        }
+
+
+        public List<Question> GetAllQuizBySubject(int? id)
+        {
+            return db.Questions.Where(x => x.SubjectsID == id && x.Status == true).ToList();
         }
 
         public IEnumerable<Question> GetAllQuizPageList(int page = 1, int pageSize = 10)

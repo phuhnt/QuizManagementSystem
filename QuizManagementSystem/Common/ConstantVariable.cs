@@ -18,8 +18,8 @@ namespace QuizManagementSystem.Common
         public static int NotHaveAccess     = -3; // Tài khoản không có quyền truy cập
 
         // Tests
-        public static int Random            =  0;
-        public static int QuizNew           =  1;
-        public static int Manual            =  2;
+        public static int Random            =  0; // Ngẫu nhiên
+        public static int QuizNew           =  1; // Câu hỏi mới nhất
+        public static int Manual            =  2; // Thủ công
     }
 }

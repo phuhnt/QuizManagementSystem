@@ -19,7 +19,6 @@ namespace Model.EF
         public virtual DbSet<Kind> Kinds { get; set; }
         public virtual DbSet<Level> Levels { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
-        public virtual DbSet<QuestionTest> QuestionTests { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<SchoolYear> SchoolYears { get; set; }
         public virtual DbSet<ScoreLadder> ScoreLadders { get; set; }
@@ -45,16 +44,10 @@ namespace Model.EF
                 .Property(e => e.Link)
                 .IsFixedLength();
 
-            modelBuilder.Entity<Question>()
-                .HasMany(e => e.QuestionTests)
-                .WithRequired(e => e.Question)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<Test>()
-                .HasMany(e => e.QuestionTests)
-                .WithRequired(e => e.Test)
-                .HasForeignKey(e => e.QuestionID)
-                .WillCascadeOnDelete(false);
+                .HasMany(e => e.Quizs)
+                .WithMany(e => e.Tests)
+                .Map(m => m.ToTable("QuizTest").MapLeftKey("TestID").MapRightKey("QuizID"));
 
             modelBuilder.Entity<Test>()
                 .HasMany(e => e.TestResultDetails)

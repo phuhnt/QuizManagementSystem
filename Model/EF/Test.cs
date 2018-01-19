@@ -11,17 +11,17 @@ namespace Model.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Test()
         {
-            QuestionTests = new HashSet<QuestionTest>();
+            Quizs = new HashSet<Question>();
             TestResultDetails = new HashSet<TestResultDetail>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int CodeTestID { get; set; }
+        public int CodeTest { get; set; }
 
         [NotMapped]
-        public string CodeTest { get; set; }
+        public string CodeTestArr { get; set; }
 
         [StringLength(500)]
         public string Title { get; set; }
@@ -59,13 +59,13 @@ namespace Model.EF
 
         public bool? Status { get; set; }
 
-        [NotMapped]
-        public int QuizSelection { get; set; }
-
         public virtual Exam Exam { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<QuestionTest> QuestionTests { get; set; }
+        public virtual ICollection<Question> Quizs { get; set; }
+
+        [NotMapped]
+        public int QuizSelection { get; set; }
 
         public virtual ScoreLadder ScoreLadder { get; set; }
 
