@@ -19,7 +19,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _quizDao = new QuizDAO();
             ViewBag.User = _userDao.GetAllUserActive().Count.ToString();
             ViewBag.Exam = _examDao.GetAllExamActive().Count.ToString();
-            //ViewBag.Test = _testDao.GetAllTestActive().Count.ToString();
+            ViewBag.Test = _testDao.GetAllTest().Count.ToString();
             ViewBag.Quiz = _quizDao.GetAllQuizActive().Count.ToString();
             return View();
         }

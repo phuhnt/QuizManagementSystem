@@ -56,6 +56,62 @@ namespace Model.DAO
             return true;
         }
 
+        public bool Update(Exam exam)
+        {
+            var _exam = db.Exams.Find(exam.Id);
+            db.Entry(_exam).CurrentValues.SetValues(exam);
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool Update(Exam exam, int[] selectedID)
+        {
+            var _exam = db.Exams.Find(exam.Id);
+            var _classDao = new ClassDAO();
+            
+            foreach (var i in _exam.Classes.ToList())
+            {
+                _exam.Classes.Remove(i);
+            }
+            db.SaveChanges();
+            _exam.Classes = new List<Class>();
+            
+            foreach (var i in selectedID)
+            {
+                var _class = new Class();
+                if (i == 0) //Chọn tất cả lớp
+                {
+                    int[] allClass = _classDao.GetAllClassID();
+                    for (int k = 0; k < allClass.Length; k++)
+                    {                     
+                        var _id = allClass[k];
+                        _exam.Classes.Add(db.Classes.Single(c => c.Id == _id));
+                    }
+                    break;
+                }
+                else
+                {
+                    _class = _classDao.GetClassById(i);
+                    _exam.Classes.Add(db.Classes.Single(c => c.Id == i));
+                }
+            }
+            db.Entry(_exam).CurrentValues.SetValues(exam);
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool Delete(Exam exam)
+        {
+            var _exam = GetExamById(exam.Id);
+            foreach (var i in _exam.Classes.ToList())
+            {
+                _exam.Classes.Remove(i);
+            }
+            db.Exams.Remove(_exam);
+            db.SaveChanges();
+            return true;
+        }
+
         public Exam GetExamById(int? id)
         {
             return db.Exams.Find(id);
@@ -63,7 +119,7 @@ namespace Model.DAO
 
         public IEnumerable<Exam> GetAllExamPageList(int page = 1, int pageSize = 10)
         {
-            return db.Exams.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
+            return db.Exams.OrderByDescending(x => x.ModifiedDate).ToPagedList(page, pageSize);
         }
 
         public List<Class> GetClassSelected(Exam exam)

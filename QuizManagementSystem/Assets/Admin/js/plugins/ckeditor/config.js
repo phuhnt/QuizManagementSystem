@@ -18,4 +18,5 @@ CKEDITOR.editorConfig = function( config ) {
         config.filebrowserUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files';
         config.filebrowserImageUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images';
         config.filebrowserFlashUploadUrl = '/Assets/Admin/js/plugins/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Flash';
+        config.mathJaxLib = '/Assets/Admin/js/plugins/ckeditor/plugins/mathjax/plugin.js';
 };

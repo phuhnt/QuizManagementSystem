@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Model.EF;
+using PagedList;
 
 namespace Model.DAO
 {
@@ -13,13 +14,7 @@ namespace Model.DAO
         public TestDAO()
         {
             db = new QuizManagementSystemDbContext();
-        }
-
-        public List<Test> GetAllTestActive()
-        {
-            return null;
-            //return db.Tests.Where(x => x.Status == true).ToList();
-        }
+        } 
 
         public bool Insert(Test test, List<int> quizIdList)
         {
@@ -32,6 +27,40 @@ namespace Model.DAO
             db.Tests.Add(test);
             db.SaveChanges();
             return true;
+        }
+
+        public Test GetTestById (int? id)
+        {
+            return db.Tests.Find(id);
+        }
+        public List<Test> GetAllTest()
+        {
+            return db.Tests.ToList();
+        }
+
+        public List<Test> GetAllTestActive()
+        {
+            return db.Tests.Where(x => x.Status == true).ToList();
+        }
+
+        public List<Question> GetAllQuiz(int? testsId)
+        {
+            var test = new TestDAO().GetTestById(testsId);
+            return test.Quizs.ToList();
+        }
+
+        // Lấy danh sách đề thi và phân trang
+        public IEnumerable<Test> GetAllTestPageList(string searchString, int page = 1, int pageSize = 10)
+        {
+
+            IQueryable<Test> model = db.Tests;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Exam.Titile.Contains(searchString) ||
+                                    x.CodeTest.ToString().Contains(searchString) ||
+                                    x.Subject.Name.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
     }
 }

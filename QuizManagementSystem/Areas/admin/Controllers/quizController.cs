@@ -69,24 +69,25 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var _quizDao = new QuizDAO();
 
-            CheckInputQuiz(question);
-            
-            if (ModelState.IsValid)
+            if (CheckInputQuiz(question))
             {
-                var _session = Session["USER_SESSION"] as UserLogin;
-                if (_session != null)
+                if (ModelState.IsValid)
                 {
-                    question.UserID = _session.UserID;
+                    var _session = Session["USER_SESSION"] as UserLogin;
+                    if (_session != null)
+                    {
+                        question.UserID = _session.UserID;
+                    }
+                    question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
+                    question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
+                    question.KeyAnswer = question.KeyAnswer.ToUpper();
+                    question.DateCreated = DateTime.Now;
+                    question.ModifiedDate = question.DateCreated;
+                    _quizDao.Insert(question);
+                    return RedirectToAction("Index", "quiz");
                 }
-                question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
-                question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
-                question.KeyAnswer = question.KeyAnswer.ToUpper();
-                question.DateCreated = DateTime.Now;
-                question.ModifiedDate = question.DateCreated;
-                _quizDao.Insert(question);               
-                return RedirectToAction("Index", "quiz");
             }
-
+                 
             SetCategoryViewBag(question.CategoryID);
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
@@ -256,7 +257,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public void SetGradeViewBag(Question quiz)
         {
             var _sub = new SubjectDAO().GetSubjectById(quiz.SubjectsID);
-            ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", _sub.GradeID);
+            if (_sub == null)
+            {
+                ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", null);
+            }
+            else
+            {
+                ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", _sub.GradeID);
+            }
         }
 
         public void SetGradeViewBag(int? selectedID = null)
@@ -275,28 +283,32 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return Json(new SelectList(subjects.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
-        private void CheckInputQuiz(Question question)
+        private bool CheckInputQuiz(Question question)
         {
             // Kiểm tra có chọn lớp, môn học hay chưa?
-            if (question.SubjectsID == 0)
+            if (question.SubjectsID <= 0 || question.SubjectsID == null)
             {
                 ModelState.AddModelError("", "Vui lòng chọn môn học");
+                return false;
             }
 
             //Kiểm tra nội dung câu hỏi, đáp án câu hỏi và đáp án đúng nhập vào có hợp lệ không
             if (String.IsNullOrEmpty(question.ContentQuestion))
             {
                 ModelState.AddModelError("", "Nội dung câu hỏi không được để trống.");
+                return false;
             }
 
             if (String.IsNullOrEmpty(question.AnswerText))
             {
                 ModelState.AddModelError("", "Đáp án lựa chọn cho câu hỏi không được để trống.");
+                return false;
             }
 
             if (String.IsNullOrEmpty(question.KeyAnswer))
             {
                 ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
+                return false;
             }
             else
             {
@@ -305,6 +317,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}"))
                     {
                         ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                        return false;
                     }
                 }
                 else
@@ -312,9 +325,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}[,]"))
                     {
                         ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
+                        return false;
                     }
                 }
             }
+            return true;
         }
     }
 }

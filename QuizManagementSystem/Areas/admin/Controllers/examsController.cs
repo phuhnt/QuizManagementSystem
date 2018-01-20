@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
+using QuizManagementSystem.Common;
 using QuizManagementSystem.Models;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
@@ -85,12 +86,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     exam.UserID = _userDao.GetUserByUserName(_session.UserName).Id;
                 }
-                
+
+                exam.NoteEncode = Common.Encode.StripHTML(exam.Note);
                 exam.CreatedDate = DateTime.Now;
 
                 var _result = _examDao.Insert(exam, exam.SelectedClassID);
                 if (_result)
                 {
+                    SetAlert("Thêm kỳ thi thành công", "success");
                     return RedirectToAction("/details/" + exam.Id);
                 }
                 else
@@ -133,31 +136,62 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Titile,Note,Status,Link,UserID")] Exam exam)
+        public ActionResult Edit([Bind(Include = "Id,Titile,Note,NoteEncode,SelectedClassID,Link,ModifiedBy,ModifiedDate,Status")] Exam exam)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    db.Entry(exam).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-            //ViewBag.UserID = new SelectList(db.Users, "Id", "UserName", exam.UserID);
+            if (String.IsNullOrEmpty(exam.Titile))
+            {
+                ModelState.AddModelError("", "Tiêu đề kỳ thi không được để trống.");
+            }
+
+            if (exam.SelectedClassID == null)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn thí sinh cho kỳ thi này.");
+            }
+            if (ModelState.IsValid)
+            {
+                var _session = Session[Common.ConstantVariable.USER_SESSION] as Common.UserLogin;
+                var _userDao = new UserDAO();
+                var _examDao = new ExamDAO();
+
+                if (_session != null)
+                {
+                    exam.ModifiedBy = _session.UserName;
+                }
+
+                exam.ModifiedDate = DateTime.Now;
+
+                var _result = _examDao.Update(exam, exam.SelectedClassID);
+                if (_result)
+                {
+                    SetAlert("Cập nhật thông tin kỳ thi thành công", "success");
+                    return RedirectToAction("/details/" + exam.Id);
+                }
+                else
+                {
+                    SetAlert("Sửa kỳ thi không thành công", "warning");
+                    return RedirectToAction("Index");
+                }
+            }
+            SetSchoolYearViewBag();
+            SetUserViewBag(exam.UserID);
+            SetClassViewBag(exam.SelectedClassID);
             return View(exam);
         }
 
         // GET: admin/exams/Delete/5
+        [HttpGet]
         public ActionResult Delete(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Exam exam = db.Exams.Find(id);
-            //if (exam == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            return View("exam");
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Exam exam = new ExamDAO().GetExamById(id);
+            if (exam == null)
+            {
+                return HttpNotFound();
+            }
+            return View(exam);
         }
 
         // POST: admin/exams/Delete/5
@@ -165,9 +199,37 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            //Exam exam = db.Exams.Find(id);
-            //db.Exams.Remove(exam);
-            //db.SaveChanges();
+            Exam exam = new ExamDAO().GetExamById(id);
+            var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (_session != null)
+            {
+                if (_session.UserID != exam.UserID && _session.UserID != 1)
+                {
+                    ModelState.AddModelError("", "Xóa kỳ thi không thành công. Lỗi: bạn không có quyền xóa kỳ thi này");
+                }
+            }
+            if (exam.TestResultDetails.Count > 0)
+            {
+                ModelState.AddModelError("", "Xóa kỳ thi không thành công. Lỗi: kỳ thi này đã có người thi không thể xóa");
+            }
+            if (exam.Tests.Count > 0)
+            {
+                ModelState.AddModelError("", "Xóa kỳ thi không thành công. Lỗi: kỳ thi này có đề thi tham chiếu đến");
+            }
+            if (ModelState.IsValid)
+            {
+                var result = new ExamDAO().Delete(exam);
+                if (result)
+                {
+                    SetAlert("Xóa kỳ thi thành công", "success");
+                    RedirectToAction("Index");
+                }
+                else
+                {
+                    SetAlert("Xóa kỳ thi không thành công", "warning");
+                    RedirectToAction("Index");
+                }
+            }
             return RedirectToAction("Index");
         }
 

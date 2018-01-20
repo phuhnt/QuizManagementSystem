@@ -38,6 +38,7 @@ namespace QuizManagementSystem.Controllers
                     var _userSession = new UserLogin();
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;
+                    _userSession.Avatar = _user.Avatar;
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
                     return Redirect("/admin/home");
                 }

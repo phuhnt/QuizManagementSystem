@@ -66,6 +66,11 @@ namespace Model.DAO
             return db.Questions.Where(x => x.SubjectsID == id && x.Status == true).ToList();
         }
 
+        public List<Question> GetAllQuizNewSubject(int? id)
+        {
+            return db.Questions.Where(x => x.SubjectsID == id && x.Status == true).OrderByDescending(x => x.ModifiedDate).ToList();
+        }
+
         public IEnumerable<Question> GetAllQuizPageList(int page = 1, int pageSize = 10)
         {
             return db.Questions.OrderByDescending(x => x.ModifiedDate).ToPagedList(page, pageSize);
@@ -89,9 +94,6 @@ namespace Model.DAO
         public Question FindQuizById(int? id)
         {
             return db.Questions.Find(id);
-        }
-
-        
-
+        }      
     }
 }

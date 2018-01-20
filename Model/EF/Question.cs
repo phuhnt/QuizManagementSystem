@@ -5,6 +5,7 @@ namespace Model.EF
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
+    using System.Web.Mvc;
 
     public partial class Question
     {
@@ -24,16 +25,16 @@ namespace Model.EF
 
         public int? LevelID { get; set; }
 
-        [StringLength(1000)]
+        [MaxLength]
         public string ContentQuestion { get; set; }
 
-        [StringLength(1000)]
+        [MaxLength]
         public string ContentQuestionEncode { get; set; }
 
-        [StringLength(500)]
+        [MaxLength]
         public string AnswerText { get; set; }
 
-        [StringLength(500)]
+        [MaxLength]
         public string AnswerTextEncode { get; set; }
 
         [StringLength(128)]

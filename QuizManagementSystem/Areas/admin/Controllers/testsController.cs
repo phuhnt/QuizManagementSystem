@@ -9,32 +9,35 @@ using System.Web;
 using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
+using QuizManagementSystem.Common;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
-    public class testsController : Controller
+    public class testsController : baseController
     {
 
         // GET: admin/tests
-        public ActionResult Index()
+        public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
-            
-            return View();
+            var testModel = new TestDAO().GetAllTestPageList(searchString, page, pageSize);
+            ViewBag.SearchString = searchString;
+            return View(testModel);
         }
 
         // GET: admin/tests/Details/5
+        [HttpGet]
         public ActionResult Details(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Test test = db.Tests.Find(id);
-            //if (test == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Test test = new TestDAO().GetTestById(id);
+            if (test == null)
+            {
+                return HttpNotFound();
+            }
+            return View(test);
         }
 
         // GET: admin/tests/Create
@@ -54,19 +57,24 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CodeTest,Title,SubjectID,NumberOfQuestions,Time,NumberOfTurns,ExamID,ScoreLadderID,TestDay,StartTime,EndTime,UserID,Status")] Test test)
+        public ActionResult Create([Bind(Include = "Id,CodeTest,Title,SubjectID,NumberOfQuestions,Time,NumberOfTurns,ExamID,ScoreLadderID,FromDate,ToDate,StartTime,EndTime,Status")] Test test)
         {
             if (CheckInputTest(test))
             {
                 if (ModelState.IsValid)
                 {
-                   if (SelectQuiz(test))
+                    if (SelectQuiz(test))
                     {
+                        SetAlert("Tạo đề thi thành công", "success");
                         return RedirectToAction("Index");
-                    }               
+                    }
+                    else
+                    {
+                        SetAlert("Tạo đề thi không thành công", "error");
+                        return RedirectToAction("Index");
+                    }
                 }
             }
-
 
             SetExamViewBag();
             SetExamineeViewBag();
@@ -80,19 +88,22 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // GET: admin/tests/Edit/5
         public ActionResult Edit(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
-            //Test test = db.Tests.Find(id);
-            //if (test == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //ViewBag.ExamID = new SelectList(db.Exams, "Id", "Titile", test.ExamID);
-            //ViewBag.ScoreLadderID = new SelectList(db.ScoreLadders, "Id", "Title", test.ScoreLadderID);
-            //ViewBag.SubjectID = new SelectList(db.Subjects, "Id", "Name", test.SubjectID);
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Test test = new TestDAO().GetTestById(id);
+            if (test == null)
+            {
+                return HttpNotFound();
+            }
+            SetExamViewBag(test.ExamID);
+            SetExamineeViewBag();
+            SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
+            SetGradeViewBag(test.Subject.GradeID);
+            SetSubjectViewBag(test.SubjectID);
+            SetScoreLadderViewBag(test.ScoreLadderID);
+            return View(test);
         }
 
         // POST: admin/tests/Edit/5
@@ -102,15 +113,28 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CodeTestID,Title,SubjectID,NumberOfQuestions,Time,NumberOfTurns,ExamID,ScoreLadderID,TestDay,StartTime,EndTime,UserID,Status")] Test test)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    db.Entry(test).State = EntityState.Modified;
-            //    db.SaveChanges();
-            //    return RedirectToAction("Index");
-            //}
-            //ViewBag.ExamID = new SelectList(db.Exams, "Id", "Titile", test.ExamID);
-            //ViewBag.ScoreLadderID = new SelectList(db.ScoreLadders, "Id", "Title", test.ScoreLadderID);
-            //ViewBag.SubjectID = new SelectList(db.Subjects, "Id", "Name", test.SubjectID);
+            if (CheckInputTest(test))
+            {
+                if (ModelState.IsValid)
+                {
+                    if (SelectQuiz(test))
+                    {
+                        SetAlert("Cập nhật đề thi thành công", "success");
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        SetAlert("Cập nhật đề thi không thành công", "error");
+                        return RedirectToAction("Index");
+                    }
+                }
+            }
+            SetExamViewBag(test.ExamID);
+            SetExamineeViewBag();
+            SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
+            SetGradeViewBag(test.Subject.GradeID);
+            SetSubjectViewBag(test.SubjectID);
+            SetScoreLadderViewBag(test.ScoreLadderID);
             return View();
         }
 
@@ -140,6 +164,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return RedirectToAction("Index");
         }
 
+
         private void SetExamViewBag(int? selectedID = null)
         {
             ViewBag.ExamID = new SelectList(new ExamDAO().GetAllExamActive(), "Id", "Titile", selectedID);
@@ -158,6 +183,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         private void SetExamineeViewBag(int? selectedID = null)
         {
             ViewBag.ExamineeID = new SelectList(new ClassDAO().GetAllClassActive(), "Id", "Name", selectedID);
+        }
+
+        private void GetExamineeViewBag(int? examsId)
+        {
+            var classes = new ClassDAO().GetAllByExams(examsId);
+            ViewBag.Examinee = classes;
         }
 
         private void SetSubjectViewBag(int? selectedID = null)
@@ -235,16 +266,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         return false;
                     }
                 }
-                if (test.StartTime == null)
-                {
-                    ModelState.AddModelError("", "Vui lòng chọn giờ bắt đầu thi");
-                    return false;
-                }
-                if (test.EndTime == null)
-                {
-                    ModelState.AddModelError("", "Vui lòng chọn giờ kết thúc thi");
-                    return false;
-                }
             }
             return true;
         }
@@ -265,6 +286,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // Chọn câu hỏi
         private bool SelectQuiz(Test test)
         {
+            // Chọn câu hỏi theo kiểu ngẫu nhiên
             if (test.QuizSelection == Common.ConstantVariable.Random)
             {
                 var _quizList = new QuizDAO().GetAllQuizBySubject(test.SubjectID);
@@ -276,16 +298,43 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 else //Random chọn câu hỏi
                 {
                     Random random = new Random();
-                    List<int> _quizIdList = new List<int>();                   
+                    List<int> _quizIdList = new List<int>();
                     for (int i = 0; i < test.NumberOfQuestions; i++)
                     {
                         int quizId;
                         do
                         {
-                            quizId = random.Next(0, _quizList.Count - 1);
+                            quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
                         } while (_quizIdList.Contains(quizId));
                         _quizIdList.Add(quizId);
                     }
+                    var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+                    test.CreatedBy = _session.UserID;
+                    test.CreatedDate = DateTime.Now;
+                    test.ModifiedDate = DateTime.Now;
+                    return new TestDAO().Insert(test, _quizIdList);
+                }
+            }
+            // Chọn câu hỏi theo kiểu câu hỏi mới nhất
+            if (test.QuizSelection == Common.ConstantVariable.QuizNew)
+            {
+                var _quizList = new QuizDAO().GetAllQuizNewSubject(test.SubjectID);
+                if (_quizList.Count < test.NumberOfQuestions)
+                {
+                    ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
+                    return false;
+                }
+                else
+                {
+                    List<int> _quizIdList = new List<int>();
+                    for (int i = 0; i < test.NumberOfQuestions; i++)
+                    {
+                        _quizIdList.Add(_quizList[i].Id);
+                    }
+                    var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+                    test.CreatedBy = _session.UserID;
+                    test.CreatedDate = DateTime.Now;
+                    test.ModifiedDate = DateTime.Now;
                     return new TestDAO().Insert(test, _quizIdList);
                 }
             }
