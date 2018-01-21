@@ -10,8 +10,7 @@ namespace QuizManagementSystem.Common
 {
     public static class Encode
     {
-        const string htmlTagPattern = "<.*?>";
-
+        
         public static string MD5Hash(string text)
         {
             MD5 md5 = new MD5CryptoServiceProvider();
@@ -35,7 +34,7 @@ namespace QuizManagementSystem.Common
 
         public static string StripHTML(string html)
         {
-            return Regex.Replace(html, htmlTagPattern, string.Empty);
+            return Regex.Replace(html, Common.ConstantVariable.htmlTagPattern, string.Empty);
         }
     }
 }

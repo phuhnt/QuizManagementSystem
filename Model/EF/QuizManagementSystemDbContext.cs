@@ -10,6 +10,8 @@ namespace Model.EF
         public QuizManagementSystemDbContext()
             : base("name=QuizManagementSystemDbContext")
         {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<QuizManagementSystemDbContext,
+                Migrations.Configuration>("QuizManagementSystemDbContext"));
         }
 
         public virtual DbSet<CategoryQuiz> CategoryQuizs { get; set; }

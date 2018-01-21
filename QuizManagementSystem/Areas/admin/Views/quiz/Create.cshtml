@@ -9,10 +9,11 @@
     Thêm câu hỏi
 }
 
+
 @section jsFooter{
     <script type="text/javascript">
-        $(function () { 
-            $('.datepicker').datepicker(); 
+        $(function () {
+            $('.datepicker').datepicker();
         });
     </script>
 
@@ -36,11 +37,58 @@
         CKEDITOR.replace('txtContentQuestion', {
             customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
         });
+        //$(document).ready(function () {
+        //    for (var i = 0; i < 4; i++) {
+        //        CKEDITOR.replace('txtAnswer[' + i + ']', {
+        //            customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
+        //        });
+        //    }
+        //});
+    </script>
+    <script>
+        $(document).ready(function () {
+            var answers = $('#answerChoice');
 
-        CKEDITOR.replace('txtAnswer', {
-            customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js',
+            $('#answerNum').change(function () {
+                var i = $(this).val();
+                $('#answerChoice').html(null);
+
+                for (var j = 0; j < i; j++) {
+                    var Alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                    answers.append('<input type= "checkbox" name= "AnswerKey[]" id= "AnswerKey[]" value= "'+j+'" title= "Đáp án đúng" />'                      
+                        + '<label class = "control-label col-md-2"><strong>Đáp án ' + Alphabet[j] + '</strong ></label>'
+                        + '<div class="input-group">'                                               
+                        + '<div class="col-md-10" >'
+                        + '<textarea name= "AnswerList[' + j + ']" class="form-control" id= "AnswerList[' + j + ']" /></textarea>'
+                        //+ '<div class="input-group-append" data-toggle="tooltip" data-placement="top" title="" data-original-title="Đáp án đúng">'
+                        //+ '<div class="input-group-text">'
+                        //+ '<input type="checkbox" name="AnswerKey[' + j + ']" id="AnswerKey[' + j +']" value="1" title="Đáp án đúng" />'
+                        //+ '</div>'
+                        //+ '</div>'
+                        + '</div> '
+                        + '</div></br>');
+                    
+                    CKEDITOR.replace('AnswerList[' + j + ']', {                   
+                        customConfig: '/Assets/Admin/js/plugins/ckeditor/config.js'
+                    });
+                }
+            });
         });
 
+        //$(document).ready(function () {
+        //    $('#btnSubmit').click(function (e) {
+        //        var i = $('#answerNum').val();
+        //        var ckeData = "";
+        //        for (var j = 0; j < i; j++) {
+
+        //            ckeData += CKEDITOR.instances.AnswerList[j].getData();
+        //        }
+        //        $.post("/admin/quiz/Create", { Answers: "Hihihihihi" }, function (result) {
+        //            console.log(result);
+        //        });
+
+        //    });
+        //});
     </script>
 
 }
@@ -48,7 +96,7 @@
 @using (Html.BeginForm("Create", "quiz", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-
+    
     <div class="form-horizontal">
         <h4>Thêm câu hỏi</h4>
         <hr />
@@ -100,38 +148,32 @@
                 @Html.ValidationMessageFor(model => model.ContentQuestion, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.Label("Đáp án lựa chọn", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Số đáp án lưa chọn", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.AnswerText, new { htmlAttributes = new { @class = "form-control", @id = "txtAnwser" }, id = "txtAnswer" })
-                @Html.ValidationMessageFor(model => model.AnswerText, "", new { @class = "text-danger" })
+                @Html.DropDownList("AnswerChoiceNum", null, "--- Chọn số đáp án ----", new { @class = "form-control", @id = "answerNum" })
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.Label("Đáp án đúng", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <span style="font-style: italic; font-size: 11px">Ví dụ đáp án đúng là A, thì bạn có thể nhập là: A hoặc a. Nếu có nhiều đáp án, thêm dấu phẩy để ngăn cách chúng (VD: A, B)</span>
-                @Html.EditorFor(model => model.KeyAnswer, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.KeyAnswer, "", new { @class = "text-danger" })
-            </div>
+        <div class="form-group" id="answerChoice">
+
         </div>
+
         <div class="form-group">
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Status", new List<SelectListItem>
-               {
-                   new SelectListItem{ Text = "Hoạt động", Value = "True"},
-                   new SelectListItem{ Text = "Không hoạt động", Value = "False"}
-               }, new { @class = "form-control" })                
-               @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                                               {
+                                                   new SelectListItem{ Text = "Hoạt động", Value = "True"},
+                                                   new SelectListItem{ Text = "Không hoạt động", Value = "False"}
+                                               }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px"/>
+                <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px" id="btnSubmit" />
                 <a class="btn btn-info pull-left" href="/admin/quiz">Quay lại</a>
             </div>
         </div>

@@ -10,6 +10,8 @@ namespace Model.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            AutomaticMigrationDataLossAllowed = false;
+            ContextKey = "Model.EF.QuizManagementSystemDbContext";
         }
 
         protected override void Seed(Model.EF.QuizManagementSystemDbContext context)

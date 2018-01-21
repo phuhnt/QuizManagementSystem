@@ -31,6 +31,8 @@ namespace Model.EF
         [MaxLength]
         public string ContentQuestionEncode { get; set; }
 
+        public int? AnswerChoiceNum { get; set; }
+
         [MaxLength]
         public string AnswerText { get; set; }
 
@@ -39,6 +41,12 @@ namespace Model.EF
 
         [StringLength(128)]
         public string KeyAnswer { get; set; }
+
+        [NotMapped]
+        public List<string> AnswerList { get; set; }
+
+        [NotMapped]
+        public List<string> AnswerKey { get; set; }
 
         public int? UserID { get; set; }
 

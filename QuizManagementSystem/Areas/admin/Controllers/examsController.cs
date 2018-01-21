@@ -86,8 +86,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     exam.UserID = _userDao.GetUserByUserName(_session.UserName).Id;
                 }
-
-                exam.NoteEncode = Common.Encode.StripHTML(exam.Note);
+                if (!String.IsNullOrEmpty(exam.Note))
+                {
+                    exam.NoteEncode = Common.Encode.StripHTML(exam.Note);
+                }     
                 exam.CreatedDate = DateTime.Now;
 
                 var _result = _examDao.Insert(exam, exam.SelectedClassID);

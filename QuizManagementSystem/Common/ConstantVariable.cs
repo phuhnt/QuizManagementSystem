@@ -10,6 +10,8 @@ namespace QuizManagementSystem.Common
         //Session
         public static string USER_SESSION = "USER_SESSION";
 
+        //Encode
+        public static string htmlTagPattern = "<[^>]*(>|$)";
 
         //Account
         public static int NotExist          =  0; // Tài khoản không tồn tại

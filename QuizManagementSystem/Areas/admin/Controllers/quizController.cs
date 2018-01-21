@@ -52,11 +52,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // GET: admin/quiz/Create
         public ActionResult Create()
         {
+            SetSubjectViewBag();
+            SetGradeViewBag();
             SetCategoryViewBag();
             SetKindViewBag();
             SetLevelViewBag();
-            SetSubjectViewBag();
-            SetGradeViewBag();
+            SetAnswerChoiceNumViewBag();
 
             return View();
         }
@@ -65,10 +66,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status")] Question question)
+        public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status,AnswerList,AnswerKey")] Question question)
         {
             var _quizDao = new QuizDAO();
 
+            
+            
             if (CheckInputQuiz(question))
             {
                 if (ModelState.IsValid)
@@ -78,22 +81,31 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     {
                         question.UserID = _session.UserID;
                     }
-                    question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
-                    question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
-                    question.KeyAnswer = question.KeyAnswer.ToUpper();
-                    question.DateCreated = DateTime.Now;
-                    question.ModifiedDate = question.DateCreated;
-                    _quizDao.Insert(question);
+                    // Nội dung câu hỏi
+                    if (!String.IsNullOrEmpty(question.ContentQuestion))
+                    {
+                        question.ContentQuestionEncode = WebUtility.HtmlDecode(Encode.StripHTML(question.ContentQuestion));
+                    }
+                 
+                    if (!String.IsNullOrEmpty(question.AnswerText))
+                    {
+                        question.AnswerTextEncode = WebUtility.HtmlDecode(Encode.StripHTML(question.AnswerText));
+                    }                  
+
+                    question.DateCreated = DateTime.Now;    //Ngày tạo
+                    question.ModifiedDate = question.DateCreated;   // Ngày chỉnh sửa
+                    _quizDao.Insert(question);      // Gọi phương thức để tạo câu hỏi
                     return RedirectToAction("Index", "quiz");
                 }
             }
-                 
+            SetGradeViewBag(question);
             SetCategoryViewBag(question.CategoryID);
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
+            SetAnswerChoiceNumViewBag(question.AnswerChoiceNum);
             SetSubjectViewBag(question.SubjectsID);
-            SetGradeViewBag(question);
-            return View(question);
+            
+            return View();
         }
 
         // GET: admin/quiz/Edit
@@ -122,7 +134,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetCategoryViewBag(_quiz.CategoryID);
             SetKindViewBag(_quiz.KindID);
             SetLevelViewBag(_quiz.LevelID);
-                     
+            SetAnswerChoiceNumViewBag(_quiz.AnswerChoiceNum);
+
             return View(_quiz);
         }
 
@@ -144,23 +157,25 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     question.ModifiedBy = _session.UserName;
                 }
-                
+
                 question.ModifiedDate = DateTime.Now;
 
-                var _result =  _quizDao.Update(question);
+                var _result = _quizDao.Update(question);
 
                 if (_result == true)
                 {
                     //return RedirectToAction("Index", "quiz");
                     return Redirect("/admin/quiz/details/" + question.Id);
                 }
-                
+
             }
+            SetSubjectViewBag(question.SubjectsID);
+            SetGradeViewBag(question);
             SetCategoryViewBag(question.CategoryID);
             SetKindViewBag(question.KindID);
             SetLevelViewBag(question.LevelID);
-            SetSubjectViewBag(question.SubjectsID);
-            SetGradeViewBag(question);
+            SetAnswerChoiceNumViewBag(question.AnswerChoiceNum);
+
             return View(question);
         }
 
@@ -212,7 +227,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             return RedirectToAction("Index");
         }
-  
+
 
         //Viewbag Catgeory
         public void SetCategoryViewBag(int? selectedID = null)
@@ -268,8 +283,24 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         public void SetGradeViewBag(int? selectedID = null)
-        {    
+        {
             ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", selectedID);
+        }
+
+        public void SetAnswerChoiceNumViewBag(int? selectedID = null)
+        {
+            ViewBag.AnswerChoiceNum = new SelectList(new List<SelectListItem>
+            {
+                    new SelectListItem{ Text = "2", Value = "2"},
+                    new SelectListItem{ Text = "3", Value = "3"},
+                    new SelectListItem{ Text = "4", Value = "4"},
+                    new SelectListItem{ Text = "5", Value = "5"},
+                    new SelectListItem{ Text = "6", Value = "6"},
+                    new SelectListItem{ Text = "7", Value = "7"},
+                    new SelectListItem{ Text = "8", Value = "8"},
+                    new SelectListItem{ Text = "9", Value = "9"},
+                    new SelectListItem{ Text = "10", Value = "10"}
+            }, "Value", "Text", selectedID);
         }
 
         //Lấy danh sách môn học theo lớp đã chọn
@@ -277,14 +308,18 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public JsonResult FillSubjects(int? classId)
         {
             var _subDao = new SubjectDAO();
-
             var subjects = _subDao.GetSubjectByClassID(classId);
-
+            if (subjects == null)
+            {
+                return Json(new SelectList(null, "Id", "Name"), JsonRequestBehavior.AllowGet);
+            }
             return Json(new SelectList(subjects.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 
         private bool CheckInputQuiz(Question question)
         {
+            char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' }; // 10 đáp án
+
             // Kiểm tra có chọn lớp, môn học hay chưa?
             if (question.SubjectsID <= 0 || question.SubjectsID == null)
             {
@@ -299,36 +334,52 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 return false;
             }
 
-            if (String.IsNullOrEmpty(question.AnswerText))
+            if (question.AnswerList == null)
             {
-                ModelState.AddModelError("", "Đáp án lựa chọn cho câu hỏi không được để trống.");
+                ModelState.AddModelError("", "Lỗi: Số đáp án lựa chọn tối thiểu là 2 đáp án");
                 return false;
             }
-
-            if (String.IsNullOrEmpty(question.KeyAnswer))
+            else if (question.AnswerList.Count < 2)
+            {
+                ModelState.AddModelError("", "Lỗi: Số đáp án lựa chọn tối thiểu là 2 đáp án");
+                return false;
+            }
+            else
+            {
+                // Đáp án lựa chọn
+                for (int i = 0; i < question.AnswerList.Count; i++)
+                {
+                    if (String.IsNullOrEmpty(question.AnswerList[i]))
+                    {
+                        ModelState.AddModelError("", "Vui lòng nhập đầy đủ nội dung của " + i + 1 + "đáp án.");
+                        return false;
+                    }
+                    question.AnswerText += Alphabet[i] + ". " + question.AnswerList[i];
+                }
+            }
+           
+            if (question.AnswerKey == null)
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
+                return false;
+            }
+            else if (question.AnswerKey.Count < 1)
             {
                 ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
                 return false;
             }
             else
             {
-                if (question.KeyAnswer.Length == 1)
+                // Đáp án đúng (Key)
+                for (int i = 0; i < question.AnswerKey.Count; i++)
                 {
-                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}"))
+                    if (Int32.Parse(question.AnswerKey[i]) > 0)
                     {
-                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (!Regex.IsMatch(question.KeyAnswer, "[A-Za-z0-9]{1}[,]"))
-                    {
-                        ModelState.AddModelError("", "Đáp án đúng cho câu hỏi này không hợp lệ.");
-                        return false;
+                        question.KeyAnswer += Alphabet[Int32.Parse(question.AnswerKey[i])];
                     }
                 }
             }
+
             return true;
         }
     }

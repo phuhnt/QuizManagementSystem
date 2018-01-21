@@ -40,7 +40,17 @@ namespace Model.DAO
         // Delete
         public bool Delete(Question quiz)
         {
-           
+            var _quiz = new QuizDAO().FindQuizById(quiz.Id);
+            
+            if (_quiz.Tests.Count > 0)
+            {
+                return false;
+            }
+            else
+            {
+                db.Questions.Remove(quiz);
+            }
+            db.SaveChanges();
             return true;
         }
 

@@ -71,7 +71,11 @@ namespace Model.DAO
         public List<Subject> GetSubjectByClassID(int? id)
         {
             var _class = new ClassDAO().GetClassById(id);
-            return db.Subjects.Where(x => x.GradeID == _class.GradeID).ToList();
+            if (_class != null)
+            {
+                return db.Subjects.Where(x => x.GradeID == _class.GradeID).ToList();
+            }
+            return null;
         }
 
         public List<Subject> GetAllSubjectsByGrade(int? id)
