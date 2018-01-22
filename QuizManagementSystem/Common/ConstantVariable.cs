@@ -9,6 +9,8 @@ namespace QuizManagementSystem.Common
     {
         //Session
         public static string USER_SESSION = "USER_SESSION";
+        public static string SESSION_CREDENTIAL = "SESSION_CREDENTIAL";
+
 
         //Encode
         public static string htmlTagPattern = "<[^>]*(>|$)";
@@ -23,5 +25,10 @@ namespace QuizManagementSystem.Common
         public static int Random            =  0; // Ngẫu nhiên
         public static int QuizNew           =  1; // Câu hỏi mới nhất
         public static int Manual            =  2; // Thủ công
+
+        // UserGroup
+        public static string STUDENT_GROUP = "STUDENT";
+        public static string TEACHER_GROUP = "TEACHER";
+        public static string ADMIN_GROUP   = "ADMIN";
     }
 }

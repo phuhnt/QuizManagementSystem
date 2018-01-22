@@ -52,7 +52,8 @@ namespace Model.EF
 
         public bool? Status { get; set; }
 
-        public int? RoleID { get; set; }
+        [StringLength(50)]
+        public string GroupID { get; set; }
 
         [StringLength(128)]
         public string CreateBy { get; set; }
@@ -68,12 +69,12 @@ namespace Model.EF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Question> Questions { get; set; }
 
-        public virtual Role Role { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestResultDetail> TestResultDetails { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Test> Tests { get; set; }
+
+        public virtual UserGroup UserGroup { get; set; }
     }
 }

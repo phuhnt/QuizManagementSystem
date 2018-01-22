@@ -10,8 +10,6 @@ namespace Model.EF
         public QuizManagementSystemDbContext()
             : base("name=QuizManagementSystemDbContext")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<QuizManagementSystemDbContext,
-                Migrations.Configuration>("QuizManagementSystemDbContext"));
         }
 
         public virtual DbSet<CategoryQuiz> CategoryQuizs { get; set; }
@@ -28,6 +26,7 @@ namespace Model.EF
         public virtual DbSet<SystemLog> SystemLogs { get; set; }
         public virtual DbSet<TestResultDetail> TestResultDetails { get; set; }
         public virtual DbSet<Test> Tests { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -46,19 +45,49 @@ namespace Model.EF
                 .Property(e => e.Link)
                 .IsFixedLength();
 
-            modelBuilder.Entity<Test>()
-                .HasMany(e => e.Quizs)
-                .WithMany(e => e.Tests)
-                .Map(m => m.ToTable("QuizTest").MapLeftKey("TestID").MapRightKey("QuizID"));
+            modelBuilder.Entity<Question>()
+                .HasMany(e => e.Tests)
+                .WithMany(e => e.Questions)
+                .Map(m => m.ToTable("QuizTest").MapLeftKey("QuestionID").MapRightKey("TestID"));
+
+            modelBuilder.Entity<Role>()
+                .Property(e => e.Id)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Role>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Role>()
+                .HasMany(e => e.UserGroups)
+                .WithMany(e => e.Roles)
+                .Map(m => m.ToTable("Credential").MapLeftKey("RoleID").MapRightKey("UserGroupID"));
+
+            modelBuilder.Entity<TestResultDetail>()
+                .Property(e => e.UserAnswer)
+                .IsUnicode(false);
 
             modelBuilder.Entity<Test>()
                 .HasMany(e => e.TestResultDetails)
                 .WithRequired(e => e.Test)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<UserGroup>()
+                .Property(e => e.Id)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(e => e.Users)
+                .WithOptional(e => e.UserGroup)
+                .HasForeignKey(e => e.GroupID);
+
             modelBuilder.Entity<User>()
                 .Property(e => e.Avatar)
                 .IsFixedLength();
+
+            modelBuilder.Entity<User>()
+                .Property(e => e.GroupID)
+                .IsUnicode(false);
 
             modelBuilder.Entity<User>()
                 .HasMany(e => e.TestResultDetails)

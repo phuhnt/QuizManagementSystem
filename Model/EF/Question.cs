@@ -52,6 +52,7 @@ namespace Model.EF
 
         public DateTime? DateCreated { get; set; }
 
+        [StringLength(128)]
         public string ModifiedBy { get; set; }
 
         public DateTime? ModifiedDate { get; set; }

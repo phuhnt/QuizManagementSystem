@@ -1568,6 +1568,7 @@
     <Compile Include="Common\UserLogin.cs" />
     <Compile Include="Controllers\errorController.cs" />
     <Compile Include="Controllers\ExampleController.cs" />
+    <Compile Include="Controllers\HasCredentialAttribute.cs" />
     <Compile Include="Controllers\homeController.cs" />
     <Compile Include="Controllers\userController.cs" />
     <Compile Include="Global.asax.cs">

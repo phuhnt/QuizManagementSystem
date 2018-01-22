@@ -30,7 +30,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     var _userSession = new UserLogin();
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;
-                    _userSession.RoleID = _user.RoleID;
+                    _userSession.GroupID = _user.GroupID;
                     if (_user.Avatar != null)
                     {
                         _userSession.Avatar = _user.Avatar;
@@ -43,19 +43,19 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
                     return RedirectToAction("Index", "home");
                 }
-                else if (_result == ConstantVariable.NotExist)
+                else if (_result == ConstantVariable.NotExist)  // 0
                 {
                     ModelState.AddModelError("", "Tài khoản không tồn tại!");
                 }
-                else if (_result == ConstantVariable.IsLocked)
+                else if (_result == ConstantVariable.IsLocked)  // -1
                 {
                     ModelState.AddModelError("", "Tài khoản đang bị khóa!");
                 }
-                else if (_result == ConstantVariable.Incorrect)
+                else if (_result == ConstantVariable.Incorrect) // -2
                 {
                     ModelState.AddModelError("", "Tài khoản hoặc mật khẩu chưa đúng!");
                 }
-                else if (_result == ConstantVariable.NotHaveAccess)
+                else if (_result == ConstantVariable.NotHaveAccess) // -3
                 {
                     ModelState.AddModelError("", "Tài khoản của bạn không có quyền truy cập!");
                 }

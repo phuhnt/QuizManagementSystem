@@ -34,6 +34,9 @@ namespace Model.EF
 
         public TimeSpan? ActualEndTime { get; set; }
 
+        [StringLength(500)]
+        public string UserAnswer { get; set; }
+
         public virtual Exam Exam { get; set; }
 
         public virtual Test Test { get; set; }

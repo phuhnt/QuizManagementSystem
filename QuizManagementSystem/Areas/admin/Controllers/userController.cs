@@ -102,7 +102,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             
             SetClassViewBag(_user.ClassID);
             SetGradeViewBag(_grade.Id);
-            SetRolesViewBag(_user.RoleID);
+            //SetRolesViewBag(_user.GroupID);
 
             return View(_user);
         }
@@ -110,7 +110,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserName,PasswordHash,NewPasswordHash,ConfirmPasswordHash,Email,DayOfBirth,Phone,DateOfParticipation,FullName,Sex,ClassID,Avatar,Status,RoleID,CreateBy,ModifiedBy")]User user)
+        public ActionResult Edit([Bind(Include = "Id,UserName,PasswordHash,NewPasswordHash,ConfirmPasswordHash,Email,DayOfBirth,Phone,DateOfParticipation,FullName,Sex,ClassID,Avatar,Status,GroupID,CreateBy,ModifiedBy")]User user)
         {
             var _userDao = new UserDAO();
             var _userCurr = _userDao.GetUserById(user.Id);
@@ -174,7 +174,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _grade = new GradeDAO().GetByClass(_class);
             SetGradeViewBag(_grade.Id);
             SetClassViewBag(user.ClassID);
-            SetRolesViewBag(user.RoleID);
+            //SetRolesViewBag(user.GroupID);
             return View(user);
         }
 
@@ -183,7 +183,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var _user = new UserDAO().GetUserById(id);
             //SetClassViewBag(_user.ClassID);
-            //SetRolesViewBag(_user.RoleID);
+            //SetRolesViewBag(_user.GroupID);
             return View(_user);
         }
 
@@ -259,7 +259,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Xác nhận lại mật khẩu chưa đúng");
                 return false;
             }
-            else if (user.RoleID <= 0 || user.RoleID == null)
+            else if (user.GroupID == null)
             {
                 ModelState.AddModelError("", "Vui lòng chọn loại tài khoản");
                 return false;
@@ -274,7 +274,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Ngày sinh không được để trống");
                 return false;
             }
-            else if (user.RoleID == 3)
+            else if (user.GroupID == "STUDENT")
             {
                 if (user.ClassID <= 0 || user.ClassID == null)
                 {
@@ -321,7 +321,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var _roleDao = new RolesDAO();
 
-            ViewBag.RoleID = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
+            ViewBag.GroupID = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
         }
 
         public JsonResult FillClass(int? gradeId)

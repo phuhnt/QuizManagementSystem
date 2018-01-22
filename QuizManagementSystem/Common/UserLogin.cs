@@ -12,7 +12,7 @@ namespace QuizManagementSystem.Common
 
         public string UserName { get; set; }
 
-        public int? RoleID { get; set; }
+        public string GroupID { get; set; }
 
         public string Avatar { get; set; }
     }

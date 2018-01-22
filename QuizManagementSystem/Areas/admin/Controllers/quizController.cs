@@ -109,6 +109,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         // GET: admin/quiz/Edit
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)

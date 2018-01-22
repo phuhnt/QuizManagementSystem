@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Model.EF;
 using PagedList;
+using Model.Common;
 
 namespace Model.DAO
 {
@@ -30,7 +31,7 @@ namespace Model.DAO
             if (!String.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.UserName.Contains(searchString) ||
-                                    x.Role.Name.Contains(searchString) ||
+                                    x.UserGroup.Name.Contains(searchString) ||
                                     x.Email.Contains(searchString));
             }
             return model.OrderByDescending(x => x.DateOfParticipation).ToPagedList(page, pageSize);
@@ -144,6 +145,54 @@ namespace Model.DAO
                 else
                     return -2; //Đăng nhập sai
             }
+        }
+
+        public int Login(string userName, string passWordHash, bool isLoginAdmin = false)
+        {
+            var result = db.Users.SingleOrDefault(x => x.UserName == userName);
+            if (result == null)
+            {
+                return 0; //Tài khoản không tồn tại
+            }
+            else
+            {
+                if (isLoginAdmin == true)
+                {
+                    if (result.GroupID == ConstantVariable.ADMIN_GROUP || result.GroupID == ConstantVariable.TEACHER_GROUP)
+                    {
+                        if (result.PasswordHash == passWordHash)
+                        {
+                            return 1; //Đăng nhập đúng
+                        }
+                        else if (result.Status == false)
+                            return -1; //Tài khoản đang bị khóa
+                        else
+                            return -2; //Đăng nhập sai
+                    }
+                    else
+                    {
+                        return -3;  // Không phải là Admin và Teacher đang nhập
+                    }
+                }
+                else
+                {
+                    if (result.PasswordHash == passWordHash)
+                    {
+                        return 1; //Đăng nhập đúng
+                    }
+                    else if (result.Status == false)
+                        return -1; //Tài khoản đang bị khóa
+                    else
+                        return -2; //Đăng nhập sai
+                }
+                
+            }
+        }
+
+        public List<string> GetListCredential(string userName)
+        {
+            var _user = db.Users.Single(x => x.UserName == userName);
+            return null;
         }
 
         public User GetUserByUserName(string userName)
