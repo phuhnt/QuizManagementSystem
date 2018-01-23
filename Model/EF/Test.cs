@@ -19,6 +19,9 @@ namespace Model.EF
 
         public int CodeTest { get; set; }
 
+        [NotMapped]
+        public string CodeTestArr { get; set; }
+
         [StringLength(500)]
         public string Title { get; set; }
 
@@ -54,6 +57,9 @@ namespace Model.EF
         public DateTime? ModifiedDate { get; set; }
 
         public bool? Status { get; set; }
+
+        [NotMapped]
+        public int QuizSelection { get; set; }
 
         public virtual Exam Exam { get; set; }
 

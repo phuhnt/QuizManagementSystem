@@ -31,6 +31,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     _userSession.UserName = _user.UserName;
                     _userSession.UserID = _user.Id;
                     _userSession.GroupID = _user.GroupID;
+                    var _listRole = _userDao.GetListRole(model.UserName);
                     if (_user.Avatar != null)
                     {
                         _userSession.Avatar = _user.Avatar;
@@ -40,7 +41,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         _userSession.Avatar = "/Data/images/avatardefault.png";
                     }
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
-
+                    Session.Add(ConstantVariable.SESSION_CREDENTIAL, _listRole);
                     return RedirectToAction("Index", "home");
                 }
                 else if (_result == ConstantVariable.NotExist)  // 0

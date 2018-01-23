@@ -42,13 +42,13 @@
                 <th scope="row">Loại tài khoản</th>
                 <td>
                     @{
-                        if (Model.Role == null)
+                        if (Model.UserGroup == null)
                         {
                             @Html.Display("Chưa cập nhật");
                         }
                         else
                         {
-                            @Html.DisplayFor(model => model.Role.Name)
+                            @Html.DisplayFor(model => model.UserGroup.Name)
                         }
                     }
                 </td>

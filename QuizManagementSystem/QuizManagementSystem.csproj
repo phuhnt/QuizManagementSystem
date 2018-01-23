@@ -1567,7 +1567,6 @@
     <Compile Include="Common\Encode.cs" />
     <Compile Include="Common\UserLogin.cs" />
     <Compile Include="Controllers\errorController.cs" />
-    <Compile Include="Controllers\ExampleController.cs" />
     <Compile Include="Controllers\HasCredentialAttribute.cs" />
     <Compile Include="Controllers\homeController.cs" />
     <Compile Include="Controllers\userController.cs" />
@@ -1585,11 +1584,6 @@
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <Content Include="tsconfig.json" />
     <Content Include="Views\user\Login.cshtml" />
-    <Content Include="Views\Example\Create.cshtml" />
-    <Content Include="Views\Example\Delete.cshtml" />
-    <Content Include="Views\Example\Details.cshtml" />
-    <Content Include="Views\Example\Edit.cshtml" />
-    <Content Include="Views\Example\Index.cshtml" />
     <Content Include="Views\error\PageNotFound.cshtml" />
     <Content Include="Views\error\AccessDenied.cshtml" />
     <Content Include="Views\error\ServerError.cshtml" />

@@ -18,10 +18,13 @@ namespace QuizManagementSystem.Controllers
             //{
             //    return false;
             //}
-            var session = (UserLogin)HttpContext.Current.Session[ConstantVariable.USER_SESSION];
-            string privilegelLevels = string.Join(";", this.GetCredentialByLoggedInUser(session.UserName));
-
-            if (privilegelLevels.Contains(this.RoleID))
+            var session = HttpContext.Current.Session[ConstantVariable.USER_SESSION] as UserLogin;
+            List<string> privilegelLevels = GetCredentialByLoggedInUser(session.UserName);
+            if (session == null)
+            {
+                return false;
+            }
+            if (privilegelLevels.Contains(this.RoleID) || session.GroupID == ConstantVariable.ADMIN_GROUP)
             {
                 return true;
             }

@@ -18,11 +18,11 @@ namespace Model.DAO
 
         public bool Insert(Test test, List<int> quizIdList)
         {
-            test.Quizs = new List<Question>();
+            test.Questions = new List<Question>();
             for (int i = 0; i < quizIdList.Count; i++)
             {
                 var _id = quizIdList[i];              
-                test.Quizs.Add(db.Questions.Single(c => c.Id == _id));
+                test.Questions.Add(db.Questions.Single(c => c.Id == _id));
             }           
             db.Tests.Add(test);
             db.SaveChanges();
@@ -46,7 +46,7 @@ namespace Model.DAO
         public List<Question> GetAllQuiz(int? testsId)
         {
             var test = new TestDAO().GetTestById(testsId);
-            return test.Quizs.ToList();
+            return test.Questions.ToList();
         }
 
         // Lấy danh sách đề thi và phân trang

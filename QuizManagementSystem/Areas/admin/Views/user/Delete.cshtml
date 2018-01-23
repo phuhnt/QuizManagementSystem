@@ -34,12 +34,7 @@
                 <tr id="row_@item.Id">
                     <td>@Html.DisplayFor(model => item.Id)</td>
                     <td>@Html.DisplayFor(model => item.UserName)</td>
-                    <td>
-                        @{
-                            var _role = new RolesDAO().FindRoleById(item.RoleID);
-                            <span>@_role.Name</span>
-                        }
-                    </td>
+                    <td>@item.UserGroup.Name</td>
                     <td>@Html.DisplayFor(model => item.Email)</td>
                     <td>@Html.DisplayFor(model => item.DateOfParticipation)</td>
                     <td>

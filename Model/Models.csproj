@@ -104,6 +104,7 @@
     <Compile Include="DAO\SubjectDAO.cs" />
     <Compile Include="DAO\TestDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
+    <Compile Include="DAO\UserGroupDAO.cs" />
     <Compile Include="DAO\UserRoleDAO.cs" />
     <Compile Include="EF\CategoryQuiz.cs" />
     <Compile Include="EF\Class.cs" />

@@ -80,17 +80,6 @@ namespace Model.DAO
         public bool Update(User user)
         {
             var _user = db.Users.Find(user.Id);
-
-            //_user.RoleID = user.RoleID;
-            //_user.Status = user.Status;
-
-            //_user.FullName = user.FullName;
-            //_user.Sex = user.Sex;
-            //_user.Email = user.Email;
-            //_user.DayOfBirth = user.DayOfBirth;
-            //_user.Phone = user.Phone;
-            //_user.ClassID = user.ClassID;
-
             db.Entry(_user).CurrentValues.SetValues(user);
             db.SaveChanges();
             return true;
@@ -189,9 +178,16 @@ namespace Model.DAO
             }
         }
 
-        public List<string> GetListCredential(string userName)
+        public List<Role> GetListRole(string userName)
         {
             var _user = db.Users.Single(x => x.UserName == userName);
+
+            //var data = from r in db.Roles
+            //           where r.UserGroups.Any(u => u.Id == _user.GroupID)
+            //           select new List<string>
+            //           {
+            //               //RoleID = r.Id;
+            //           }
             return null;
         }
 

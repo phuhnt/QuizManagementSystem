@@ -8,6 +8,7 @@ using Model.DAO;
 using QuizManagementSystem.Common;
 using System.Data.Entity.Infrastructure;
 using System.Net;
+using QuizManagementSystem.Controllers;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -29,12 +30,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(_model);
         }
 
+        [HasCredential(RoleID = "CREATE_USER")]
         [HttpGet]
         public ActionResult Create()
         {
             SetGradeViewBag();
             SetClassViewBag();
-            SetRolesViewBag();
+            SetGroupIDViewBag();
             return View();
         }
 
@@ -73,7 +75,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             SetGradeViewBag();
             SetClassViewBag();
-            SetRolesViewBag();
+            SetGroupIDViewBag();
             return View(user);
         }
 
@@ -317,11 +319,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         //Lấy danh sách quyền
-        public void SetRolesViewBag(int? selectedID = null)
-        {
-            var _roleDao = new RolesDAO();
-
-            ViewBag.GroupID = new SelectList(_roleDao.GetAll(), "Id", "Name", selectedID);
+        public void SetGroupIDViewBag(int? selectedID = null)
+        { 
+            ViewBag.GroupID = new SelectList(new UserGroupDAO().GetAll(), "Id", "Name", selectedID);
         }
 
         public JsonResult FillClass(int? gradeId)
