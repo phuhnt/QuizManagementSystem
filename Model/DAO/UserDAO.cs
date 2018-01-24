@@ -178,17 +178,14 @@ namespace Model.DAO
             }
         }
 
-        public List<Role> GetListRole(string userName)
+        public List<string> GetListRole(string userName)
         {
             var _user = db.Users.Single(x => x.UserName == userName);
 
-            //var data = from r in db.Roles
-            //           where r.UserGroups.Any(u => u.Id == _user.GroupID)
-            //           select new List<string>
-            //           {
-            //               //RoleID = r.Id;
-            //           }
-            return null;
+            var data = from r in db.Roles
+                       where r.UserGroups.Any(u => u.Id == _user.GroupID)
+                       select r;
+            return data.Select(r => r.Id).ToList();
         }
 
         public User GetUserByUserName(string userName)

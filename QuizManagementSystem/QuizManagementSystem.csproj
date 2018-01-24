@@ -1588,6 +1588,7 @@
     <Content Include="Views\error\AccessDenied.cshtml" />
     <Content Include="Views\error\ServerError.cshtml" />
     <Content Include="Views\error\Index.cshtml" />
+    <Content Include="Views\error\NotAccessPermission.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -5,12 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
+using QuizManagementSystem.Controllers;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class homeController : baseController
     {
         // GET: admin/home
+        [HasCredential(RoleID = "ADMIN_HOME")]
         public ActionResult Index()
         {
             var _userDao = new UserDAO();

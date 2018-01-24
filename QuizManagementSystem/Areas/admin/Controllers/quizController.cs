@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
 using QuizManagementSystem.Common;
+using QuizManagementSystem.Controllers;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -25,6 +26,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         //    return View(_model);
         //}
 
+        [HasCredential(RoleID = "QUIZ_HOME")]
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
             var _quizDao = new QuizDAO();
@@ -34,6 +36,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         // GET: admin/quiz/Details/10
+        [HasCredential(RoleID = "QUIZ_DETAIL")]
         public ActionResult Details(int? id)
         {
             var _quizDao = new QuizDAO();
@@ -50,6 +53,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         // GET: admin/quiz/Create
+        [HasCredential(RoleID = "QUIZ_CREATE")]
         public ActionResult Create()
         {
             SetSubjectViewBag();
@@ -66,6 +70,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [HasCredential(RoleID = "QUIZ_CREATE")]
         public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status,AnswerList,AnswerKey")] Question question)
         {
             var _quizDao = new QuizDAO();
@@ -110,6 +115,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         // GET: admin/quiz/Edit
         [HttpGet]
+        [HasCredential(RoleID = "QUIZ_EDIT")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -144,6 +150,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [HasCredential(RoleID = "QUIZ_EDIT")]
         public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,Status")] Question question)
         {
             if (ModelState.IsValid)
@@ -182,6 +189,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         // GET: admin/quiz/Delete
         [HttpGet]
+        [HasCredential(RoleID = "QUIZ_DELETE")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -199,6 +207,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // POST: admin/quiz/Delete/10
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "QUIZ_DELETE")]
         public ActionResult DeleteConfirmed(int id)
         {
             var _quizDao = new QuizDAO();
