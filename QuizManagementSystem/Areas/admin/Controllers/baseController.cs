@@ -9,6 +9,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class baseController : Controller
     {
+
         protected override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             var _session = Session[ConstantVariable.USER_SESSION];

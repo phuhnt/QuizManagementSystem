@@ -29,6 +29,12 @@ namespace Model.DAO
             return true;
         }
 
+        public bool Update(Test test, List<int> quizIdList)
+        {
+
+            return true;
+        }
+
         public Test GetTestById (int? id)
         {
             return db.Tests.Find(id);

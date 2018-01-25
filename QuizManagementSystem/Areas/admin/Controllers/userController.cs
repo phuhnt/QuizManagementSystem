@@ -30,7 +30,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(_model);
         }
 
-        [HasCredential(RoleID = "CREATE_USER")]
+        [HasCredential(RoleID = "ADMIN")]
         [HttpGet]
         public ActionResult Create()
         {
@@ -42,6 +42,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "ADMIN")]
         public ActionResult Create(User user)
         {         
             if (CheckInputUser(user) == true)
@@ -104,7 +105,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             
             SetClassViewBag(_user.ClassID);
             SetGradeViewBag(_grade.Id);
-            //SetRolesViewBag(_user.GroupID);
+            SetGroupIDViewBag(_user.GroupID);
 
             return View(_user);
         }
@@ -176,7 +177,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _grade = new GradeDAO().GetByClass(_class);
             SetGradeViewBag(_grade.Id);
             SetClassViewBag(user.ClassID);
-            //SetRolesViewBag(user.GroupID);
+            SetGroupIDViewBag(user.GroupID);
             return View(user);
         }
 
@@ -319,9 +320,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         //Lấy danh sách quyền
-        public void SetGroupIDViewBag(int? selectedID = null)
-        { 
-            ViewBag.GroupID = new SelectList(new UserGroupDAO().GetAll(), "Id", "Name", selectedID);
+        public void SetGroupIDViewBag(string selectedID = null)
+        {
+            var listUserGroup = new UserGroupDAO().GetAll();
+            var id = listUserGroup.First(x => x.Id == selectedID);
+            ViewBag.GroupID = new SelectList(listUserGroup, "Id", "Name", selectedID);
         }
 
         public JsonResult FillClass(int? gradeId)

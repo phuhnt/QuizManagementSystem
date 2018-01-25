@@ -1,138 +1,244 @@
 ﻿@model Model.EF.Test
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Chỉnh sửa đề thi | Quiz Management System";
     Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
 }
 
 @section breadcrumb{
-    Chỉnh sửa môn học
+    Chỉnh sửa đề thi
 }
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+@section jsHeader{
+    <script>
+        $('#ExamID').onload(function () {
+            var examinee = $('#ExamineeID');
+            var id = $('#ExamID').val();
+            var str = "";
+            examinee.html('');
+            $.getJSON("/admin/tests/FillExaminee", { examsId: id }, function (data) {
+                $.each(data, function (i, item) {
+                    str += item.Text;
+                    if (item.Text != null) {
+                        str += ", "
+                    }
+                });
+                examinee.val(str);
+            });
+        });
+    </script>
+}
 
-    <div class="form-horizontal">
-        <h4>Test</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+    @section jsFooter{
+        <script>
+            $(document).ready(function () {
+                var grades = $('#GradeID');
+                $('#SchoolYearID').change(function () {
+                    var id = $(this).val();
+                    $('#GradeID').html(null);
+                    $.getJSON("/admin/tests/FillGrades", { schoolyearId: id }, function (data) {
+                        grades.append($('<option></option>').val("0").text(""));
+                        $.each(data, function (i, item) {
+                            grades.append($('<option></option>').val(item.Value).text(item.Text));
+                        });
+                    });
+                });
+            });
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CodeTestID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CodeTestID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CodeTestID, "", new { @class = "text-danger" })
+            $(document).ready(function () {
+                var subj = $('#SubjectID');
+                $('#SubjectID').html(null);
+                $('#GradeID').change(function () {
+                    var id = $(this).val();
+                    $('#SubjectID').html(null);
+                    $.getJSON("/admin/tests/FillSubjects", { gradeId: id }, function (data) {
+                        $.each(data, function (i, item) {
+                            subj.append($('<option></option>').val(item.Value).text(item.Text));
+                        });
+                    });
+                });
+            });
+
+            $(document).ready(function () {
+                var examinee = $('#ExamineeID');
+                examinee.html('');
+                $('#ExamID').change(function () {
+                    var id = $(this).val();
+                    var str = "";
+                    examinee.html('');
+                    $.getJSON("/admin/tests/FillExaminee", { examsId: id }, function (data) {
+                        $.each(data, function (i, item) {
+                            str += item.Text;
+                            if (item.Text != null) {
+                                str += ", "
+                            }
+                        });
+                        examinee.val(str);
+                    });
+
+                });
+            });
+
+
+        </script>
+
+    }
+
+    @using (Html.BeginForm("Edit", "tests", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Thông tin đề thi</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Kỳ thi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ExamID", null, "--- Chọn kỳ thi ---", htmlAttributes: new { @class = "form-control", @id = "ExamID" })
+                    @Html.ValidationMessageFor(model => model.ExamID, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Thí sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBox("ExamineeID", "", htmlAttributes: new { @class = "form-control", @id = "ExamineeID", @readonly = "readonly" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.SubjectID, "SubjectID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SubjectID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.SubjectID, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SchoolYearID", null, "--- Chọn năm học ---", htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.NumberOfQuestions, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumberOfQuestions, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumberOfQuestions, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Khối", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("GradeID", null, "--- Chọn khối ---", htmlAttributes: new { @class = "form-control", @id = "GradeID" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Time, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Time, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Time, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Môn thi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SubjectID", null, htmlAttributes: new { @class = "form-control", @id = "SubjectID" })
+                    @Html.ValidationMessageFor(model => model.SubjectID, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.NumberOfTurns, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumberOfTurns, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumberOfTurns, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Mã đề", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CodeTest, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                    @Html.ValidationMessageFor(model => model.CodeTest, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ExamID, "ExamID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ExamID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ExamID, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Mô tả", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ScoreLadderID, "ScoreLadderID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ScoreLadderID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ScoreLadderID, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Số câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NumberOfQuestions, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NumberOfQuestions, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.TestDay, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TestDay, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TestDay, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Phương án chọn câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.DropDownList("QuizSelection", new List<SelectListItem>
+                                                   {
+                                                       new SelectListItem{ Text = "Ngẫu nhiên", Value = "1"},
+                                                       new SelectListItem{ Text = "Câu hỏi mới nhất", Value = "2"},
+                                                       new SelectListItem{ Text = "Thủ công", Value = "3"}
+                                                   }, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Thời gian làm bài (phút)", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Time, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Time, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.EndTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Số lượt làm bài", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NumberOfTurns, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NumberOfTurns, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.UserID, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.UserID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Thang điểm", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ScoreLadderID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ScoreLadderID, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Status)
-                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.Label("Ngày bắt đầu thi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                    @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Ngày kết thúc thi", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                    @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Giờ mở đề (HH:mm AM | PM)", htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control", @type = "time" } })
+                    @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Giờ đóng đề (HH:mm AM | PM)", new { htmlAttributes = new { @class = "control-label col-md-3" } })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control", @type = "time" } })
+                    @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.DropDownList("Status", new List<SelectListItem>
+                                                   {
+                                                       new SelectListItem{ Text = "Mở", Value = "True"},
+                                                       new SelectListItem{ Text = "Đóng", Value = "False"}
+                                                   }, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Tạo" class="btn btn-primary pull-right" style="width: 100px" />
+                    <a class="btn btn-info" href="/admin/tests">Quay lại</a>
                 </div>
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    }
+    <br />
+    <br />
