@@ -235,14 +235,44 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public ActionResult StartTheTest(int? id)
+        {
+            //var _session = Session[ConstantVariable.USER_SESSION];
+            //if (_session == null)
+            //{
+            //    return RedirectToAction("Login", "user", new { userLink = HttpContext.Request.Url.AbsolutePath });
+
+            //}
+            var _exam = new ExamDAO().GetExamById(id);
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (_exam == null)
+            {
+                return HttpNotFound();
+            }
+            int[] _codeTestID = new int[_exam.Tests.Count]; // Danh sách các mã đề thi của kỳ thi
+            var _tests = _exam.Tests.ToList();
+            for (int i = 0; i < _exam.Tests.Count; i++)
+            {
+                _codeTestID[i] = _tests[i].CodeTest;
+            }
+            if (_codeTestID != null)
+            {
+                Random random = new Random();
+                int selectCodeTest = random.Next(0, _codeTestID.Length);    // Chọn ngẫu nhiên một mã đề
+                return View(_tests[selectCodeTest]);
+            }
+
+            return View(_exam);
+        }
+
+        [HttpPost]
         public ActionResult StartTheTest(int? id, string userLink = "/")
         {
-            var _session = Session[ConstantVariable.USER_SESSION];
-            if (_session == null)
-            {
-                return RedirectToAction("Login", "user", new { userLink = HttpContext.Request.Url.AbsolutePath });
-
-            }
+            
 
             return View();
         }

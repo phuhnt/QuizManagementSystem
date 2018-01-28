@@ -1,17 +1,78 @@
-﻿
+﻿@using Model.DAO;
+
+@model Model.EF.Test
+
 @{
     Layout = null;
 }
 
 <!DOCTYPE html>
 
-<html>
+<html lang="vi">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>StartTheTest</title>
+    <title>Bắt đầu bài thi | Quiz Management System</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Quiz Management System">
+    <!-- Bootstrap core CSS-->
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap-grid.min.css" rel="stylesheet" />
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <!-- Custom fonts for this template-->
+    <link href="~/Assets/Admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Assets/Admin/vendor/jquery/jquery.min.js"></script>
+    <script src="/Assets/Admin/js/plugins/countdown/js/jquery.countdown.js"></script>
+
 </head>
 <body>
-    <div> 
+    <div class="container">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <!-- Brand/logo -->
+            <a class="navbar-brand" href="/">Quiz Management System</a>
+
+            <!-- Links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Đề thi đang mở</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Đề thi của tôi</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-right ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/login">
+                        <i class="fa fa-fw fa-sign-in"></i>Đăng nhập
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+    <hr />
+
+    <div class="countdown position-fixed">
+        <span id="clock" class="border border-success" style="color: orangered; font-size: 20px"></span>
+    </div>
+    <div class="container">
+        @{
+            var quizList = new TestDAO().GetAllQuiz(Model.Id);
+            for (int i = 1; i <= quizList.Count; i++)
+            {
+                @Html.Raw("<strong>Câu " + @i + "</strong>: " + quizList[i - 1].ContentQuestion);
+                @Html.Raw(quizList[i - 1].AnswerText);
+            }
+        }
+    </div>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>
+    <script>
+        var timeToTake = new Date($.now()).getTime() + (@Model.Time * 60 * 1000);
+        $('#clock').countdown(timeToTake, function (event) {
+            $(this).html(event.strftime('%H:%M:%S'));
+        });
+    </script>
 </body>
 </html>

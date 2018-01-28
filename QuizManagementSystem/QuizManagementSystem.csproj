@@ -1269,6 +1269,8 @@
     <Content Include="Assets\Admin\js\plugins\ckfinder\_samples\skin_v1.html" />
     <Content Include="Assets\Admin\js\plugins\ckfinder\_samples\standalone.html" />
     <Content Include="Assets\Admin\js\plugins\ckfinder\_samples\standalone_v1.html" />
+    <Content Include="Assets\Admin\js\plugins\countdown\js\jquery.countdown.js" />
+    <Content Include="Assets\Admin\js\plugins\countdown\js\jquery.countdown.min.js" />
     <Content Include="Assets\Admin\js\sb-admin-charts.js" />
     <Content Include="Assets\Admin\js\sb-admin-charts.min.js" />
     <Content Include="Assets\Admin\js\sb-admin-datatables.js" />

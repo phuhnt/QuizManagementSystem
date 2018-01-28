@@ -32,7 +32,7 @@ namespace QuizManagementSystem
             routes.MapRoute(
                 name: "User Login",
                 url: "dang-nhap",
-                defaults: new { controller = "user", action = "Login", userLink = "/"},
+                defaults: new { controller = "user", action = "Login"},
                 namespaces: new[] { "QuizManagementSystem.Controllers" }
             );
 
