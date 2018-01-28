@@ -44,6 +44,11 @@ namespace Model.DAO
             return db.Tests.ToList();
         }
 
+        public List<Test> GetAllTestByExam(Exam exam)
+        {
+            return db.Tests.Where(x => x.ExamID == exam.Id).ToList();
+        }
+
         public List<Test> GetAllTestActive()
         {
             return db.Tests.Where(x => x.Status == true).ToList();

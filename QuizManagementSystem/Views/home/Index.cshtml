@@ -1,0 +1,104 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using Model.DAO;
+@model PagedList.IPagedList<Model.EF.Exam>
+@{
+    Layout = null;
+}
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Quiz Management System">
+    <title> Hệ thống hỗ trợ thi trắc nghiệm | Quiz Management System</title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Assets/Admin/vendor/bootstrap/css/bootstrap-grid.min.css" rel="stylesheet" />
+    <!-- Custom fonts for this template-->
+    <link href="~/Assets/Admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <!-- Brand/logo -->
+            <a class="navbar-brand" href="/">Quiz Management System</a>
+
+            <!-- Links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Đề thi đang mở</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Đề thi của tôi</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-right ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/login">
+                        <i class="fa fa-fw fa-sign-in"></i>Đăng nhập
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <hr />
+    <!--Nội dung-->
+    <div class="container">
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập nội dung tìm kiếm..." aria-label="Tìm kiếm">
+            <button class="btn btn-default my-2 my-sm-0" type="submit">Tìm</button>
+        </form>
+        @using (Html.BeginForm("Index", "home", FormMethod.Get))
+        {
+            <br />
+            foreach (var item in Model)
+            {
+                if (item.Tests.Count > 0)
+                {
+                    var tests = new TestDAO().GetAllTestByExam(item);
+                    <div class="card card-outline-primary mb-3">
+                        <div class="card-body">
+                            <h2 class="card-title card-link"><a href="/admin/exams/startthetest/@item.Id"> @item.Titile</a></h2>
+                            <span class="card-text">
+                                <em class="fa fa-book">Môn thi: <strong>@tests[0].Subject.Name</strong></em>
+                            </span>
+                            <span class="card-text">
+                                <em class="fa fa-clock-o">Thời gian bắt đầu: <strong>@tests[0].StartTime.ToString() @tests[0].FromDate.Value.ToShortDateString()</strong></em>
+                            </span>
+                            <span class="card-text">
+                                <em class="fa fa-clock-o">Thời gian kết thúc: <strong>@tests[0].EndTime @tests[0].ToDate.Value.ToShortDateString()</strong></em>
+                            </span>
+                            <span class="card-text">
+                                <em class="fa fa-user">
+                                    Tạo bởi:
+                                    @{
+                                        var _user = new UserDAO().GetUserById(@tests[0].CreatedBy);
+                                        <strong> @_user.UserName.ToString()</strong>
+                                    }
+                                </em>
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+        }
+    </div>
+
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Assets/Admin/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>

@@ -13,17 +13,35 @@ namespace QuizManagementSystem
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    name: "Login",
-            //    url: "dang-nhap",
-            //    defaults: new { controller = "user", action = "Login", id = UrlParameter.Optional },
-            //    namespaces: new[] { "QuizManagementSystem.Controllers" }
-            //);
+            //Admin
+            routes.MapRoute(
+              name: "Start The Test",
+              url: "ky-thi-{id}/bat-dau-thi",
+              defaults: new { controller = "exams", action = "StartTheTest", id = UrlParameter.Optional },
+              namespaces: new[] { "QuizManagementSystem.Areas.admin.Controllers" }
+            );
+
+            routes.MapRoute(
+              name: "Admin Login",
+              url: "admin/dang-nhap",
+              defaults: new { controller = "login", action = "login"},
+              namespaces: new[] { "QuizManagementSystem.Areas.admin.Controllers" }
+            );
+
+            //User
+            routes.MapRoute(
+                name: "User Login",
+                url: "dang-nhap",
+                defaults: new { controller = "user", action = "Login", userLink = "/"},
+                namespaces: new[] { "QuizManagementSystem.Controllers" }
+            );
+
+
 
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "user", action = "Login", id = UrlParameter.Optional },
+                defaults: new { controller = "home", action = "Index", id = UrlParameter.Optional },
                 namespaces: new[] { "QuizManagementSystem.Controllers" }
             );
         }

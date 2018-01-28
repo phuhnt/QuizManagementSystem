@@ -1522,6 +1522,7 @@
     <Content Include="Areas\admin\Views\subjects\Details.cshtml" />
     <Content Include="Areas\admin\Views\subjects\Edit.cshtml" />
     <Content Include="Areas\admin\Views\subjects\Index.cshtml" />
+    <Content Include="Areas\admin\Views\exams\StartTheTest.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1589,6 +1590,7 @@
     <Content Include="Views\error\ServerError.cshtml" />
     <Content Include="Views\error\Index.cshtml" />
     <Content Include="Views\error\NotAccessPermission.cshtml" />
+    <Content Include="Views\home\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -1600,7 +1602,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\admin\Views\base\" />
     <Folder Include="Areas\admin\Views\role\" />
-    <Folder Include="Views\home\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

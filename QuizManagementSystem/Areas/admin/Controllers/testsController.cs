@@ -165,6 +165,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
 
+        public ActionResult StartTheTest()
+        {
+
+            return View();
+        }
+
         private void SetExamViewBag(int? selectedID = null)
         {
             ViewBag.ExamID = new SelectList(new ExamDAO().GetAllExamActive(), "Id", "Titile", selectedID);

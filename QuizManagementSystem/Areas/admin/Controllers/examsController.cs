@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
 using QuizManagementSystem.Common;
-using QuizManagementSystem.Models;
+using QuizManagementSystem.Controllers;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -18,10 +18,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         
 
         // GET: admin/exams
-        public ActionResult Index(int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
             var _dao = new ExamDAO();
-            var _model = _dao.GetAllExamPageList(page, pageSize);
+            var _model = _dao.GetAllExamPageList(searchString, page, pageSize);
             return View(_model);
         }
 
@@ -233,6 +233,18 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        public ActionResult StartTheTest(int? id, string userLink = "/")
+        {
+            var _session = Session[ConstantVariable.USER_SESSION];
+            if (_session == null)
+            {
+                return RedirectToAction("Login", "user", new { userLink = HttpContext.Request.Url.AbsolutePath });
+
+            }
+
+            return View();
         }
 
         public void SetUserViewBag(int? selectedID = null)

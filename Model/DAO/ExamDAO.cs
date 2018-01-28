@@ -117,9 +117,16 @@ namespace Model.DAO
             return db.Exams.Find(id);
         }
 
-        public IEnumerable<Exam> GetAllExamPageList(int page = 1, int pageSize = 10)
+        public IEnumerable<Exam> GetAllExamPageList(string searchString, int page = 1, int pageSize = 10)
         {
-            return db.Exams.OrderByDescending(x => x.ModifiedDate).ToPagedList(page, pageSize);
+            IQueryable<Exam> model = db.Exams;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Titile.Contains(searchString) ||
+                                    x.NoteEncode.Contains(searchString) ||
+                                    x.Note.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
 
         public List<Class> GetClassSelected(Exam exam)

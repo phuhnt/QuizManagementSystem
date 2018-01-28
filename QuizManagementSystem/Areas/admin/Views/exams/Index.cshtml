@@ -43,7 +43,12 @@
 
         @using (Html.BeginForm("Index", "exams", FormMethod.Get))
         {
-
+            <div class="input-group col-6" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
@@ -71,8 +76,8 @@
                         {
                             <tr>
                                 <td>@Html.DisplayFor(model => item.Id)</td>
-                                <td>@Html.DisplayFor(model => item.Titile)</td>                            
-                                <td>@Html.DisplayFor(model => item.CreatedDate)</td>                                
+                                <td>@Html.DisplayFor(model => item.Titile)</td>
+                                <td>@Html.DisplayFor(model => item.CreatedDate)</td>
                                 <td>
                                     @{
                                         if (item.Status == null)
@@ -91,11 +96,11 @@
                                     }
                                 </td>
                                 <td>
-                                    @{ 
+                                    @{
                                         var _userDao = new UserDAO();
-                                        
+
                                         <p>
-                                            @{ 
+                                            @{
                                                 if (_userDao.GetUserById(item.UserID) != null)
                                                 {
                                                     @_userDao.GetUserById(item.UserID).UserName;
@@ -113,7 +118,7 @@
                         }
                     </tbody>
                 </table>
-                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
             </div>
         }
     </div>
