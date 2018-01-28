@@ -32,6 +32,11 @@ namespace Model.DAO
         public bool Update(Question quiz)
         {
             var _quizCurrent = FindQuizById(quiz.Id);
+
+            quiz.AnswerChoiceNum = _quizCurrent.AnswerChoiceNum;
+            quiz.DateCreated = _quizCurrent.DateCreated;
+            quiz.UserID = _quizCurrent.UserID;
+
             db.Entry(_quizCurrent).CurrentValues.SetValues(quiz);
             db.SaveChanges();
             return true;

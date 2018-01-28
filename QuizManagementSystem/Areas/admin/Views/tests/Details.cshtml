@@ -80,7 +80,7 @@
         </tbody>
     </table>
     <span class="badge badge-primary" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1rem; margin-top: 24px">Nội dung đề thi (Đề: @Model.CodeTest)</span>
-    <table class="table table-bordered table-dark">
+    <table class="table table-bordered">
         <tbody>
             <tr>
                 <td>
@@ -90,6 +90,7 @@
                         {
                             @Html.Raw("<strong>Câu " + @i + "</strong>: " + quizList[i - 1].ContentQuestion);
                             @Html.Raw(quizList[i - 1].AnswerText);
+                            <br />
                         }
                     }
                 </td>

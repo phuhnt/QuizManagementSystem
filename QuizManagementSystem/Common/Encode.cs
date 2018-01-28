@@ -34,7 +34,11 @@ namespace QuizManagementSystem.Common
 
         public static string StripHTML(string html)
         {
-            return Regex.Replace(html, Common.ConstantVariable.htmlTagPattern, string.Empty);
+            return Regex.Replace(html, ConstantVariable.htmlTagPattern, string.Empty);
+        }
+        public static string StripPTag(string html)
+        {
+            return Regex.Replace(html, ConstantVariable.pTagPattern, string.Empty);
         }
     }
 }

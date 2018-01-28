@@ -168,6 +168,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Admin\css\my-custom.css" />
     <Content Include="Assets\Admin\css\sb-admin.css" />
     <Content Include="Assets\Admin\css\sb-admin.min.css" />
     <Content Include="Assets\Admin\js\plugins\ckeditor\adapters\jquery.js" />

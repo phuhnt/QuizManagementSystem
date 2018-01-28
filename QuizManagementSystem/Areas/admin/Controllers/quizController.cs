@@ -160,7 +160,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 question.ContentQuestionEncode = Encode.StripHTML(question.ContentQuestion);
                 question.AnswerTextEncode = Encode.StripHTML(question.AnswerText);
                 question.KeyAnswer = question.KeyAnswer.ToUpper();
-
+                
                 if (_session != null)
                 {
                     question.ModifiedBy = _session.UserName;
@@ -364,7 +364,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         ModelState.AddModelError("", "Vui lòng nhập đầy đủ nội dung của " + i + 1 + "đáp án.");
                         return false;
                     }
-                    question.AnswerText += Alphabet[i] + ". " + question.AnswerList[i];
+                    question.AnswerText += Alphabet[i] + ". " + question.AnswerList[i] + "\r\n";
                 }
             }
            
