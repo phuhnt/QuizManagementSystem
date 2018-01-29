@@ -26,7 +26,9 @@
     <!-- Bootstrap core JavaScript-->
     <script src="~/Assets/Admin/vendor/jquery/jquery.min.js"></script>
     <script src="/Assets/Admin/js/plugins/countdown/js/jquery.countdown.js"></script>
-    
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -53,62 +55,95 @@
         </nav>
     </div>
     <hr />
-
     <div class="countdown">
         <span id="clock" class="border border-warning text-center countdown-custom"></span>
     </div>
+
     @{
+
         var quizList = new TestDAO().GetAllQuiz(Model.Id);
-    }
-    <div class="list-quiz border border-success">
-        @for (int i = 1; i <= quizList.Count; i++)
-        {
-            if (i % 2 != 0)
+        <div class="list-quiz border border-success">
+            @for (int i = 1; i <= quizList.Count; i++)
             {
-                <div class="col-md-6">
-                    <a href="#@i" class="@i">Câu @i</a><br />
-                </div>
-            }
-            else
-            {
-                <div class="col-md-6">
-                    <a href="#@i" class="@i">Câu @i</a><br />
-                </div>
-            }
-
-        }
-    </div>
-
-    <div class="wrapper">
-        <div class="card">
-            <div class="card-body text-center">
-                <strong> @Model.Exam.Titile.ToUpper()</strong><br />
-                <strong>Môn thi: @Model.Subject.Name</strong><br />
-                <i>Thời gian làm bài: @Model.Time (phút)</i><br />
-            </div>
-        </div>
-        <hr />
-
-        @for (int i = 1; i <= quizList.Count; i++)
-        {
-
-            //char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
-            string[] _answer = null;
-            <input type="checkbox" id="@i" data-toggle="tooltip" title="Đánh dấu câu hỏi này" /><strong id="@i">Câu @i: </strong>
-            @Html.Raw(quizList[i - 1].ContentQuestion);
-            _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
-            for (int j = 0; j < _answer.Length; j++)
-            {
-                if (_answer[j] != null && _answer[j] != "")
+                if (i % 2 != 0)
                 {
-                    <input type="radio" name="_answer" value="_asswer[j]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
-
+                    <div class="col-md-6">
+                        <a href="#@i" class="@i">Câu @i</a><br />
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-6">
+                        <a href="#@i" class="@i">Câu @i</a><br />
+                    </div>
                 }
 
             }
+        </div>
+
+    }
+
+    @using (Html.BeginForm("StartTheTest", "exams", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <button type="button" class="btn btn-primary btn-submit-test" data-toggle="modal" data-target="#myModal">Nộp bài</button>
+        <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Nộp bài</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Bạn có chắc rằng nộp bài sẽ kết thúc bài thi này?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="OK">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper">
+            <div class="card">
+                <div class="card-body text-center">
+                    <strong> @Model.Exam.Titile.ToUpper()</strong><br />
+                    <strong>Môn thi: @Model.Subject.Name</strong><br />
+                    <i>Thời gian làm bài: @Model.Time (phút)</i><br />
+                </div>
+            </div>
             <hr />
-        }
-    </div>
+            @Html.HiddenFor(x => x.Id)
+            @Html.HiddenFor(x => x.CodeTest)
+            @Html.HiddenFor(x => x.ExamID)
+            
+            @for (int i = 1; i <= quizList.Count; i++)
+            {
+
+                char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+                string[] _answer = null;
+                <input type="checkbox" id="@i" data-toggle="tooltip" title="Đánh dấu câu hỏi này" /><strong id="@i">Câu @i: </strong>
+                @Html.Raw(quizList[i - 1].ContentQuestion);
+                _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
+                int index = 0;
+                for (int j = 0; j < _answer.Length; j++)
+                {
+                    if (_answer[j] != null && _answer[j] != "")
+                    {
+                        <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                        index++;
+                    }
+
+                }
+                <hr />
+            }
+        </div>
+    }
+
     <!-- /.content-wrapper-->
     <footer class="sticky-footer">
         <div class="container wrapper">
@@ -118,8 +153,7 @@
         </div>
     </footer>
     <br />
-    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/Assets/Admin/vendor/bootstrap/js/bootstrap.js"></script>
+
     <script>
         var timeToTake = new Date($.now()).getTime() + (@Model.Time * 60 * 1000);
         $('#clock').countdown(timeToTake, function (event) {
@@ -131,10 +165,12 @@
             $('input[type="checkbox"]').click(function (sender) {
                 if ($(this).prop("checked") == true) {
                     id = sender.currentTarget.id;
-                    $("#" + id + "").css('color', 'red');
+                    //$("#" + id + "").css('color', 'red');
+                    $("." + id + "").css('color', 'red');
                 }
                 else if ($(this).prop("checked") == false) {
-                    $("#" + id + "").css('color', 'blue');
+                    //$("#" + id + "").css('color', 'blue');
+                    $("." + id + "").css('color', 'blue');
                 }
             });
 

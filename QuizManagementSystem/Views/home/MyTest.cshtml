@@ -40,13 +40,13 @@
             <!-- Links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home/active">Đề thi đang mở</a>
+                    <a class="nav-link" href="/">Đề thi đang mở</a>
                 </li>
                 @{
                     if (session != null)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/home/mytest">Đề thi của tôi</a>
+                            <a class="nav-link" href="#">Đề thi của tôi</a>
                         </li>
                     }
                     else
@@ -80,7 +80,7 @@
                                 <a class="dropdown-item" href="/user/Logout">Thoát</a>
                             </div>
                         </li>
-                    </ul> 
+                    </ul>
                 }
             }
         </nav>
@@ -134,7 +134,7 @@
                     </div>
                 }
             }
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            @Html.PagedListPager(Model, page => Url.Action("MyTest", new { page, @searchString = @ViewBag.SearchString }))
         }
     </div>
 

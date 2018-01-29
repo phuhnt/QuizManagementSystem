@@ -238,13 +238,22 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpGet]
         public ActionResult StartTheTest(int? id)
         {
-            //var _session = Session[ConstantVariable.USER_SESSION];
-            //if (_session == null)
-            //{
-            //    return RedirectToAction("Login", "user", new { userLink = HttpContext.Request.Url.AbsolutePath });
-
-            //}
             var _exam = new ExamDAO().GetExamById(id);
+            var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (_session == null)
+            {
+                SetAlert("Vui lòng đăng nhập để bắt đầu thi", "error");
+                return Redirect("/");
+            }
+            else
+            {
+                var _user = new UserDAO().GetUserById(_session.UserID);
+                if (!_exam.Classes.Contains(new ClassDAO().GetClassById(_user.ClassID)))
+                {
+                    SetAlert("Bạn không phải là thí sinh của kỳ thi này.", "error");
+                    return Redirect("/");
+                }
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -270,11 +279,69 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult StartTheTest(int? id, string userLink = "/")
+        [ValidateAntiForgeryToken]
+        public ActionResult StartTheTest(Test test)
         {
-            
-
-            return View();
+            var _test = new TestDAO().GetTestByCodeTest(test.CodeTest, test.ExamID);
+            var _testResultDAO = new TestResultDetailDAO();
+            var _testResult = new TestResultDetail();
+            if (_test != null)
+            {
+                _test.UserAnswer = test.UserAnswer;
+                _test.ExamID = test.ExamID;
+                _test.CodeTest = test.CodeTest;
+            }
+            var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (_session != null)
+            {
+                _testResult.UserID = _session.UserID;
+            }
+            _testResult.TestID = _test.Id;
+            _testResult.ExamID = _test.ExamID;
+            int _answerCorrectNum = 0;
+            int _answerWrongNum = 0;
+            int _answerIgnoredNum = 0;
+            var listQuiz = new TestDAO().GetAllQuiz(_test.Id);
+            for (int i = 0; i < listQuiz.Count; i++)
+            {
+                if (listQuiz[i].KeyAnswer == _test.UserAnswer[i])
+                {
+                    _answerCorrectNum++;
+                }
+                else if (listQuiz[i].KeyAnswer != _test.UserAnswer[i])
+                {
+                    _answerWrongNum++;
+                }
+                else
+                {
+                    _answerIgnoredNum++;
+                }
+            }
+            _testResult.Score = (double)_answerCorrectNum * (_test.ScoreLadder.Score / _test.NumberOfQuestions);
+            _testResult.NumberOfWrong = _answerWrongNum;
+            _testResult.NumberOfCorrect = _answerCorrectNum;
+            _testResult.NumberOfIgnored = _answerIgnoredNum;
+            _testResult.TimeToTake = null;
+            _testResult.ActualTestDate = DateTime.Now;
+            _testResult.ActualStartTime = null;
+            _testResult.ActualEndTime = DateTime.Now.TimeOfDay;
+            for(int i = 0; i < listQuiz.Count; i++)
+            {
+                if (i != listQuiz.Count - 1)
+                {
+                    _testResult.UserAnswer += _test.UserAnswer[i] + ",";                    
+                }
+                else
+                {
+                    _testResult.UserAnswer += _test.UserAnswer[i];
+                }
+            }
+            // Insert
+            if (_testResultDAO.Insert(_testResult) > 0)
+            {
+                return Redirect("/");
+            }
+            return Redirect("/");
         }
 
         public void SetUserViewBag(int? selectedID = null)

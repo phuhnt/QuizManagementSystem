@@ -61,6 +61,9 @@ namespace Model.EF
         [NotMapped]
         public int QuizSelection { get; set; }
 
+        [NotMapped]
+        public List<string> UserAnswer { get; set; }
+
         public virtual Exam Exam { get; set; }
 
         public virtual ScoreLadder ScoreLadder { get; set; }

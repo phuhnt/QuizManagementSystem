@@ -129,6 +129,36 @@ namespace Model.DAO
             return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
 
+        public IEnumerable<Exam> GetAllExamActivePageList(string searchString, int page = 1, int pageSize = 10)
+        {
+            IQueryable<Exam> model = db.Exams;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Status == true && (x.Titile.Contains(searchString) ||
+                                    x.NoteEncode.Contains(searchString) ||
+                                    x.Note.Contains(searchString)));
+            }
+            else
+            {
+                model = model.Where(x => x.Status == true);
+            }
+            return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
+        }
+
+        public IEnumerable<Exam> GetAllExamUserPageList(int? id, string searchString, int page = 1, int pageSize = 10)
+        {
+            var user = new UserDAO().GetUserById(id);
+            var _class = new ClassDAO().GetClassById(user.ClassID);
+            IQueryable<Exam> model = _class.Exams.ToList().AsQueryable();
+            if (!String.IsNullOrEmpty(searchString) && _class != null)
+            {
+                model = model.Where(x => x.Titile.Contains(searchString) ||
+                                    x.NoteEncode.Contains(searchString) ||
+                                    x.Note.Contains(searchString));
+            }
+            return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
+        }
+
         public List<Class> GetClassSelected(Exam exam)
         {
             return exam.Classes.ToList();
@@ -144,5 +174,6 @@ namespace Model.DAO
         {
             return db.Exams.Where(x => x.Status == true).ToList();
         }
+
     }
 }

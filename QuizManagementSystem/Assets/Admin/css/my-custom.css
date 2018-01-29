@@ -40,3 +40,10 @@
     text-align: center;
     display: inline-block;
 }
+
+.btn-submit-test {
+    float: right;
+    right: 140px;
+    bottom: 24%;
+    position: fixed;
+}

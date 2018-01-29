@@ -1567,6 +1567,7 @@
     <Compile Include="Areas\admin\Controllers\testsController.cs" />
     <Compile Include="Areas\admin\Controllers\userController.cs" />
     <Compile Include="Areas\admin\Models\AdminLoginModel.cs" />
+    <Compile Include="Common\BaseAlert.cs" />
     <Compile Include="Common\ConstantVariable.cs" />
     <Compile Include="Common\Encode.cs" />
     <Compile Include="Common\UserLogin.cs" />
@@ -1594,6 +1595,8 @@
     <Content Include="Views\error\Index.cshtml" />
     <Content Include="Views\error\NotAccessPermission.cshtml" />
     <Content Include="Views\home\Index.cshtml" />
+    <Content Include="Views\home\Active.cshtml" />
+    <Content Include="Views\home\MyTest.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

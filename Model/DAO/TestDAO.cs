@@ -60,6 +60,11 @@ namespace Model.DAO
             return test.Questions.ToList();
         }
 
+        public Test GetTestByCodeTest(int? codeTest, int? examId)
+        {
+            return db.Tests.SingleOrDefault(x => x.CodeTest == codeTest && x.ExamID == examId);
+        }
+
         // Lấy danh sách đề thi và phân trang
         public IEnumerable<Test> GetAllTestPageList(string searchString, int page = 1, int pageSize = 10)
         {
