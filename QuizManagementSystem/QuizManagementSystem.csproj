@@ -1600,6 +1600,7 @@
     <Content Include="Views\home\MyTest.cshtml" />
     <Content Include="Views\user\Info.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\user\HistoryExams.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

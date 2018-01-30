@@ -351,7 +351,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             // Insert
             if (_id > 0)
             {
-                return ResultDetail(_id);
+                return Redirect("/admin/exams/resultdetail/" + _id);
             }
             return Redirect("/");
         }
@@ -359,6 +359,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         
         public ActionResult ResultDetail(int? id)
         {
+            if (CheckSession() == false)
+            {
+                SetAlert("Truy cập không hợp lệ.", "error");
+                return Redirect("/");
+            }
             var _result = new TestResultDetailDAO().GetById(id);
             return View(_result);
         }
@@ -401,6 +406,16 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             var classes = new ClassDAO().GetAllBySchoolYear(schoolyearId);            
             return Json(new SelectList(classes.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
+        }
+
+        public bool CheckSession()
+        {
+            var session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (session == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

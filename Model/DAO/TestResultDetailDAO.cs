@@ -32,5 +32,17 @@ namespace Model.DAO
         {
             return db.TestResultDetails.SingleOrDefault(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId);
         }
+
+        public IEnumerable<TestResultDetail> GetAllTestResultPageList(User user, string searchString, int page = 1, int pageSize = 10)
+        {
+            IEnumerable<TestResultDetail> model = db.TestResultDetails;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                model = model.Where(x => x.Exam.Titile.Contains(searchString) ||
+                                    x.Test.Subject.Name.Contains(searchString));
+            }
+
+            return model.OrderByDescending(x => x.ActualTestDate).ToPagedList(page, pageSize);
+        }
     }
 }

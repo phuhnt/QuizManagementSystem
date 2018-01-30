@@ -252,6 +252,19 @@ namespace QuizManagementSystem.Controllers
             return View(user);
         }
 
+        public ActionResult HistoryExams(int? id, string searchString, int page = 1, int pageSize = 10)
+        {
+            if (CheckSession(id) == false)
+            {
+                SetAlert("Truy cập không hợp lệ.", "error");
+                return Redirect("/");
+            }
+
+            var _user = new UserDAO().GetUserById(id);
+            var listTestResult = new TestResultDetailDAO().GetAllTestResultPageList(_user, searchString, page = 1, pageSize = 10);
+            return View(listTestResult);
+        }
+
         private bool CheckSession(int? id)
         {
             var session = Session[ConstantVariable.USER_SESSION] as UserLogin;

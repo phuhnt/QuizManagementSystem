@@ -1,0 +1,89 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@using Model.DAO;
+@using QuizManagementSystem.Common;
+@model PagedList.IPagedList<Model.EF.TestResultDetail>
+@{
+    ViewBag.Title = "Lịch sử thi | Quiz Management System";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/css/my-custom.css" rel="stylesheet" />
+}
+
+<h2>Lịch sử các kỳ thi</h2>
+
+@using (Html.BeginForm("HistoryExams", "user", FormMethod.Get))
+{
+    <div class="input-group col-6" style="margin-bottom: 20px;">
+        <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Kỳ thi</th>
+                    <th>Môn thi</th>
+                    <th>Số điểm</th>
+                    <th>Kết quả</th>
+                    <th>Ngày thi</th>
+                    <th>Chức năng</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>STT</th>
+                    <th>Kỳ thi</th>
+                    <th>Môn thi</th>
+                    <th>Số điểm</th>
+                    <th>Kết quả</th>
+                    <th>Ngày thi</th>
+                    <th>Chức năng</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                @{
+                    int stt = 0;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @{
+                                    stt++;
+                                    <span>@stt</span>
+                                }
+                            </td>
+                            <td>@item.Exam.Titile</td>
+                            <td>@item.Test.Subject.Name</td>
+                            <td>@item.Score</td>
+                            <td>
+                                @{
+                                    if (item.Score >= item.Test.ScoreLadder.ScorePassed)
+                                    {
+                                        <span class="badge badge-pill badge-success">Đạt</span>
+                                    }
+                                    else
+                                    {
+                                        <p class="badge badge-pill badge-danger">Không đạt</p>
+                                    }
+                                }
+                            </td>
+                            <td>@item.ActualTestDate.Value.ToShortDateString()</td>
+                            <td><a class="btn btn-info" href="/admin/exams/resultdetail/@item.Id">Chi tiết</a></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @Html.PagedListPager(Model, page => Url.Action("HistoryExams", new { page, @searchString = @ViewBag.SearchString }))
+    </div>
+}
+
+
