@@ -37,6 +37,8 @@ namespace Model.EF
         [StringLength(500)]
         public string UserAnswer { get; set; }
 
+        public bool? Status { get; set; }
+
         public virtual Exam Exam { get; set; }
 
         public virtual Test Test { get; set; }

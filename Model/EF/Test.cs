@@ -25,27 +25,13 @@ namespace Model.EF
         [StringLength(500)]
         public string Title { get; set; }
 
-        public int? SubjectID { get; set; }
-
         public int? NumberOfQuestions { get; set; }
 
         public int? Time { get; set; }
 
-        public int? NumberOfTurns { get; set; }
-
         public int? ExamID { get; set; }
 
         public int? ScoreLadderID { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? FromDate { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? ToDate { get; set; }
-
-        public TimeSpan? StartTime { get; set; }
-
-        public TimeSpan? EndTime { get; set; }
 
         public int? CreatedBy { get; set; }
 
@@ -67,8 +53,6 @@ namespace Model.EF
         public virtual Exam Exam { get; set; }
 
         public virtual ScoreLadder ScoreLadder { get; set; }
-
-        public virtual Subject Subject { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TestResultDetail> TestResultDetails { get; set; }

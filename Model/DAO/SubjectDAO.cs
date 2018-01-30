@@ -37,9 +37,9 @@ namespace Model.DAO
         public int Delete(int id)
         {
             var _subj = GetSubjectById(id);
-            if (_subj.Tests.Count > 0)
+            if (_subj.Exams.Count > 0)
             {
-                return 1; // Môn học có chưa đề thi
+                return 1; // Môn học có chứa kỳ thi
             }
             if (db.Questions.Where(x => x.SubjectsID == id).FirstOrDefault().Id > 0)
             {

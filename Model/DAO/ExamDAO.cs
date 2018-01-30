@@ -149,20 +149,28 @@ namespace Model.DAO
         {
             var user = new UserDAO().GetUserById(id);
             var _class = new ClassDAO().GetClassById(user.ClassID);
-            IQueryable<Exam> model = null;
-            if (_class.Exams != null)
-            {
-                model = _class.Exams.ToList().AsQueryable();
-            }
-            
-            if (!String.IsNullOrEmpty(searchString) && _class != null)
+            IQueryable<Exam> model = db.Exams;
+            List<Exam> queryable = new List<Exam>();
+            if (!String.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.Titile.Contains(searchString) ||
                                     x.NoteEncode.Contains(searchString) ||
                                     x.Note.Contains(searchString));
             }
             
-            return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
+            if (_class.Exams != null)
+            {
+                foreach (var item in _class.Exams.ToList())
+                {
+                    var e = model.Where(x => x.Id == item.Id).FirstOrDefault();
+                    if (e != null)
+                    {
+                        queryable.Add(e);
+                    }  
+                }
+            }
+            queryable.AsQueryable();
+            return queryable.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
 
         public List<Class> GetClassSelected(Exam exam)

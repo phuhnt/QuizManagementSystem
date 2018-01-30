@@ -106,13 +106,13 @@
                         <div class="card-body">
                             <h2 class="card-title card-link"><a href="/admin/exams/startthetest/@item.Id"> @item.Titile</a></h2>
                             <span class="card-text">
-                                <em class="fa fa-book">Môn thi: <strong>@tests[0].Subject.Name</strong></em>
+                                <em class="fa fa-book">Môn thi: <strong>@item.Subject.Name</strong></em>
                             </span>
                             <span class="card-text">
-                                <em class="fa fa-clock-o">Thời gian bắt đầu: <strong>@tests[0].StartTime.ToString() @tests[0].FromDate.Value.ToShortDateString()</strong></em>
+                                <em class="fa fa-clock-o">Thời gian bắt đầu: <strong>@item.StartTime.ToString() @item.FromDate.Value.ToShortDateString()</strong></em>
                             </span>
                             <span class="card-text">
-                                <em class="fa fa-clock-o">Thời gian kết thúc: <strong>@tests[0].EndTime @tests[0].ToDate.Value.ToShortDateString()</strong></em>
+                                <em class="fa fa-clock-o">Thời gian kết thúc: <strong>@item.EndTime @item.ToDate.Value.ToShortDateString()</strong></em>
                             </span>
                             <span class="card-text">
                                 <em class="fa fa-user">

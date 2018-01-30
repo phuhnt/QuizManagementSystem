@@ -55,10 +55,6 @@ namespace Model.EF
                 .IsUnicode(false);
 
             modelBuilder.Entity<Role>()
-                .Property(e => e.Name)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Role>()
                 .HasMany(e => e.UserGroups)
                 .WithMany(e => e.Roles)
                 .Map(m => m.ToTable("Credential").MapLeftKey("RoleID").MapRightKey("UserGroupID"));

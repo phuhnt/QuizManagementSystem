@@ -57,7 +57,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CodeTest,Title,SubjectID,NumberOfQuestions,Time,NumberOfTurns,ExamID,ScoreLadderID,FromDate,ToDate,StartTime,EndTime,Status")] Test test)
+        public ActionResult Create([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
         {
             if (CheckInputTest(test))
             {
@@ -99,9 +99,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             SetExamViewBag(test.ExamID);
             SetExamineeViewBag();
-            SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
-            SetGradeViewBag(test.Subject.GradeID);
-            SetSubjectViewBag(test.SubjectID);
+            //SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
+            //SetGradeViewBag(test.Subject.GradeID);
+            //SetSubjectViewBag(test.SubjectID);
             SetScoreLadderViewBag(test.ScoreLadderID);
             return View(test);
         }
@@ -111,7 +111,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CodeTestID,Title,SubjectID,NumberOfQuestions,Time,NumberOfTurns,ExamID,ScoreLadderID,TestDay,StartTime,EndTime,UserID,Status")] Test test)
+        public ActionResult Edit([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
         {
             if (CheckInputTest(test))
             {
@@ -131,10 +131,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             SetExamViewBag(test.ExamID);
             SetExamineeViewBag();
-            SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
-            SetGradeViewBag(test.Subject.GradeID);
-            SetSubjectViewBag(test.SubjectID);
-            SetScoreLadderViewBag(test.ScoreLadderID);
+            //SetSchoolYearViewBag(test.Subject.Grade.SchoolYearID);
+            //SetGradeViewBag(test.Subject.GradeID);
+            //SetSubjectViewBag(test.SubjectID);
+            //SetScoreLadderViewBag(test.ScoreLadderID);
             return View();
         }
 
@@ -232,11 +232,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Vui lòng chọn kỳ thi");
                 return false;
             }
-            if (test.SubjectID <= 0 || test.SubjectID == null)
-            {
-                ModelState.AddModelError("", "Vui lòng chọn môn thi");
-                return false;
-            }
+            //if (test.SubjectID <= 0 || test.SubjectID == null)
+            //{
+            //    ModelState.AddModelError("", "Vui lòng chọn môn thi");
+            //    return false;
+            //}
             if (test.NumberOfQuestions <= 0)
             {
                 ModelState.AddModelError("", "Số câu hỏi không hợp lệ");
@@ -247,31 +247,31 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Thời gian làm bài không hợp lệ");
                 return false;
             }
-            if (test.NumberOfTurns <= 0)
-            {
-                ModelState.AddModelError("", "Số lượt làm bài không hợp lệ");
-                return false;
-            }
+            //if (test.NumberOfTurns <= 0)
+            //{
+            //    ModelState.AddModelError("", "Số lượt làm bài không hợp lệ");
+            //    return false;
+            //}
             if (test.Status == true)
             {
-                if (test.FromDate == null)
-                {
-                    ModelState.AddModelError("", "Vui lòng chọn ngày bắt đầu thi");
-                    return false;
-                }
-                else if (test.ToDate == null)
-                {
-                    ModelState.AddModelError("", "Vui lòng chọn ngày kết thúc thi");
-                    return false;
-                }
-                else
-                {
-                    if (test.ToDate < test.FromDate)
-                    {
-                        ModelState.AddModelError("", "Ngày kết thúc thi không thể nhỏ hơn ngày bắt đầu thi");
-                        return false;
-                    }
-                }
+                //if (test.FromDate == null)
+                //{
+                //    ModelState.AddModelError("", "Vui lòng chọn ngày bắt đầu thi");
+                //    return false;
+                //}
+                //else if (test.ToDate == null)
+                //{
+                //    ModelState.AddModelError("", "Vui lòng chọn ngày kết thúc thi");
+                //    return false;
+                //}
+                //else
+                //{
+                //    if (test.ToDate < test.FromDate)
+                //    {
+                //        ModelState.AddModelError("", "Ngày kết thúc thi không thể nhỏ hơn ngày bắt đầu thi");
+                //        return false;
+                //    }
+                //}
             }
             return true;
         }
@@ -295,7 +295,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             // Chọn câu hỏi theo kiểu ngẫu nhiên
             if (test.QuizSelection == Common.ConstantVariable.Random)
             {
-                var _quizList = new QuizDAO().GetAllQuizBySubject(test.SubjectID);
+                var _quizList = new QuizDAO().GetAllQuizBySubject(test.Exam.SubjectID);
                 if (_quizList.Count < test.NumberOfQuestions)
                 {
                     ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
@@ -324,7 +324,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             // Chọn câu hỏi theo kiểu câu hỏi mới nhất
             if (test.QuizSelection == Common.ConstantVariable.QuizNew)
             {
-                var _quizList = new QuizDAO().GetAllQuizNewSubject(test.SubjectID);
+                var _quizList = new QuizDAO().GetAllQuizNewSubject(test.Exam.SubjectID);
                 if (_quizList.Count < test.NumberOfQuestions)
                 {
                     ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");

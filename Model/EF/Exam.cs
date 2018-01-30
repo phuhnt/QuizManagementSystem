@@ -28,6 +28,20 @@ namespace Model.EF
         [StringLength(500)]
         public string NoteEncode { get; set; }
 
+        public int? SubjectID { get; set; }
+
+        public int? NumberOfTurns { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? FromDate { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? ToDate { get; set; }
+
+        public TimeSpan? StartTime { get; set; }
+
+        public TimeSpan? EndTime { get; set; }
+
         [StringLength(256)]
         public string Link { get; set; }
 
@@ -44,6 +58,8 @@ namespace Model.EF
 
         [NotMapped]
         public int[] SelectedClassID { get; set; }
+
+        public virtual Subject Subject { get; set; }
 
         public virtual User User { get; set; }
 

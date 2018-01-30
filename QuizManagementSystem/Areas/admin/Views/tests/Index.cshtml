@@ -45,7 +45,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Mã đề thi</th>
@@ -74,8 +74,8 @@
                             <tr>
                                 <td>@Html.DisplayFor(model => item.CodeTest)</td>
                                 <td>@Html.DisplayFor(model => item.Exam.Titile)</td>
-                                <td>@Html.DisplayFor(model => item.Subject.Name)</td>
-                                <td>@Html.DisplayFor(model => item.FromDate)</td>
+                                <td>@Html.DisplayFor(model => item.Exam.Subject.Name)</td>
+                                <td>@Html.DisplayFor(model => item.Exam.FromDate)</td>
                                 <td>@Html.DisplayFor(model => item.NumberOfQuestions)</td>
                                 <td>
                                     @{

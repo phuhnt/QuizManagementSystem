@@ -25,6 +25,9 @@ namespace Model.EF
 
         public int? LevelID { get; set; }
 
+        [StringLength(500)]
+        public string Note { get; set; }
+
         [MaxLength]
         public string ContentQuestion { get; set; }
 

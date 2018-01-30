@@ -54,6 +54,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            SetGradeViewBag();
+            SetSubjectViewBag();
             SetSchoolYearViewBag();
             SetClassViewBag(null);
             return View();
@@ -66,43 +68,38 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Exam exam)
         {
-            if (String.IsNullOrEmpty(exam.Titile))
+            if (CheckInputExam(exam))
             {
-                ModelState.AddModelError("", "Tiêu đề kỳ thi không được để trống.");
-            }
+                if (ModelState.IsValid)
+                {
+                    var _session = Session[ConstantVariable.USER_SESSION] as Common.UserLogin;
+                    var _userDao = new UserDAO();
+                    var _examDao = new ExamDAO();
 
-            if (exam.SelectedClassID == null)
-            {
-                ModelState.AddModelError("", "Vui lòng chọn thí sinh cho kỳ thi này.");
-            }
+                    if (_session != null)
+                    {
+                        exam.UserID = _userDao.GetUserByUserName(_session.UserName).Id;
+                    }
+                    if (!String.IsNullOrEmpty(exam.Note))
+                    {
+                        exam.NoteEncode = Encode.StripHTML(exam.Note);
+                    }
+                    exam.CreatedDate = DateTime.Now;
 
-            if (ModelState.IsValid)
-            {
-                var _session = Session[Common.ConstantVariable.USER_SESSION] as Common.UserLogin;
-                var _userDao = new UserDAO();
-                var _examDao = new ExamDAO();
-               
-                if (_session != null)
-                {
-                    exam.UserID = _userDao.GetUserByUserName(_session.UserName).Id;
-                }
-                if (!String.IsNullOrEmpty(exam.Note))
-                {
-                    exam.NoteEncode = Common.Encode.StripHTML(exam.Note);
-                }     
-                exam.CreatedDate = DateTime.Now;
-
-                var _result = _examDao.Insert(exam, exam.SelectedClassID);
-                if (_result)
-                {
-                    SetAlert("Thêm kỳ thi thành công", "success");
-                    return RedirectToAction("/details/" + exam.Id);
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Thêm kỳ thi không thành công.");
+                    var _result = _examDao.Insert(exam, exam.SelectedClassID);
+                    if (_result)
+                    {
+                        SetAlert("Thêm kỳ thi thành công", "success");
+                        return Redirect("/details/" + exam.Id);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Thêm kỳ thi không thành công.");
+                    }
                 }
             }
+            SetGradeViewBag();
+            SetSubjectViewBag();
             SetSchoolYearViewBag();
             SetUserViewBag(exam.UserID);
             SetClassViewBag(exam.SelectedClassID);
@@ -386,6 +383,16 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", selectedID);
         }
 
+        private void SetGradeViewBag(int? selectedID = null)
+        {
+            ViewBag.GradeID = new SelectList(new GradeDAO().GetAll(), "Id", "GradeName", selectedID);
+        }
+
+        private void SetSubjectViewBag(int? selectedID = null)
+        {
+            ViewBag.SubjectID = new SelectList(new SubjectDAO().GetAllSubjects(), "Id", "Name", selectedID);
+        }
+
         public JsonResult GetClassSelected(int? id)
         {
             var _examDao = new ExamDAO();
@@ -414,6 +421,53 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             if (session == null)
             {
                 return false;
+            }
+            return true;
+        }
+
+        private bool CheckInputExam(Exam exam)
+        {
+            if (String.IsNullOrEmpty(exam.Titile))
+            {
+                ModelState.AddModelError("", "Tiêu đề kỳ thi không được để trống.");
+                return false;
+            }
+
+            if (exam.SelectedClassID == null)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn thí sinh cho kỳ thi này.");
+                return false;
+            }
+            if (exam.SubjectID <= 0 || exam.SubjectID == null)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn môn thi");
+                return false;
+            }
+            if (exam.NumberOfTurns <= 0)
+            {
+                ModelState.AddModelError("", "Số lượt làm bài không hợp lệ");
+                return false;
+            }
+            if (exam.Status == true)
+            {
+                if (exam.FromDate == null)
+                {
+                    ModelState.AddModelError("", "Vui lòng chọn ngày bắt đầu thi");
+                    return false;
+                }
+                else if (exam.ToDate == null)
+                {
+                    ModelState.AddModelError("", "Vui lòng chọn ngày kết thúc thi");
+                    return false;
+                }
+                else
+                {
+                    if (exam.ToDate < exam.FromDate)
+                    {
+                        ModelState.AddModelError("", "Ngày kết thúc thi không thể nhỏ hơn ngày bắt đầu thi");
+                        return false;
+                    }
+                }
             }
             return true;
         }

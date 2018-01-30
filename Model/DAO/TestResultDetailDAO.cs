@@ -39,7 +39,7 @@ namespace Model.DAO
             if (!String.IsNullOrEmpty(searchString))
             {
                 model = model.Where(x => x.Exam.Titile.Contains(searchString) ||
-                                    x.Test.Subject.Name.Contains(searchString));
+                                    x.Exam.Subject.Name.Contains(searchString));
             }
 
             return model.OrderByDescending(x => x.ActualTestDate).ToPagedList(page, pageSize);

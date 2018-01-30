@@ -74,7 +74,7 @@ namespace Model.DAO
             {
                 model = model.Where(x => x.Exam.Titile.Contains(searchString) ||
                                     x.CodeTest.ToString().Contains(searchString) ||
-                                    x.Subject.Name.Contains(searchString));
+                                    x.Exam.Subject.Name.Contains(searchString));
             }
             return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
