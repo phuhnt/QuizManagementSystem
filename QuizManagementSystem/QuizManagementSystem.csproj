@@ -1526,6 +1526,7 @@
     <Content Include="Areas\admin\Views\subjects\Edit.cshtml" />
     <Content Include="Areas\admin\Views\subjects\Index.cshtml" />
     <Content Include="Areas\admin\Views\exams\StartTheTest.cshtml" />
+    <Content Include="Areas\admin\Views\exams\ResultDetail.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1597,6 +1598,8 @@
     <Content Include="Views\home\Index.cshtml" />
     <Content Include="Views\home\Active.cshtml" />
     <Content Include="Views\home\MyTest.cshtml" />
+    <Content Include="Views\user\Info.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

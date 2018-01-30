@@ -22,5 +22,15 @@ namespace Model.DAO
             db.SaveChanges();
             return testResultDetail.Id;
         }
+
+        public TestResultDetail GetById(int? id)
+        {
+            return db.TestResultDetails.Find(id);
+        }
+
+        public TestResultDetail GetTestResult(int? userId, int? testId, int? examId)
+        {
+            return db.TestResultDetails.SingleOrDefault(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId);
+        }
     }
 }

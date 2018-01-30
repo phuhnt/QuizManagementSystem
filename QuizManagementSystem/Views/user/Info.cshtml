@@ -1,0 +1,199 @@
+﻿@model Model.EF.User
+
+@{
+    ViewBag.Title = "Cập nhật thông tin | Quiz Management System";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section jsFooter{
+    <script>
+        $(document).ready(function () {
+            $("#dob").val("@Model.DayOfBirth.Value.ToString("yyyy-MM-dd")");
+         });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#btnSelectImage').on('click', function (e) {
+                e.preventDefault();
+                var finder = new CKFinder();
+                finder.selectActionFunction = function (url) {
+                    $('#txtImage').val(url);
+                };
+                finder.popup();
+            })
+        });
+    </script>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#avatar').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        $('#btnSelectImage').change(function () {
+            readURL(this);
+        });
+    </script>
+}
+
+
+
+@using (Html.BeginForm("Info", "user", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="form-horizontal">
+        <h4>Cập nhật thông tin tài khoản</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        @Html.Label("Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                if (Model.Avatar != null)
+                {
+                    <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px" />
+                }
+                else
+                {
+                    <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px" />
+                }
+            }
+
+            @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control", @id = "txtImage", @readonly = "readonly" }, id = "txtImage" })
+            <input class="btn btn-outline-primary" name="btnSelectImage" id="btnSelectImage" type="file" />
+            @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger", @id = "errImage" })
+        </div>
+        <br />
+        <div class="form-group">
+            @Html.Label("Tên tài khoản", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <strong>@Model.UserName</strong>
+                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Mật khẩu mới", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NewPasswordHash, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                @Html.ValidationMessageFor(model => model.NewPasswordHash, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Nhập lại mật khẩu mới", htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ConfirmPasswordHash, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                @Html.ValidationMessageFor(model => model.ConfirmPasswordHash, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Loại tài khoản", "Loại tài khoản", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <strong>@Model.UserGroup.Name</strong>
+                @Html.ValidationMessageFor(model => model.GroupID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+
+                    if (Model.Status == null)
+                    {
+                        <span class="badge badge-pill badge-info">Chưa kích hoạt</span>
+
+                    }
+                    else if (Model.Status == true)
+                    {
+                        <span class="badge badge-pill badge-success">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-pill badge-danger">Khóa</span>
+                    }
+                }
+                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <hr />
+    <h4>Cập nhật thông tin người dùng</h4>
+    <hr />
+    <div class="form-group">
+        @Html.Label("Họ và tên", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Ngày sinh", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DayOfBirth, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "dob" } })
+            @Html.ValidationMessageFor(model => model.DayOfBirth, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Giới tính", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.RadioButtonFor(model => model.Sex, "Nam", new { htmlAttributes = new { @class = "form-control" } }) Nam
+            @Html.RadioButtonFor(model => model.Sex, "Nữ", new { htmlAttributes = new { @class = "form-control" } }) Nữ
+            @Html.ValidationMessageFor(model => model.Sex, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Địa chỉ email", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Số điện thoại", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{ 
+                if (Model.Class == null)
+                {
+                    <strong>Chưa cập nhật</strong>
+                }
+                else
+                {
+                    <strong>@Model.Class.Name</strong>
+                }
+            }
+            @Html.ValidationMessageFor(model => model.ClassID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Cập nhật" class="btn btn-success pull-right" style="width: 100px" />
+            <a class="btn btn-info pull-left" href="/">Hủy</a>
+        </div>
+    </div>
+
+}
+<br />
+<br />
+<br />

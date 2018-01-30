@@ -19,7 +19,6 @@ namespace Model.EF
 
         public int Id { get; set; }
 
-        [Required]
         [StringLength(128)]
         public string UserName { get; set; }
 

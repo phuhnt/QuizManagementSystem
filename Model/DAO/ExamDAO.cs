@@ -149,13 +149,19 @@ namespace Model.DAO
         {
             var user = new UserDAO().GetUserById(id);
             var _class = new ClassDAO().GetClassById(user.ClassID);
-            IQueryable<Exam> model = _class.Exams.ToList().AsQueryable();
+            IQueryable<Exam> model = null;
+            if (_class.Exams != null)
+            {
+                model = _class.Exams.ToList().AsQueryable();
+            }
+            
             if (!String.IsNullOrEmpty(searchString) && _class != null)
             {
                 model = model.Where(x => x.Titile.Contains(searchString) ||
                                     x.NoteEncode.Contains(searchString) ||
                                     x.Note.Contains(searchString));
             }
+            
             return model.OrderByDescending(x => x.CreatedDate).ThenBy(x => x.Status).ToPagedList(page, pageSize);
         }
 

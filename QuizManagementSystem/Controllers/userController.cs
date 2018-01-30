@@ -1,11 +1,14 @@
 ﻿using Model.DAO;
 using QuizManagementSystem.Common;
 using QuizManagementSystem.Models;
+using System.Net;
 using System.Web.Mvc;
+using Model.EF;
+using System;
 
 namespace QuizManagementSystem.Controllers
 {
-    public class userController : Controller
+    public class userController : BaseAlert
     {
         // GET: user
         public ActionResult Index()
@@ -135,6 +138,135 @@ namespace QuizManagementSystem.Controllers
         {
             Session[ConstantVariable.USER_SESSION] = null;
             return Redirect("/");
+        }
+
+        [HttpGet]
+        public ActionResult Info(int? id)
+        {
+            
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (CheckSession(id) == false)
+            {
+                return RedirectToAction("AccessDenied", "error");
+            }
+            var _user = new UserDAO().GetUserById(id);
+            if (_user == null)
+            {
+                return HttpNotFound();
+            }
+            _user.ConfirmPasswordHash = null;
+
+            return View(_user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Info([Bind(Include = "Id,PasswordHash,NewPasswordHash,ConfirmPasswordHash,Email,DayOfBirth,Phone,FullName,Sex,Avatar,ModifiedBy")]User user)
+        {
+            if (CheckSession(user.Id) == false)
+            {
+                return RedirectToAction("AccessDenied", "error");
+            }
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+
+            var _userDao = new UserDAO();
+            var _userCurr = _userDao.GetUserById(user.Id);
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (!String.IsNullOrEmpty(user.NewPasswordHash) && !String.IsNullOrEmpty(user.ConfirmPasswordHash))
+            {
+                if (String.Compare(user.NewPasswordHash, user.ConfirmPasswordHash, true) != 0)
+                {
+                    ModelState.AddModelError("", "Mật khẩu chưa trùng khớp.");
+                }
+                else // Update user có cập nhật mật khẩu mới
+                {
+                    var _newPassWordHash = Encode.MD5Hash(user.NewPasswordHash);
+
+                    user.PasswordHash = _newPassWordHash; //Gán mật khẩu mới vào cột PasswordHash
+                    user.NewPasswordHash = null; 
+                    user.ConfirmPasswordHash = null;
+                    user.ModifiedBy = _userSession.UserName;
+
+                    // Giữ lại các trường không đổi
+                    user.UserName = _userCurr.UserName;
+                    user.ClassID = _userCurr.ClassID;
+                    user.Class = _userCurr.Class;
+                    user.CreateBy = _userCurr.CreateBy;
+                    user.GroupID = _userCurr.GroupID;
+                    user.UserGroup = _userCurr.UserGroup;
+                    user.Status = _userCurr.Status;
+                    user.DateOfParticipation = _userCurr.DateOfParticipation;
+                    
+                    var _result = _userDao.Update(user);
+
+
+                    if (_result == true)
+                    {
+                        _userSession.Avatar = null;
+                        _userSession.Avatar = user.Avatar;
+                        SetAlert("Cập nhật người dùng thành công.", "success");
+                        return View(user);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                    }
+                }
+            }
+            else if (String.IsNullOrEmpty(user.NewPasswordHash) && String.IsNullOrEmpty(user.ConfirmPasswordHash)) // Ko cập nhật mật khẩu
+            {
+                user.ModifiedBy = _userSession.UserName;
+                // Giữ lại các trường không đổi
+                user.UserName = _userCurr.UserName;
+                user.ClassID = _userCurr.ClassID;
+                user.Class = _userCurr.Class;
+                user.CreateBy = _userCurr.CreateBy;
+                user.GroupID = _userCurr.GroupID;
+                user.UserGroup = _userCurr.UserGroup;
+                user.Status = _userCurr.Status;
+                user.DateOfParticipation = _userCurr.DateOfParticipation;
+
+                var _result = _userDao.Update(user, null);
+                if (_result == true)
+                {
+                    SetAlert("Sửa thông tin người dùng thành công.", "success");
+                    return View(user);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Cập nhật người dùng không thành công.");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào mật khẩu mới và xác nhận mật khẩu vào ô bên dưới.");
+            }
+
+            return View(user);
+        }
+
+        private bool CheckSession(int? id)
+        {
+            var session = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            if (session == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (session.UserID != id)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

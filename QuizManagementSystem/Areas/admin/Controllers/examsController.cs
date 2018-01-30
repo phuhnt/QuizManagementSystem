@@ -248,12 +248,16 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             else
             {
                 var _user = new UserDAO().GetUserById(_session.UserID);
-                if (!_exam.Classes.Contains(new ClassDAO().GetClassById(_user.ClassID)))
+                var listClass = new ClassDAO().GetAllByExams(_exam.Id);
+                if (!listClass.Exists(x => x.Id == _user.ClassID))
                 {
                     SetAlert("Bạn không phải là thí sinh của kỳ thi này.", "error");
                     return Redirect("/");
                 }
             }
+            // Kiểm tra số lượt làm bài
+            //var _testResult = new TestResultDetailDAO().GetTestResult(_session.UserID, )
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -321,7 +325,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             _testResult.NumberOfWrong = _answerWrongNum;
             _testResult.NumberOfCorrect = _answerCorrectNum;
             _testResult.NumberOfIgnored = _answerIgnoredNum;
-            _testResult.TimeToTake = null;
+            if (_testResult.TimeToTake == null)
+            {
+                _testResult.TimeToTake = 1;
+            }
+            else
+            {
+                _testResult.TimeToTake = _testResult.TimeToTake + 1;
+            }
             _testResult.ActualTestDate = DateTime.Now;
             _testResult.ActualStartTime = null;
             _testResult.ActualEndTime = DateTime.Now.TimeOfDay;
@@ -336,12 +347,20 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     _testResult.UserAnswer += _test.UserAnswer[i];
                 }
             }
+            int _id = _testResultDAO.Insert(_testResult);
             // Insert
-            if (_testResultDAO.Insert(_testResult) > 0)
+            if (_id > 0)
             {
-                return Redirect("/");
+                return ResultDetail(_id);
             }
             return Redirect("/");
+        }
+
+        
+        public ActionResult ResultDetail(int? id)
+        {
+            var _result = new TestResultDetailDAO().GetById(id);
+            return View(_result);
         }
 
         public void SetUserViewBag(int? selectedID = null)
