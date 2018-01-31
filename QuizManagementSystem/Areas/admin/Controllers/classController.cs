@@ -10,6 +10,7 @@ using Model.EF;
 using Model.DAO;
 using ClosedXML.Excel;
 using System.IO;
+using QuizManagementSystem.Common;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
@@ -60,6 +61,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Class _class)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             var _classDao = new ClassDAO();
             if (CheckInputClass(_class))
             {
@@ -69,6 +71,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result > 0)
                     {
                         SetAlert("Thêm lớp học thành công", "success");
+                        new SystemLogDAO().Insert("Thêm lớp học [" + _class.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/class/details/" + _result);
                     }
                     else
@@ -109,6 +112,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,GradeID,Status,SchoolYearID")] Class _class)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputClass(_class))
             {
                 if (ModelState.IsValid)
@@ -117,6 +121,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Cập nhật thông tin lớp học thành công", "success");
+                        new SystemLogDAO().Insert("Sửa lớp học [" + _class.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/class/details/" + _class.Id);
                     }
                     else
@@ -150,10 +155,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            var _class = new ClassDAO().GetClassById(id);
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             var _result = new ClassDAO().Delete(id);
             if (_result)
             {
                 SetAlert("Xóa lớp học thành công", "success");
+                new SystemLogDAO().Insert("Xóa lớp học [" + _class.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
             }
             else
             {

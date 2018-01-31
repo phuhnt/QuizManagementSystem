@@ -32,6 +32,34 @@
                 </td>
             </tr>
             <tr>
+                <th scope="row" width="50%">Môn thi</th>
+                <td width="50%">
+                    @{
+
+                        <p>@Model.Subject.Name</p>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" width="50%">Mã đề thi</th>
+                <td width="50%">
+                    @{
+                        if (Model.Tests != null && Model.Tests.Count > 0)
+                        {
+                            foreach (var item in Model.Tests)
+                            {
+                                <a class="badge badge-pill badge-success" href="/admin/tests/details/@item.Id" style="color:white">@item.CodeTest</a>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge badge-pill badge-info">Chưa có đề thi</span>
+                        }
+
+                    }
+                </td>
+            </tr>
+            <tr>
                 <th scope="row" width="50%">Ghi chú</th>
                 <td width="50%">
                     @{
@@ -45,7 +73,7 @@
                 <td>
                     @{
                         var _listClass = _examDao.GetClassSelected(Model.Id);
-                        if (_listClass == null)
+                        if (_listClass == null && _listClass.Count <= 0)
                         {
                             <p class="badge badge-pill badge-info">Chưa thiết lập</p>
 
@@ -54,7 +82,7 @@
                         {
                             foreach (var i in _listClass)
                             {
-                                <p class="badge badge-pill badge-success">@i.Name</p>
+                                <a class="badge badge-pill badge-success" href="/admin/class/details/@i.Id" style="color: white">@i.Name</a>
                             }
                         }
                     }

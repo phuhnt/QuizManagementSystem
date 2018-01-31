@@ -104,6 +104,7 @@ namespace QuizManagementSystem.Controllers
                     }
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
                     Session.Add(ConstantVariable.SESSION_CREDENTIAL, _listRole);
+                    new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "]" + " đăng nhập thành công", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     if (userLink == null)
                         return Redirect("/");
                     else
@@ -136,6 +137,8 @@ namespace QuizManagementSystem.Controllers
         //Logout
         public ActionResult Logout()
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "]" + " đăng xuất khỏi hệ thống thành công", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
             Session[ConstantVariable.USER_SESSION] = null;
             return Redirect("/");
         }
@@ -212,6 +215,7 @@ namespace QuizManagementSystem.Controllers
                         _userSession.Avatar = null;
                         _userSession.Avatar = user.Avatar;
                         SetAlert("Cập nhật người dùng thành công.", "success");
+                        new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "]" + " cập nhật thông tin [" + user.UserName + "] thành công", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return View(user);
                     }
                     else
@@ -237,6 +241,7 @@ namespace QuizManagementSystem.Controllers
                 if (_result == true)
                 {
                     SetAlert("Sửa thông tin người dùng thành công.", "success");
+                    new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "]" + " cập nhật thông tin [" + user.UserName + "] thành công", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return View(user);
                 }
                 else

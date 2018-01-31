@@ -8,11 +8,13 @@ using System.Web;
 using System.Web.Mvc;
 using Model.EF;
 using Model.DAO;
+using QuizManagementSystem.Common;
+
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class subjectsController : baseController
     {
-        
+
         // GET: admin/subjects
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
@@ -51,6 +53,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Note,Status,GradeID")] Subject subject)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputSubject(subject))
             {
                 var _subjectDao = new SubjectDAO();
@@ -60,6 +63,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result > 0)
                     {
                         SetAlert("Thêm môn học thành công", "success");
+                        new SystemLogDAO().Insert("Tạo môn học thành công [" + subject.Name + "] [Năm học: " + subject.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/subjects/details/" + _result);
                     }
                     else
@@ -99,6 +103,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Note,Status,GradeID")] Subject subject)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputSubject(subject))
             {
                 if (ModelState.IsValid)
@@ -107,6 +112,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Cập nhật thông tin môn học thành công", "success");
+                        new SystemLogDAO().Insert("Cập nhật môn học thành công [" + subject.Name + "] [Năm học: " + subject.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/subjects/details/" + subject.Id);
                     }
                     else
@@ -139,10 +145,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            var subject = new SubjectDAO().GetSubjectById(id);
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             var _result = new SubjectDAO().Delete(id);
             if (_result == 0)
             {
                 SetAlert("Xóa môn học thành công", "success");
+                new SystemLogDAO().Insert("Xóa môn học thành công [" + subject.Name + "] [Năm học: " + subject.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
             }
             else if (_result == 1)
             {

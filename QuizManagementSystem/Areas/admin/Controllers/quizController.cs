@@ -74,9 +74,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status,AnswerList,AnswerKey")] Question question)
         {
             var _quizDao = new QuizDAO();
-
-            
-            
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputQuiz(question))
             {
                 if (ModelState.IsValid)
@@ -100,6 +98,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     question.DateCreated = DateTime.Now;    //Ngày tạo
                     question.ModifiedDate = question.DateCreated;   // Ngày chỉnh sửa
                     _quizDao.Insert(question);      // Gọi phương thức để tạo câu hỏi
+                    new SystemLogDAO().Insert("Tạo câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return RedirectToAction("Index", "quiz");
                 }
             }
@@ -172,7 +171,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
                 if (_result == true)
                 {
-                    //return RedirectToAction("Index", "quiz");
+                    new SystemLogDAO().Insert("Sửa câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return Redirect("/admin/quiz/details/" + question.Id);
                 }
 
@@ -221,6 +220,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Xóa câu hỏi thành công", "success");
+                        new SystemLogDAO().Insert("Xóa câu hỏi thành công [ID = " + _quiz.Id + "] [ID môn học: " + _quiz.SubjectsID + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/quiz");
                     }
                     else

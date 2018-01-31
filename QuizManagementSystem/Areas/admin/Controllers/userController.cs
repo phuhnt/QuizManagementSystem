@@ -66,6 +66,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_id > 0)
                     {
                         SetAlert("Thêm người dùng thành công.", "success");
+                        new SystemLogDAO().Insert("Thêm người dùng [" + user.UserName + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return RedirectToAction("Index", "user");
                     }
                     else
@@ -113,7 +114,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UserName,PasswordHash,NewPasswordHash,ConfirmPasswordHash,Email,DayOfBirth,Phone,DateOfParticipation,FullName,Sex,ClassID,Avatar,Status,GroupID,CreateBy,ModifiedBy")]User user)
+        public ActionResult Edit(User user)
         {
             var _userDao = new UserDAO();
             var _userCurr = _userDao.GetUserById(user.Id);
@@ -128,21 +129,31 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
                         var _newPassWordHash = Encode.MD5Hash(user.NewPasswordHash);
 
                         user.PasswordHash = _newPassWordHash; //Gán mật khẩu mới vào cột PasswordHash
                         user.NewPasswordHash = _userCurr.PasswordHash; //Gán mật khẩu cũ vào NewPasswordHash
-                        user.ConfirmPasswordHash = null; 
+                        user.ConfirmPasswordHash = null;
+                        user.ModifiedBy = _userSession.UserName;
+
+                        //Các trường không đổi
+                        user.UserName = _userCurr.UserName;
+                        user.DateOfParticipation = _userCurr.DateOfParticipation;
+                        user.CreateBy = _userCurr.CreateBy;
 
                         var _result = _userDao.Update(user);
-                        var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
-                        _userSession.Avatar = null;
-                        _userSession.Avatar = user.Avatar;
-                        
+                       
+                        if (_userSession.UserID == user.Id)
+                        {
+                            _userSession.Avatar = null;
+                            _userSession.Avatar = user.Avatar;
+                        }
+                                               
                         if (_result == true)
                         {
                             SetAlert("Cập nhật người dùng thành công.", "success");
-                            //return RedirectToAction("Index", "user");
+                            new SystemLogDAO().Insert("Sửa người dùng [" + user.UserName + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                             return Redirect("/admin/user/detail/" + user.Id);
                         }
                         else
@@ -156,11 +167,23 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+                    user.ModifiedBy = _userSession.UserName;
+                    //Các trường không đổi
+                    user.UserName = _userCurr.UserName;
+                    user.DateOfParticipation = _userCurr.DateOfParticipation;
+                    user.CreateBy = _userCurr.CreateBy;
+
                     var _result = _userDao.Update(user, null);
                     if (_result == true)
                     {
                         SetAlert("Sửa thông tin người dùng thành công.", "success");
-                        //return RedirectToAction("Detail", "user");
+                        if (_userSession.UserID == user.Id)
+                        {
+                            _userSession.Avatar = null;
+                            _userSession.Avatar = user.Avatar;
+                        }
+                        new SystemLogDAO().Insert("Sửa người dùng [" + user.UserName + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/user/detail/" + user.Id);
                     }
                     else
@@ -193,6 +216,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpDelete]
         public ActionResult Delete(int? id)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -210,6 +234,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Xóa người dùng thành công", "success");
+                        new SystemLogDAO().Insert("Thêm người dùng [" + _user.UserName + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     }
                     else
                     {
@@ -219,15 +244,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }           
             return PartialView("Delete", new UserDAO().GetAllUserPageList());
         }
-
-        // POST: Example/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult DeleteConfirmed(int id)
-        //{
-
-        //}
-
+    
         private bool CheckInputUser(User user)
         {
             var _userDao = new UserDAO();
@@ -323,7 +340,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public void SetGroupIDViewBag(string selectedID = null)
         {
             var listUserGroup = new UserGroupDAO().GetAll();
-            var id = listUserGroup.First(x => x.Id == selectedID);
+            //var id = listUserGroup.First(x => x.Id == selectedID);
             ViewBag.GroupID = new SelectList(listUserGroup, "Id", "Name", selectedID);
         }
 

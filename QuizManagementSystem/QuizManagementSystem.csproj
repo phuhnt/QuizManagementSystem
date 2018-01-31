@@ -1527,6 +1527,7 @@
     <Content Include="Areas\admin\Views\subjects\Index.cshtml" />
     <Content Include="Areas\admin\Views\exams\StartTheTest.cshtml" />
     <Content Include="Areas\admin\Views\exams\ResultDetail.cshtml" />
+    <Content Include="Areas\admin\Views\log\Index.cshtml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />
@@ -1561,6 +1562,7 @@
     <Compile Include="Areas\admin\Controllers\classController.cs" />
     <Compile Include="Areas\admin\Controllers\examsController.cs" />
     <Compile Include="Areas\admin\Controllers\homeController.cs" />
+    <Compile Include="Areas\admin\Controllers\logController.cs" />
     <Compile Include="Areas\admin\Controllers\loginController.cs" />
     <Compile Include="Areas\admin\Controllers\quizController.cs" />
     <Compile Include="Areas\admin\Controllers\roleController.cs" />
@@ -1571,6 +1573,7 @@
     <Compile Include="Common\BaseAlert.cs" />
     <Compile Include="Common\ConstantVariable.cs" />
     <Compile Include="Common\Encode.cs" />
+    <Compile Include="Common\GetIPAddress.cs" />
     <Compile Include="Common\UserLogin.cs" />
     <Compile Include="Controllers\errorController.cs" />
     <Compile Include="Controllers\HasCredentialAttribute.cs" />

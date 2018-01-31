@@ -42,6 +42,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     }
                     Session.Add(ConstantVariable.USER_SESSION, _userSession);
                     Session.Add(ConstantVariable.SESSION_CREDENTIAL, _listRole);
+                    new SystemLogDAO().Insert("Người dùng [" + _user.UserName + "] đăng nhập thành công", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return RedirectToAction("Index", "home");
                 }
                 else if (_result == ConstantVariable.NotExist)  // 0
@@ -71,6 +72,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         //Logout
         public ActionResult logout()
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "] đăng xuất khỏi hệ thống", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
             Session[ConstantVariable.USER_SESSION] = null;
             return Redirect("/admin/login");
         }

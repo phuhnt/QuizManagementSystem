@@ -15,7 +15,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class examsController : baseController
     {
-        
+
 
         // GET: admin/exams
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
@@ -42,7 +42,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             SetUserViewBag(_exam.UserID);
             var _listClass = _examDao.GetClassSelected(_exam);
             int[] _selectedClassID = new int[_listClass.Count];
-            for (int i=0; i < _listClass.Count; i++)
+            for (int i = 0; i < _listClass.Count; i++)
             {
                 _selectedClassID[i] = _listClass[i].Id;
             }
@@ -90,6 +90,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Thêm kỳ thi thành công", "success");
+                        new SystemLogDAO().Insert("Thêm kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/details/" + exam.Id);
                     }
                     else
@@ -163,6 +164,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 if (_result)
                 {
                     SetAlert("Cập nhật thông tin kỳ thi thành công", "success");
+                    new SystemLogDAO().Insert("Cập nhật kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return RedirectToAction("/details/" + exam.Id);
                 }
                 else
@@ -221,6 +223,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 if (result)
                 {
                     SetAlert("Xóa kỳ thi thành công", "success");
+                    new SystemLogDAO().Insert("Xóa kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     RedirectToAction("Index");
                 }
                 else
@@ -303,41 +306,49 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             int _answerWrongNum = 0;
             int _answerIgnoredNum = 0;
             var listQuiz = new TestDAO().GetAllQuiz(_test.Id);
-            for (int i = 0; i < listQuiz.Count; i++)
+
+            if (_test.UserAnswer == null || _test.UserAnswer.Count <= 0)
             {
-                if (listQuiz[i].KeyAnswer == _test.UserAnswer[i])
-                {
-                    _answerCorrectNum++;
-                }
-                else if (listQuiz[i].KeyAnswer != _test.UserAnswer[i])
-                {
-                    _answerWrongNum++;
-                }
-                else
-                {
-                    _answerIgnoredNum++;
-                }
-            }
-            _testResult.Score = (double)_answerCorrectNum * (_test.ScoreLadder.Score / _test.NumberOfQuestions);
-            _testResult.NumberOfWrong = _answerWrongNum;
-            _testResult.NumberOfCorrect = _answerCorrectNum;
-            _testResult.NumberOfIgnored = _answerIgnoredNum;
-            if (_testResult.TimeToTake == null)
-            {
-                _testResult.TimeToTake = 1;
+                _answerIgnoredNum = listQuiz.Count;
             }
             else
             {
-                _testResult.TimeToTake = _testResult.TimeToTake + 1;
+                for (int i = 0; i < _test.UserAnswer.Count; i++)
+                {
+
+                    if (listQuiz[i].KeyAnswer == _test.UserAnswer[i])
+                    {
+                        _answerCorrectNum++;
+                    }
+                    else
+                    {
+                        _answerWrongNum++;
+                    }              
+                }
+                _answerIgnoredNum = listQuiz.Count - (_answerCorrectNum + _answerWrongNum);
+            }
+
+            _testResult.Score = _answerCorrectNum * (_test.ScoreLadder.Score / _test.NumberOfQuestions);
+            _testResult.NumberOfWrong = _answerWrongNum;
+            _testResult.NumberOfCorrect = _answerCorrectNum;
+            _testResult.NumberOfIgnored = _answerIgnoredNum;
+            var _countTimeToTake = new TestResultDetailDAO().GetAll(_session.UserID, test.Id, test.ExamID);
+            if (_countTimeToTake == null)
+            {
+                _testResult.TimeToTake = 0;
+            }
+            else
+            {
+                _testResult.TimeToTake =_countTimeToTake.Count + 1;
             }
             _testResult.ActualTestDate = DateTime.Now;
             _testResult.ActualStartTime = null;
             _testResult.ActualEndTime = DateTime.Now.TimeOfDay;
-            for(int i = 0; i < listQuiz.Count; i++)
+            for (int i = 0; i < listQuiz.Count; i++)
             {
                 if (i != listQuiz.Count - 1)
                 {
-                    _testResult.UserAnswer += _test.UserAnswer[i] + ",";                    
+                     _testResult.UserAnswer += _test.UserAnswer[i] + ",";
                 }
                 else
                 {
@@ -348,12 +359,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             // Insert
             if (_id > 0)
             {
+                var _testDb = new TestDAO().GetTestById(_testResult.TestID);
+                new SystemLogDAO().Insert("Người dùng thi online [Kỳ thi: " + _testDb.Exam.Titile + "] [Môn thi: " + _testDb.Exam.Subject.Name + "] [Mã đề: " + _testDb.CodeTest + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                 return Redirect("/admin/exams/resultdetail/" + _id);
             }
             return Redirect("/");
         }
 
-        
+
         public ActionResult ResultDetail(int? id)
         {
             if (CheckSession() == false)
@@ -411,7 +424,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         public JsonResult FillClasses(int? schoolyearId)
         {
-            var classes = new ClassDAO().GetAllBySchoolYear(schoolyearId);            
+            var classes = new ClassDAO().GetAllBySchoolYear(schoolyearId);
             return Json(new SelectList(classes.ToArray(), "Id", "Name"), JsonRequestBehavior.AllowGet);
         }
 

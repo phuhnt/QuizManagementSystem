@@ -59,6 +59,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputTest(test))
             {
                 if (ModelState.IsValid)
@@ -66,6 +67,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (SelectQuiz(test))
                     {
                         SetAlert("Tạo đề thi thành công", "success");
+                        new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + test.Exam.Titile + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return RedirectToAction("Index");
                     }
                     else
@@ -113,6 +115,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
         {
+            var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputTest(test))
             {
                 if (ModelState.IsValid)
@@ -120,6 +123,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (SelectQuiz(test))
                     {
                         SetAlert("Cập nhật đề thi thành công", "success");
+                        new SystemLogDAO().Insert("Cập nhật đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + test.Exam.Titile + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return RedirectToAction("Index");
                     }
                     else
@@ -162,14 +166,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             //db.Tests.Remove(test);
             //db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-
-        public ActionResult StartTheTest()
-        {
-
-            return View();
-        }
+        }   
 
         private void SetExamViewBag(int? selectedID = null)
         {

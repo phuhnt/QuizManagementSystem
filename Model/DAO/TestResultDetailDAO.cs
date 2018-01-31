@@ -33,6 +33,11 @@ namespace Model.DAO
             return db.TestResultDetails.SingleOrDefault(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId);
         }
 
+        public List<TestResultDetail> GetAll(int? userId, int? testId, int? examId)
+        {
+            return db.TestResultDetails.Where(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId).ToList();
+        }
+
         public IEnumerable<TestResultDetail> GetAllTestResultPageList(User user, string searchString, int page = 1, int pageSize = 10)
         {
             IEnumerable<TestResultDetail> model = db.TestResultDetails;

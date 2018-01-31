@@ -102,6 +102,7 @@
     <Compile Include="DAO\SchoolYearDAO.cs" />
     <Compile Include="DAO\ScoreLadderDAO.cs" />
     <Compile Include="DAO\SubjectDAO.cs" />
+    <Compile Include="DAO\SystemLogDAO.cs" />
     <Compile Include="DAO\TestDAO.cs" />
     <Compile Include="DAO\TestResultDetailDAO.cs" />
     <Compile Include="DAO\UserDAO.cs" />
