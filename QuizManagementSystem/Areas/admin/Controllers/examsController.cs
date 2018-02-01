@@ -91,7 +91,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     {
                         SetAlert("Thêm kỳ thi thành công", "success");
                         new SystemLogDAO().Insert("Thêm kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
-                        return Redirect("/details/" + exam.Id);
+                        return Redirect("/admin/exams/details/" + exam.Id);
                     }
                     else
                     {
@@ -100,7 +100,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
             }
             SetGradeViewBag();
-            SetSubjectViewBag();
+            SetSubjectViewBag(exam.SubjectID);
             SetSchoolYearViewBag();
             SetUserViewBag(exam.UserID);
             SetClassViewBag(exam.SelectedClassID);
@@ -127,7 +127,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 _selectedClassID[i] = _listClass[i].Id;
             }
             _exam.SelectedClassID = _selectedClassID;
+
             SetClassViewBag(_exam.SelectedClassID);
+            SetGradeViewBag(_exam.Subject.GradeID);
+            SetSubjectViewBag(_exam.SubjectID);
+            SetSchoolYearViewBag(_exam.Subject.Grade.SchoolYearID);
+            SetUserViewBag(_exam.UserID);
+
             return View(_exam);
         }
 
@@ -136,7 +142,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Titile,Note,NoteEncode,SelectedClassID,Link,ModifiedBy,ModifiedDate,Status")] Exam exam)
+        public ActionResult Edit(Exam exam)
         {
             if (String.IsNullOrEmpty(exam.Titile))
             {
@@ -149,7 +155,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             if (ModelState.IsValid)
             {
-                var _session = Session[Common.ConstantVariable.USER_SESSION] as Common.UserLogin;
+                var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
                 var _userDao = new UserDAO();
                 var _examDao = new ExamDAO();
 
@@ -165,7 +171,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     SetAlert("Cập nhật thông tin kỳ thi thành công", "success");
                     new SystemLogDAO().Insert("Cập nhật kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
-                    return RedirectToAction("/details/" + exam.Id);
+                    return Redirect("/admin/exams/details/" + exam.Id);
                 }
                 else
                 {
@@ -173,6 +179,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     return RedirectToAction("Index");
                 }
             }
+
+            SetGradeViewBag();
+            SetSubjectViewBag(exam.SubjectID);
             SetSchoolYearViewBag();
             SetUserViewBag(exam.UserID);
             SetClassViewBag(exam.SelectedClassID);
@@ -224,12 +233,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     SetAlert("Xóa kỳ thi thành công", "success");
                     new SystemLogDAO().Insert("Xóa kỳ thi [" + exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
-                    RedirectToAction("Index");
+                    RedirectToAction("Index", "exams");
                 }
                 else
                 {
                     SetAlert("Xóa kỳ thi không thành công", "warning");
-                    RedirectToAction("Index");
+                    RedirectToAction("Index", "exams");
                 }
             }
             return RedirectToAction("Index");
@@ -256,7 +265,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
             }
             // Kiểm tra số lượt làm bài
-            //var _testResult = new TestResultDetailDAO().GetTestResult(_session.UserID, )
+            var _testResultUser = new TestResultDetailDAO().GetTestResult(_session.UserID, _exam.Id);
+            if (_testResultUser.TimeToTake >= _exam.NumberOfTurns)
+            {
+                SetAlert("Bạn đã hết lượt làm bài của kỳ thi này.", "error");
+                return Redirect("/");
+            }
 
             if (id == null)
             {
@@ -332,7 +346,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             _testResult.NumberOfWrong = _answerWrongNum;
             _testResult.NumberOfCorrect = _answerCorrectNum;
             _testResult.NumberOfIgnored = _answerIgnoredNum;
-            var _countTimeToTake = new TestResultDetailDAO().GetAll(_session.UserID, test.Id, test.ExamID);
+            var _countTimeToTake = new TestResultDetailDAO().GetAll(_session.UserID, _test.ExamID);
             if (_countTimeToTake == null)
             {
                 _testResult.TimeToTake = 0;

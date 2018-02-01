@@ -19,6 +19,11 @@
     <script src="~/Assets/Admin/vendor/chosen/js/chosen.jquery.min.js"></script>
     <script>
         $(document).ready(function () {
+                $("#fromDate").val("@Model.FromDate.Value.ToString("yyyy-MM-dd")");
+                $("#toDate").val("@Model.ToDate.Value.ToString("yyyy-MM-dd")");
+        });
+
+        $(document).ready(function () {
             var grades = $('#GradeID');
 
             $('#SchoolYearID').change(function () {
@@ -46,6 +51,7 @@
                 });
             });
         });
+
         $(document).ready(function () {
             $('#multiSelectClass').chosen({
                 width: "100%"
@@ -63,14 +69,13 @@
                     selClass = items;
                 });
             });
-                                  
-            for (i = 0; i < selClass.length; i++)
-            {
+
+            for (i = 0; i < selClass.length; i++) {
                 $('#multiSelectClass').val([selClass[i]]).trigger('chosen:updated');
             }
-            
+
             //$('#multiSelectClass').val(selClass).trigger('chosen:updated');
-            
+
             //var classArr = selectedClass.split(',');
             //for (var i = 0; i < classArr.length; i++) {
             //    classArr[i] = classArr[i].replace(/^\s*/, "").replace(/\s*$/, "");
@@ -78,6 +83,8 @@
             //$('#multiSelectClass').val().trigger('chosen:updated')({
             //    width: "100%"
             //});
+
+
         });
     </script>
 
@@ -144,7 +151,7 @@
         <div class="form-group">
             @Html.Label("Ngày bắt đầu thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "fromDate" } })
                 @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -152,7 +159,7 @@
         <div class="form-group">
             @Html.Label("Ngày kết thúc thi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date", @id = "toDate" } })
                 @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
             </div>
         </div>

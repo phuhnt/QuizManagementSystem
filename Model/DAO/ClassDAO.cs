@@ -30,7 +30,10 @@ namespace Model.DAO
         public bool Update(Class c)
         {
             var _class = db.Classes.Find(c.Id);
-            db.Entry(_class).CurrentValues.SetValues(c);
+            //db.Entry(_class).CurrentValues.SetValues(c);
+            _class.Name = c.Name;
+            _class.GradeID = c.GradeID;
+            _class.Status = c.Status;
             db.SaveChanges();
             return true;
         }

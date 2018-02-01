@@ -71,7 +71,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result > 0)
                     {
                         SetAlert("Thêm lớp học thành công", "success");
-                        new SystemLogDAO().Insert("Thêm lớp học [" + _class.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        new SystemLogDAO().Insert("Thêm lớp học [" + new GradeDAO().GetByClass(_class).SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/class/details/" + _result);
                     }
                     else
@@ -110,9 +110,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,GradeID,Status,SchoolYearID")] Class _class)
+        public ActionResult Edit([Bind(Include = "Id,Name,GradeID,Status")] Class _class)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
+            Class c = new ClassDAO().GetClassById(_class.Id);
             if (CheckInputClass(_class))
             {
                 if (ModelState.IsValid)
@@ -121,7 +122,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (_result)
                     {
                         SetAlert("Cập nhật thông tin lớp học thành công", "success");
-                        new SystemLogDAO().Insert("Sửa lớp học [" + _class.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        new SystemLogDAO().Insert("Sửa lớp học [" + c.Grade.SchoolYear.NameOfSchoolYear + "]" + "[" + _class.Name + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/class/details/" + _class.Id);
                     }
                     else
@@ -130,8 +131,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         return Redirect("/admin/class");
                     }
                 }
+                else
+                {
+                    SetAlert("Cập nhật thông tin lớp học không thành công", "error");
+                    return Redirect("/admin/class");
+                }
             }
-            
+            SetGradeViewBag(_class.GradeID);
+            SetSchoolYearViewBag(c.Grade.SchoolYear.Id);
             return View(_class);
         }
 
@@ -214,6 +221,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         private bool CheckInputClass(Class _class)
         {
             var _classDao = new ClassDAO();
+            var c = _classDao.GetClassById(_class.Id);
             if (_class.GradeID <= 0 || _class.GradeID == null)
             {
                 ModelState.AddModelError("", "Vui lòng chọn năm học");
@@ -227,6 +235,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             else
             {
+                if (c != null)
+                {
+                    if (c.Id == _class.Id && c.Name == _class.Name)
+                    {
+                        return true;
+                    }
+                }  
                 if (_classDao.IsExistNameClass(_class))
                 {
                     ModelState.AddModelError("", "Tên lớp đã tồn tại");

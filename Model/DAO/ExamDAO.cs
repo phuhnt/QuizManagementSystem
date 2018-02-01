@@ -95,7 +95,20 @@ namespace Model.DAO
                     _exam.Classes.Add(db.Classes.Single(c => c.Id == i));
                 }
             }
-            db.Entry(_exam).CurrentValues.SetValues(exam);
+            //db.Entry(_exam).CurrentValues.SetValues(exam);
+            _exam.Titile = exam.Titile;
+            _exam.Note = exam.Note;
+            _exam.NoteEncode = exam.NoteEncode;
+            _exam.SubjectID = exam.SubjectID;
+            _exam.NumberOfTurns = exam.NumberOfTurns;
+            _exam.FromDate = exam.FromDate;
+            _exam.ToDate = exam.ToDate;
+            _exam.StartTime = exam.StartTime;
+            _exam.EndTime = exam.EndTime;
+            _exam.ModifiedBy = exam.ModifiedBy;
+            _exam.ModifiedDate = exam.ModifiedDate;
+            _exam.Status = exam.Status;
+
             db.SaveChanges();
             return true;
         }

@@ -28,14 +28,15 @@ namespace Model.DAO
             return db.TestResultDetails.Find(id);
         }
 
-        public TestResultDetail GetTestResult(int? userId, int? testId, int? examId)
+        public TestResultDetail GetTestResult(int? userId, int? examId)
         {
-            return db.TestResultDetails.SingleOrDefault(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId);
+            var model = db.TestResultDetails.Where(x => x.UserID == userId && x.ExamID == examId);
+            return model.OrderByDescending(x => x.TimeToTake).First();
         }
 
-        public List<TestResultDetail> GetAll(int? userId, int? testId, int? examId)
+        public List<TestResultDetail> GetAll(int? userId, int? examId)
         {
-            return db.TestResultDetails.Where(x => x.UserID == userId && x.TestID == testId && x.ExamID == examId).ToList();
+            return db.TestResultDetails.Where(x => x.UserID == userId && x.ExamID == examId).ToList();
         }
 
         public IEnumerable<TestResultDetail> GetAllTestResultPageList(User user, string searchString, int page = 1, int pageSize = 10)

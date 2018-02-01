@@ -19,13 +19,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
 
         // GET: admin/quiz
-        //public ActionResult Index(int page = 1, int pageSize = 10)
-        //{
-        //    var _quizDao = new QuizDAO();
-        //    var _model = _quizDao.GetAllQuizPageList();
-        //    return View(_model);
-        //}
-
         [HasCredential(RoleID = "QUIZ_HOME")]
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
@@ -71,7 +64,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         [HasCredential(RoleID = "QUIZ_CREATE")]
-        public ActionResult Create([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,UserID,DateCreated,Status,AnswerList,AnswerKey")] Question question)
+        public ActionResult Create(Question question)
         {
             var _quizDao = new QuizDAO();
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
@@ -87,6 +80,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     // Nội dung câu hỏi
                     if (!String.IsNullOrEmpty(question.ContentQuestion))
                     {
+                        question.ContentQuestion = Encode.StripPTag(question.ContentQuestion);
                         question.ContentQuestionEncode = WebUtility.HtmlDecode(Encode.StripHTML(question.ContentQuestion));
                     }
                  
@@ -95,9 +89,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         question.AnswerTextEncode = WebUtility.HtmlDecode(Encode.StripHTML(question.AnswerText));
                     }                  
 
-                    question.DateCreated = DateTime.Now;    //Ngày tạo
+                    question.DateCreated = DateTime.Now;            //Ngày tạo
                     question.ModifiedDate = question.DateCreated;   // Ngày chỉnh sửa
-                    _quizDao.Insert(question);      // Gọi phương thức để tạo câu hỏi
+
+                    _quizDao.Insert(question);                      // Gọi phương thức để tạo câu hỏi
                     new SystemLogDAO().Insert("Tạo câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return RedirectToAction("Index", "quiz");
                 }
@@ -361,7 +356,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 {
                     if (String.IsNullOrEmpty(question.AnswerList[i]))
                     {
-                        ModelState.AddModelError("", "Vui lòng nhập đầy đủ nội dung của " + i + 1 + "đáp án.");
+                        ModelState.AddModelError("", "Vui lòng nhập đầy đủ nội dung của " + question.AnswerList.Count + "đáp án.");
                         return false;
                     }
                     question.AnswerText += Alphabet[i] + ". " + question.AnswerList[i] + "\r\n";

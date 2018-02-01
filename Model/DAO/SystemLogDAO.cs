@@ -43,7 +43,7 @@ namespace Model.DAO
                                     x.PerformedBy.Contains(searchString) ||
                                     x.ClientIP.Contains(searchString));
             }
-            return model.OrderByDescending(x => x.ExDate).ThenBy(x => x.ExTime).ToPagedList(page, pageSize);
+            return model.OrderByDescending(x => x.Id).ToPagedList(page, pageSize);
         }
     }
 }
