@@ -1,4 +1,4 @@
-namespace Model.EF
+﻿namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -33,6 +33,8 @@ namespace Model.EF
 
         public int? ScoreLadderID { get; set; }
 
+        public string MixAnswer { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public DateTime? CreatedDate { get; set; }
@@ -45,7 +47,13 @@ namespace Model.EF
         public bool? Status { get; set; }
 
         [NotMapped]
-        public int QuizSelection { get; set; }
+        public int QuizSelection { get; set; }  //Phương án chọn câu hỏi
+        
+        [NotMapped]
+        public int FixedOrChanged { get; set; } //Phương thức cố định hay thay đổi câu hỏi
+
+        [NotMapped]
+        public int Mix { get; set; }    // Đảo câu hỏi, đảo đáp án, hay đảo cả 2
 
         [NotMapped]
         public List<string> UserAnswer { get; set; }

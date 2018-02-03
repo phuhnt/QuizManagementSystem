@@ -1,4 +1,6 @@
-﻿@model Model.EF.Test
+﻿@using QuizManagementSystem.Common;
+
+@model Model.EF.Test
 
 @{
     ViewBag.Title = "Tạo đề thi";
@@ -85,30 +87,12 @@
                 @Html.TextBox("ExamineeID", "", htmlAttributes: new { @class = "form-control", @id = "ExamineeID", @readonly = "readonly" })
             </div>
         </div>
-        <div class="form-group">
-            @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SchoolYearID", null, "--- Chọn năm học ---", htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.Label("Khối", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("GradeID", null, "--- Chọn khối ---", htmlAttributes: new { @class = "form-control", @id = "GradeID" })
-            </div>
-        </div>
-        @*<div class="form-group">
-            @Html.Label("Môn thi", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SubjectID", null, htmlAttributes: new { @class = "form-control", @id = "SubjectID" })
-                @Html.ValidationMessageFor(model => model.SubjectID, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
+
         <div class="form-group">
             @Html.Label("Mã đề", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.CodeTest, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                @Html.ValidationMessageFor(model => model.CodeTest, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.CodeTestArr, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                @Html.ValidationMessageFor(model => model.CodeTestArr, "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -128,20 +112,40 @@
         </div>
 
         <div class="form-group">
-            @Html.Label("Phương án chọn câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Phương án chọn câu hỏi", htmlAttributes: new { @class = "control-label col-md-2", @id = "QuizSelection" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.DropDownList("QuizSelection", new List<SelectListItem>
-                                   {
-                                       new SelectListItem{ Text = "Ngẫu nhiên", Value = "1"},
-                                       new SelectListItem{ Text = "Câu hỏi mới nhất", Value = "2"},
-                                       new SelectListItem{ Text = "Thủ công", Value = "3"}
-                                   }, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-                </div>
+                @Html.DropDownList("QuizSelection", new List<SelectListItem>
+                   {
+                       new SelectListItem{ Text = "Ngẫu nhiên", Value = "" + ConstantVariable.RandomQuiz},
+                       new SelectListItem{ Text = "Câu hỏi mới nhất", Value = "" + ConstantVariable.NewQuiz},
+                       new SelectListItem{ Text = "Thủ công", Value = "" + ConstantVariable.ManualQuiz}
+                   }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.QuizSelection, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Câu hỏi của mỗi đề", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("FixedOrChanged", new List<SelectListItem>
+                   {
+                       new SelectListItem{ Text = "Khác nhau ở mỗi đề", Value = "" + ConstantVariable.ChangedQuiz},
+                       new SelectListItem{ Text = "Cố định ở mỗi đề", Value = "" + ConstantVariable.FixedQuiz},
+                   }, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FixedOrChanged, "", new { @class = "text-danger" })
             </div>
         </div>
 
+        <div class="form-group">
+            @Html.Label("Trộn đề & câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixQuiz, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAnswer, new { htmlAttributes = new { @class = "form-control" } }) Trộn đáp án
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAll, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi và đáp án
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.NoMix, new { htmlAttributes = new { @class = "form-control" } }) Không trộn
+                @Html.ValidationMessageFor(model => model.Mix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        
         <div class="form-group">
             @Html.Label("Thời gian làm bài (phút)", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -150,14 +154,6 @@
             </div>
         </div>
 
-        @*<div class="form-group">
-            @Html.Label("Số lượt làm bài", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumberOfTurns, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumberOfTurns, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
-
         <div class="form-group">
             @Html.Label("Thang điểm", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -165,38 +161,6 @@
                 @Html.ValidationMessageFor(model => model.ScoreLadderID, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        @*<div class="form-group">
-            @Html.Label("Ngày bắt đầu thi", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FromDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
-                @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Ngày kết thúc thi", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ToDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
-                @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Giờ mở đề (HH:mm AM | PM)", htmlAttributes: new { @class = "control-label col-md-3" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control", @type = "time" } })
-                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Giờ đóng đề (HH:mm AM | PM)", new { htmlAttributes = new { @class = "control-label col-md-3" } })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control" , @type = "time" } })
-                @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
-            </div>
-        </div>*@
 
         <div class="form-group">
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })

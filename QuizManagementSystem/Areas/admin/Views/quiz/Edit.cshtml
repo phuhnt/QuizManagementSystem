@@ -130,7 +130,13 @@
                 @Html.ValidationMessageFor(model => model.LevelID, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        <div class="form-group">
+            @Html.Label("Ghi chú", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
+            </div>
+        </div>
         <div class="form-group">
             @Html.Label("Nội dung câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -138,24 +144,24 @@
                 @Html.ValidationMessageFor(model => model.ContentQuestion, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group">
-            @Html.Label("Số đáp án lưa chọn", htmlAttributes: new { @class = "control-label col-md-2" })
+        @*<div class="form-group">
+            @Html.Label("Số đáp án lựa chọn", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("AnswerNum", new List<SelectListItem>
-                {
+            {
 
-                        new SelectListItem{ Text = "2", Value = "2"},
-                        new SelectListItem{ Text = "3", Value = "3"},
-                        new SelectListItem{ Text = "4", Value = "4"},
-                        new SelectListItem{ Text = "5", Value = "5"},
-                        new SelectListItem{ Text = "6", Value = "6"},
-                        new SelectListItem{ Text = "7", Value = "7"},
-                        new SelectListItem{ Text = "8", Value = "8"},
-                        new SelectListItem{ Text = "9", Value = "9"},
-                        new SelectListItem{ Text = "10", Value = "10"}
-                }, "--- Chọn số đáp án ----", new { @class = "form-control", @id = "answerNum" })
+                    new SelectListItem{ Text = "2", Value = "2"},
+                    new SelectListItem{ Text = "3", Value = "3"},
+                    new SelectListItem{ Text = "4", Value = "4"},
+                    new SelectListItem{ Text = "5", Value = "5"},
+                    new SelectListItem{ Text = "6", Value = "6"},
+                    new SelectListItem{ Text = "7", Value = "7"},
+                    new SelectListItem{ Text = "8", Value = "8"},
+                    new SelectListItem{ Text = "9", Value = "9"},
+                    new SelectListItem{ Text = "10", Value = "10"}
+            }, "--- Chọn số đáp án ----", new { @class = "form-control", @id = "answerNum" })
             </div>
-        </div>
+        </div>*@
         <div class="form-group">
             @Html.Label("Đáp án lựa chọn", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -163,9 +169,9 @@
                 @Html.ValidationMessageFor(model => model.AnswerText, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group" id="answerChoice">
+        @*<div class="form-group" id="answerChoice">
 
-        </div>
+        </div>*@
 
         <div class="form-group">
             @Html.Label("Đáp án đúng", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -180,10 +186,10 @@
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Status", new List<SelectListItem>
-           {
-               new SelectListItem{ Text = "Hoạt động", Value = "True"},
-               new SelectListItem{ Text = "Không hoạt động", Value = "False"}
-           }, new { @class = "form-control" })
+       {
+           new SelectListItem{ Text = "Hoạt động", Value = "True"},
+           new SelectListItem{ Text = "Không hoạt động", Value = "False"}
+       }, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>

@@ -80,7 +80,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     // Nội dung câu hỏi
                     if (!String.IsNullOrEmpty(question.ContentQuestion))
                     {
-                        question.ContentQuestion = Encode.StripPTag(question.ContentQuestion);
                         question.ContentQuestionEncode = WebUtility.HtmlDecode(Encode.StripHTML(question.ContentQuestion));
                     }
                  
@@ -359,16 +358,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         ModelState.AddModelError("", "Vui lòng nhập đầy đủ nội dung của " + question.AnswerList.Count + "đáp án.");
                         return false;
                     }
-                    question.AnswerText += Alphabet[i] + ". " + question.AnswerList[i] + "\r\n";
+
+                    question.AnswerText += "<p>" + Alphabet[i] + ". " + Encode.StripPTag(question.AnswerList[i]) + "\r\n</p>";
                 }
             }
            
-            if (question.AnswerKey == null)
-            {
-                ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
-                return false;
-            }
-            else if (question.AnswerKey.Count < 1)
+            if (question.AnswerKey == null || question.AnswerKey.Count < 1)
             {
                 ModelState.AddModelError("", "Vui lòng nhập vào đáp án đúng cho câu hỏi này");
                 return false;
@@ -378,7 +373,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 // Đáp án đúng (Key)
                 for (int i = 0; i < question.AnswerKey.Count; i++)
                 {
-                    if (Int32.Parse(question.AnswerKey[i]) > 0)
+                    if (Int32.Parse(question.AnswerKey[i]) >= 0)
                     {
                         question.KeyAnswer += Alphabet[Int32.Parse(question.AnswerKey[i])];
                     }

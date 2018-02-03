@@ -23,9 +23,16 @@ namespace QuizManagementSystem.Common
         public static int NotHaveAccess     = -3; // Tài khoản không có quyền truy cập
 
         // Tests
-        public static int Random            =  0; // Ngẫu nhiên
-        public static int QuizNew           =  1; // Câu hỏi mới nhất
-        public static int Manual            =  2; // Thủ công
+        public static int RandomQuiz        =  1; // Ngẫu nhiên
+        public static int NewQuiz           =  2; // Câu hỏi mới nhất
+        public static int ManualQuiz        =  3; // Thủ công
+        public static int FixedQuiz         =  4; // Cố định câu hỏi
+        public static int ChangedQuiz       =  5; // Câu hỏi có thể khác nhau
+        public static int NoMix             =  6; // Không trộn
+        public static int MixQuiz           =  7; // Trộn câu hỏi
+        public static int MixAnswer         =  8; // Trộn đáp án
+        public static int MixAll            =  9; // Trộn câu hỏi và đáp án
+
 
         // UserGroup
         public static string STUDENT_GROUP = "STUDENT";

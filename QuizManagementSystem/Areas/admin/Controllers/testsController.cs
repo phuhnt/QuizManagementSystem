@@ -45,8 +45,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         {
             SetExamViewBag();
             SetExamineeViewBag();
-            SetSchoolYearViewBag();
-            SetGradeViewBag();
+            //SetSchoolYearViewBag();
+            //SetGradeViewBag();
             SetSubjectViewBag();
             SetScoreLadderViewBag();
             return View();
@@ -57,7 +57,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
+        public ActionResult Create(Test test)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputTest(test))
@@ -67,7 +67,6 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (SelectQuiz(test))
                     {
                         SetAlert("Tạo đề thi thành công", "success");
-                        new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + test.Exam.Titile + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return RedirectToAction("Index");
                     }
                     else
@@ -80,8 +79,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
             SetExamViewBag();
             SetExamineeViewBag();
-            SetSchoolYearViewBag();
-            SetGradeViewBag();
+            //SetSchoolYearViewBag();
+            //SetGradeViewBag();
             SetSubjectViewBag();
             SetScoreLadderViewBag();
             return View(test);
@@ -229,11 +228,49 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Vui lòng chọn kỳ thi");
                 return false;
             }
-            //if (test.SubjectID <= 0 || test.SubjectID == null)
-            //{
-            //    ModelState.AddModelError("", "Vui lòng chọn môn thi");
-            //    return false;
-            //}
+            if (String.IsNullOrEmpty(test.CodeTestArr))
+            {
+                ModelState.AddModelError("", "Vui lòng nhập vào mã đề của đề thi. Nếu muốn tạo nhiều đề thi cùng một lúc, mỗi mã đề cách nhau dấu phẩy.");
+                return false;
+            }
+            else
+            {
+                var _regex = new Regex(@"[0-9,]");
+                var _codeTest = test.CodeTestArr.Replace(" ", string.Empty);
+                if (_regex.IsMatch(_codeTest) == false)
+                {
+                    ModelState.AddModelError("", "Mã đề không hợp lệ. Chú ý: Nếu muốn tạo nhiều đề thi cùng một lúc, mỗi mã đề cách nhau dấu phẩy.");
+                    return false;
+                }
+                else
+                {
+                    var _codeTestArr = Regex.Split(_codeTest, ",");
+                    var _exam = new ExamDAO().GetExamById(test.ExamID);
+                    var _testList = new TestDAO().GetAllTestByExam(_exam);
+                    string temp = null;
+                    for (int i = 0; i < _codeTestArr.Length; i++)
+                    {
+                        if (_codeTestArr[i] == temp)
+                        {
+                            ModelState.AddModelError("", "Mã đề không hợp lệ. Chú ý: Nếu muốn tạo nhiều đề thi cùng một lúc, mỗi mã đề cách nhau dấu phẩy, mã đề phải khác nhau.");
+                            return false;
+                        }
+                        else
+                        {
+                            for (int j = 0; j < _testList.Count; j++)
+                            {
+                                if (_testList[j].CodeTest.ToString() == _codeTestArr[i])
+                                {
+                                    ModelState.AddModelError("", "Mã đề không hợp lệ. Mã đề phải khác nhau.");
+                                    return false;
+                                }
+                            }
+                        }
+                        temp = _codeTestArr[i];
+                    }
+                    test.CodeTestArr = _codeTest;
+                }
+            }
             if (test.NumberOfQuestions <= 0)
             {
                 ModelState.AddModelError("", "Số câu hỏi không hợp lệ");
@@ -244,32 +281,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Thời gian làm bài không hợp lệ");
                 return false;
             }
-            //if (test.NumberOfTurns <= 0)
-            //{
-            //    ModelState.AddModelError("", "Số lượt làm bài không hợp lệ");
-            //    return false;
-            //}
-            if (test.Status == true)
-            {
-                //if (test.FromDate == null)
-                //{
-                //    ModelState.AddModelError("", "Vui lòng chọn ngày bắt đầu thi");
-                //    return false;
-                //}
-                //else if (test.ToDate == null)
-                //{
-                //    ModelState.AddModelError("", "Vui lòng chọn ngày kết thúc thi");
-                //    return false;
-                //}
-                //else
-                //{
-                //    if (test.ToDate < test.FromDate)
-                //    {
-                //        ModelState.AddModelError("", "Ngày kết thúc thi không thể nhỏ hơn ngày bắt đầu thi");
-                //        return false;
-                //    }
-                //}
-            }
+            
+            
             return true;
         }
 
@@ -289,39 +302,135 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // Chọn câu hỏi
         private bool SelectQuiz(Test test)
         {
-            // Chọn câu hỏi theo kiểu ngẫu nhiên
-            if (test.QuizSelection == Common.ConstantVariable.Random)
+            var _exam = new ExamDAO().GetExamById(test.ExamID);
+            // Chọn câu hỏi theo kiểu ngẫu nhiên (random)
+            if (test.QuizSelection == ConstantVariable.RandomQuiz)
             {
-                var _quizList = new QuizDAO().GetAllQuizBySubject(test.Exam.SubjectID);
-                if (_quizList.Count < test.NumberOfQuestions)
+                //Lấy tất cả câu hỏi theo môn học từ kỳ thi đã chọn
+                var _quizList = new QuizDAO().GetAllQuizBySubject(_exam.SubjectID);
+                var _codeTestArr = Regex.Split(test.CodeTestArr, ",");  //Trả về mảng mã đề
+                var _session = Session[ConstantVariable.USER_SESSION] as UserLogin; // Thông tin user đăng nhập
+
+                //Hình thức: không cố định câu hỏi / khác nhau ở mỗi đề
+                if (test.FixedOrChanged == ConstantVariable.ChangedQuiz)
                 {
-                    ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
-                    return false;
-                }
-                else //Random chọn câu hỏi
-                {
-                    Random random = new Random();
-                    List<int> _quizIdList = new List<int>();
-                    for (int i = 0; i < test.NumberOfQuestions; i++)
+                    //Kiểm tra số câu hỏi có đủ hay không
+                    if ((test.NumberOfQuestions * _codeTestArr.Length) > _quizList.Count)
                     {
-                        int quizId;
-                        do
-                        {
-                            quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
-                        } while (_quizIdList.Contains(quizId));
-                        _quizIdList.Add(quizId);
+                        ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
+                        return false;
                     }
-                    var _session = Session[ConstantVariable.USER_SESSION] as UserLogin;
-                    test.CreatedBy = _session.UserID;
-                    test.CreatedDate = DateTime.Now;
-                    test.ModifiedDate = DateTime.Now;
-                    return new TestDAO().Insert(test, _quizIdList);
+                    List<int> _quizIdList = new List<int>();
+                    for (int i = 0; i < _codeTestArr.Length; i++)
+                    {
+                        if (!String.IsNullOrEmpty(_codeTestArr[i]))
+                        {
+                            test.CodeTest = int.Parse(_codeTestArr[i]); //Mã đề
+                            Random random = new Random();
+                            List<int> _quizIdListByCodeTest = new List<int>();
+                            for (int j = 0; j < test.NumberOfQuestions; j++)
+                            {
+                                int quizId;
+                                do
+                                {
+                                    quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
+                                } while (_quizIdList.Contains(quizId));
+                                _quizIdListByCodeTest.Add(quizId);
+                            }
+
+                            test.CreatedBy = _session.UserID;   //Người tạo
+                            test.CreatedDate = DateTime.Now;
+                            test.ModifiedDate = DateTime.Now;
+
+                            var r = new TestDAO().Insert(test, _quizIdListByCodeTest);
+                            if (r == false)
+                            {
+                                return r;
+                            }
+
+                            new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        }
+                    }//end:For                    
                 }
+                //Hình thức: cố định câu hỏi
+                else if (test.FixedOrChanged == ConstantVariable.FixedQuiz)
+                {
+                    //Kiểm tra số câu hỏi có đủ hay không
+                    if (test.NumberOfQuestions > _quizList.Count)
+                    {
+                        ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
+                        return false;
+                    }
+                    //Trộn câu hỏi
+                    if (test.Mix == ConstantVariable.MixQuiz)
+                    {
+                        List<int> _quizIdList = new List<int>();
+                        bool r = false;
+                        for (int i = 0; i < _codeTestArr.Length; i++)
+                        {
+                            if (!String.IsNullOrEmpty(_codeTestArr[i]))
+                            {
+                                test.CodeTest = int.Parse(_codeTestArr[i]); //Mã đề
+                                Random random = new Random();
+
+                                if (i == 0)
+                                {
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        do
+                                        {
+                                            quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
+                                        } while (_quizIdList.Contains(quizId));
+                                        _quizIdList.Add(quizId);
+                                    }
+
+                                    test.CreatedBy = _session.UserID;   //Người tạo
+                                    test.CreatedDate = DateTime.Now;
+                                    test.ModifiedDate = DateTime.Now;
+
+                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    if (r == false)
+                                    {
+                                        return r;
+                                    }
+                                    new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                                }
+                                else
+                                {
+                                    List<int> _quizIdListMixQuiz = new List<int>();
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        do
+                                        {
+                                            int index = random.Next(0, _quizIdList.Count - 1);
+                                            quizId = _quizIdList[index];
+
+                                        } while (_quizIdListMixQuiz.Contains(quizId));
+
+                                        _quizIdListMixQuiz.Add(quizId);                                       
+                                    }
+                                    test.CreatedBy = _session.UserID;   //Người tạo
+                                    test.CreatedDate = DateTime.Now;
+                                    test.ModifiedDate = DateTime.Now;
+                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    if (r == false)
+                                    {
+                                        return r;
+                                    }
+                                    new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                                }
+                            }
+                        }//end:For
+                    }//end-if: trộn câu hỏi
+                }
+
             }
             // Chọn câu hỏi theo kiểu câu hỏi mới nhất
-            if (test.QuizSelection == Common.ConstantVariable.QuizNew)
+            if (test.QuizSelection == ConstantVariable.NewQuiz)
             {
-                var _quizList = new QuizDAO().GetAllQuizNewSubject(test.Exam.SubjectID);
+                var _quizList = new QuizDAO().GetAllQuizNewSubject(_exam.SubjectID);
                 if (_quizList.Count < test.NumberOfQuestions)
                 {
                     ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");

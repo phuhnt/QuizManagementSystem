@@ -51,7 +51,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Note,Status,GradeID")] Subject subject)
+        public ActionResult Create(Subject subject)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputSubject(subject))
@@ -62,8 +62,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     var _result = _subjectDao.Insert(subject);
                     if (_result > 0)
                     {
+                        var s = new SubjectDAO().GetSubjectById(_result);
                         SetAlert("Thêm môn học thành công", "success");
-                        new SystemLogDAO().Insert("Tạo môn học thành công [" + subject.Name + "] [Năm học: " + subject.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        new SystemLogDAO().Insert("Tạo môn học thành công [Môn học: " + s.Name + "] [Năm học: " + s.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/subjects/details/" + _result);
                     }
                     else
@@ -101,7 +102,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Note,Status,GradeID")] Subject subject)
+        public ActionResult Edit(Subject subject)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
             if (CheckInputSubject(subject))
@@ -155,11 +156,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             else if (_result == 1)
             {
-                SetAlert("Lỗi: môn học tồn tại đề thi. Không thể xóa môn học này.", "warning");
+                SetAlert("Lỗi: môn học tồn tại đề thi. Không thể xóa môn học này.", "error");
             }
             else if (_result == 2)
             {
-                SetAlert("Lỗi: môn học tồn tại câu hỏi. Không thể xóa môn học này.", "warning");
+                SetAlert("Lỗi: môn học tồn tại câu hỏi. Không thể xóa môn học này.", "error");
             }
             return RedirectToAction("Index");
         }

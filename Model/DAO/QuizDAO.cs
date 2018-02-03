@@ -33,11 +33,21 @@ namespace Model.DAO
         {
             var _quizCurrent = FindQuizById(quiz.Id);
 
-            quiz.AnswerChoiceNum = _quizCurrent.AnswerChoiceNum;
-            quiz.DateCreated = _quizCurrent.DateCreated;
-            quiz.UserID = _quizCurrent.UserID;
+            _quizCurrent.SubjectsID = quiz.SubjectsID;
+            _quizCurrent.CategoryID = quiz.CategoryID;
+            _quizCurrent.KindID = quiz.KindID;
+            _quizCurrent.LevelID = quiz.LevelID;
+            _quizCurrent.Note = quiz.Note;
+            _quizCurrent.ContentQuestion = quiz.ContentQuestion;
+            _quizCurrent.ContentQuestionEncode = quiz.ContentQuestionEncode;
+            _quizCurrent.AnswerChoiceNum = quiz.AnswerChoiceNum;
+            _quizCurrent.AnswerText = quiz.AnswerText;
+            _quizCurrent.AnswerTextEncode = quiz.AnswerTextEncode;
+            _quizCurrent.KeyAnswer = quiz.KeyAnswer;
+            _quizCurrent.ModifiedBy = quiz.ModifiedBy;
+            _quizCurrent.ModifiedDate = quiz.ModifiedDate;
+            _quizCurrent.Status = quiz.Status;
 
-            db.Entry(_quizCurrent).CurrentValues.SetValues(quiz);
             db.SaveChanges();
             return true;
         }

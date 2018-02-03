@@ -28,7 +28,12 @@ namespace Model.DAO
         public bool Update(Subject s)
         {
             var _subj = db.Subjects.Find(s.Id);
-            db.Entry(_subj).CurrentValues.SetValues(s);
+
+            _subj.Name = s.Name;
+            _subj.Note = s.Note;
+            _subj.Status = s.Status;
+            _subj.GradeID = s.GradeID;
+
             db.SaveChanges();
             return true;
         }
@@ -37,14 +42,16 @@ namespace Model.DAO
         public int Delete(int id)
         {
             var _subj = GetSubjectById(id);
+            var _q = db.Questions.Where(x => x.SubjectsID == id).Count();
             if (_subj.Exams.Count > 0)
             {
                 return 1; // Môn học có chứa kỳ thi
             }
-            if (db.Questions.Where(x => x.SubjectsID == id).FirstOrDefault().Id > 0)
+            if (_q > 0)
             {
-                return 2; //Môn học có chứa coau6 hỏi
+                return 2; //Môn học có chứa câu hỏi
             }
+
             db.Subjects.Remove(_subj);
             db.SaveChanges();
             return 0;
@@ -63,7 +70,7 @@ namespace Model.DAO
 
         public bool IsExistNameSubject(Subject s)
         {
-            if (db.Subjects.Where(x => x.Name == s.Name).FirstOrDefault() != null)
+            if (db.Subjects.Where(x => x.Name == s.Name && x.Id != s.Id).FirstOrDefault() != null)
                 return true;
             return false;
         }

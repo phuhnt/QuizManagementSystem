@@ -19,8 +19,8 @@
     <table class="table table-bordered table-dark">
         <tbody>
             @{
-                var _subj = new SubjectDAO().GetSubjectById(Model.SubjectsID);
-                var _grade = new GradeDAO().GetBySubject(_subj);
+        var _subj = new SubjectDAO().GetSubjectById(Model.SubjectsID);
+        var _grade = new GradeDAO().GetBySubject(_subj);
             }
             <tr>
                 <th scope="row" width="50%">Khối</th>
@@ -39,6 +39,10 @@
                         <p>@_subj.Name</p>
                     }
                 </td>
+            </tr>
+            <tr>
+                <th scope="row">Ghi chú</th>
+                <td>@Html.DisplayFor(model => model.Note)</td>
             </tr>
             <tr>
                 <th scope="row">Loại câu hỏi</th>
