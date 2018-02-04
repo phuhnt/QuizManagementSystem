@@ -17,11 +17,10 @@
 
         public int Id { get; set; }
 
-        public int CodeTest { get; set; }
+        public int? CodeTest { get; set; }
 
         [NotMapped]
         public string CodeTestArr { get; set; }
-
         [StringLength(500)]
         public string Title { get; set; }
 
@@ -48,7 +47,7 @@
 
         [NotMapped]
         public int QuizSelection { get; set; }  //Phương án chọn câu hỏi
-        
+
         [NotMapped]
         public int FixedOrChanged { get; set; } //Phương thức cố định hay thay đổi câu hỏi
 
@@ -57,7 +56,6 @@
 
         [NotMapped]
         public List<string> UserAnswer { get; set; }
-
         public virtual Exam Exam { get; set; }
 
         public virtual ScoreLadder ScoreLadder { get; set; }

@@ -14,7 +14,8 @@ namespace QuizManagementSystem.Common
 
         //Encode
         public static string htmlTagPattern = "<[^>]*(>|$)";
-        public static string pTagPattern = "<p>|</p>";
+        public static string pTagPattern    = "<p>|</p>";
+        public static string codeTestTag    = @"<\d+>|</\d+>";
 
         //Account
         public static int NotExist          =  0; // Tài khoản không tồn tại

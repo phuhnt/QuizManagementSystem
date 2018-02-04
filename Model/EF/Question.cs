@@ -46,7 +46,7 @@
         public string MixAnswer { get; set; }  // Đảo đáp án
 
         [StringLength(128)]
-        public string KeyAnswer { get; set; }  
+        public string KeyAnswer { get; set; }
 
         [StringLength(128)]
         public string MixKeyAnswer { get; set; } //Đảo key đáp án
@@ -56,7 +56,6 @@
 
         [NotMapped]
         public List<string> AnswerKey { get; set; }
-
         public int? UserID { get; set; }
 
         public DateTime? DateCreated { get; set; }

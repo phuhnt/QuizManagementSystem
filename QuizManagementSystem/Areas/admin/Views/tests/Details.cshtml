@@ -1,4 +1,5 @@
 ﻿@using Model.DAO;
+@using QuizManagementSystem.Common;
 
 @model Model.EF.Test
 
@@ -86,12 +87,19 @@
                 <td>
                     @{
                         var quizList = new TestDAO().GetAllQuiz(Model.Id);
+
                         for (int i = 1; i <= quizList.Count; i++)
                         {
                             @Html.Raw("<strong>Câu " + @i + "</strong>: " + quizList[i - 1].ContentQuestion);
                             if (Model.MixAnswer == true)
                             {
-                                @Html.Raw(quizList[i - 1].MixAnswer);
+                                string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                                int startIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
+                                _pattern = "</" + _pattern.Substring(1);
+                                int endIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
+                                
+                                var _mixAnswer = quizList[i - 1].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                                @Html.Raw(Encode.StripCodeTestTag(_mixAnswer));
                             }
                             else
                             {

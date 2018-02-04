@@ -172,13 +172,19 @@
                 @Html.Raw(quizList[i - 1].ContentQuestion);
                 if (Model.MixAnswer == true)
                 {
-                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].MixAnswer, "\r\n");
+                    string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                    int startIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
+                    _pattern = "</" + _pattern.Substring(1);
+                    int endIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
+                    var _mixAnswer = quizList[i - 1].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+
+                    _answer = System.Text.RegularExpressions.Regex.Split(Encode.StripCodeTestTag(_mixAnswer), "\r\n");
                     int index = 0;
                     for (int j = 0; j < _answer.Length; j++)
                     {
-                        if (_answer[j] != null && _answer[j] != "")
+                        if (!string.IsNullOrEmpty(_answer[j]) && _answer[j].Contains(Alphabet[index] + ". "))
                         {
-                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(Encode.StripPTag(_answer[j].ToString()))<br>
                             index++;
                         }
 
@@ -191,7 +197,7 @@
                     int index = 0;
                     for (int j = 0; j < _answer.Length; j++)
                     {
-                        if (_answer[j] != null && _answer[j] != "")
+                        if (!string.IsNullOrEmpty(_answer[j]))
                         {
                             <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
                             index++;

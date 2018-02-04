@@ -35,6 +35,16 @@ namespace Model.DAO
             return true;
         }
 
+        public bool UpdateMixAnswer(Test test)
+        {
+            var _testCurrent = GetTestById(test.Id);
+
+            _testCurrent.MixAnswer = test.MixAnswer;
+
+            db.SaveChanges();
+            return true;
+        }
+
         public Test GetTestById (int? id)
         {
             return db.Tests.Find(id);
@@ -47,6 +57,11 @@ namespace Model.DAO
         public List<Test> GetAllTestByExam(Exam exam)
         {
             return db.Tests.Where(x => x.ExamID == exam.Id).ToList();
+        }
+
+        public List<Test> GetAllTestByExam(int? examId)
+        {
+            return db.Tests.Where(x => x.ExamID == examId).ToList();
         }
 
         public List<Test> GetAllTestActive()

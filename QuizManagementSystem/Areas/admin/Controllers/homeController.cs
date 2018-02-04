@@ -25,5 +25,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             ViewBag.Quiz = _quizDao.GetAllQuizActive().Count.ToString();
             return View();
         }
+
+
     }
 }

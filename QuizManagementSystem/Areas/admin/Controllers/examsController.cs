@@ -284,7 +284,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _tests = _exam.Tests.ToList();
             for (int i = 0; i < _exam.Tests.Count; i++)
             {
-                _codeTestID[i] = _tests[i].CodeTest;
+                _codeTestID[i] = (int)_tests[i].CodeTest;
             }
             if (_codeTestID != null)
             {

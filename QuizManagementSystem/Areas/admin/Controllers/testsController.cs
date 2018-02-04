@@ -165,7 +165,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             //db.Tests.Remove(test);
             //db.SaveChanges();
             return RedirectToAction("Index");
-        }   
+        }
 
         private void SetExamViewBag(int? selectedID = null)
         {
@@ -281,8 +281,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 ModelState.AddModelError("", "Thời gian làm bài không hợp lệ");
                 return false;
             }
-            
-            
+
+
             return true;
         }
 
@@ -373,7 +373,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                             {
                                 test.CodeTest = int.Parse(_codeTestArr[i]); //Mã đề
                                 Random random = new Random();
-                                
+
                                 if (i == 0)
                                 {
                                     for (int j = 0; j < test.NumberOfQuestions; j++)
@@ -473,7 +473,15 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                             quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
                                         } while (_quizIdList.Contains(quizId));
                                         _quizIdList.Add(quizId);
+                                        var _quiz = new QuizDAO().GetById(quizId);
+
+                                        _quiz.MixAnswer += "<" + test.CodeTest + ">" + _quiz.AnswerText + "</" + test.CodeTest + ">";
+                                        _quiz.MixKeyAnswer += "<" + test.CodeTest + ">" + _quiz.KeyAnswer + "</" + test.CodeTest + ">";
+
+                                        new QuizDAO().UpdateMixAnswer(_quiz);
                                     }
+
+
 
                                     test.CreatedBy = _session.UserID;   //Người tạo
                                     test.CreatedDate = DateTime.Now;
@@ -498,38 +506,60 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                         int alpha = 0;
                                         // Remove các giá trị null  hoặc ""
                                         for (int k = 0; k < _answer.Count; k++)
-                                        { 
-                                            if (_answer[k] != null || _answer[k] != "")
+                                        {
+                                            if (!String.IsNullOrEmpty(_answer[k]))
                                             {
                                                 var strPattern = "" + Alphabet[alpha] + ". ";
                                                 _answerArr.Add(Encode.StripAnswerLabel(Encode.StripPTag(_answer[k]), strPattern));
                                                 alpha++;
                                             }
-                                            
-                                        }
 
-                                        // Trộn
-                                        for (int k = 0; k < _answerArr.Count; k++)
+                                        }
+                                        _quiz.MixAnswer += "<" + test.CodeTest + ">";
+                                        int _numChoice = _answerArr.Count;
+                                        int indexKey = 0;
+                                        // Lấy index của đáp án
+                                        for (int p = 0; p < Alphabet.Length; p++)
                                         {
-                                            var index = random.Next(0, _answerArr.Count - 1);
-                                            if (_answerArr[index] != null || _answerArr[index] != "")
+                                            if (Alphabet[p].ToString() == _quiz.KeyAnswer.ToString())
                                             {
-                                                _quiz.MixAnswer += "<p>" + Alphabet[k] + ". " + Encode.StripPTag(_answerArr[index]) + "\r\n</p>";
-                                                if (_answerArr[index].Contains(_quiz.KeyAnswer.ToString() + ". "))
-                                                {
-                                                    _quiz.MixKeyAnswer = Alphabet[index].ToString();
-                                                }
-                                                _answerArr.RemoveAt(index);
-                                                new QuizDAO().UpdateMixAnswer(_quiz);
+                                                indexKey = p;
+                                                break;
                                             }
-                                            
                                         }
+                                        // Trộn đáp án của câu hỏi
+                                        for (int k = 0; k < _numChoice; k++)
+                                        {
+                                            var indexRandom = random.Next(0, _answerArr.Count - 1);
+                                            if (!String.IsNullOrEmpty(_answerArr[indexRandom]))
+                                            {
+                                                _quiz.MixAnswer += "<p>" + Alphabet[k] + ". " + Encode.StripPTag(_answerArr[indexRandom]) + "\r\n</p>";
+                                                if (indexKey != -1)
+                                                {
+                                                    if (indexRandom < indexKey)
+                                                    {
+                                                        indexKey--;
+                                                    }
+                                                    else if (indexRandom == indexKey)
+                                                    {
+                                                        _quiz.MixKeyAnswer += "<" + test.CodeTest + ">" + Alphabet[k].ToString() + "</" + test.CodeTest + ">";
+                                                        indexKey = -1;
+                                                    }
+                                                }
+                                                _answerArr.RemoveAt(indexRandom);
+                                            }
 
-                                    }
+                                        }
+                                        _quiz.MixAnswer += "</" + test.CodeTest + ">";
+                                        test.MixAnswer = true;
+                                        new QuizDAO().UpdateMixAnswer(_quiz);
+                                        new TestDAO().UpdateMixAnswer(test);
+                                    }//end-for
+
                                     test.CreatedBy = _session.UserID;   //Người tạo
                                     test.CreatedDate = DateTime.Now;
                                     test.ModifiedDate = DateTime.Now;
-                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    r = new TestDAO().Insert(test, _temp);
                                     if (r == false)
                                     {
                                         return r;

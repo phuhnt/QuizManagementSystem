@@ -45,5 +45,10 @@ namespace QuizManagementSystem.Common
         {
             return Regex.Replace(answer, strPattern, string.Empty);
         }
+
+        public static string StripCodeTestTag(string s)
+        {
+            return Regex.Replace(s, ConstantVariable.codeTestTag, string.Empty);
+        }
     }
 }
