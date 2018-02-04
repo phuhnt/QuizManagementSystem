@@ -52,6 +52,17 @@ namespace Model.DAO
             return true;
         }
 
+        public bool UpdateMixAnswer(Question question)
+        {
+            var _quizCurrent = GetById(question.Id);
+
+            _quizCurrent.MixAnswer = question.MixAnswer;
+            _quizCurrent.MixKeyAnswer = question.MixKeyAnswer;
+
+            db.SaveChanges();
+            return true;
+        }
+
         // Delete
         public bool Delete(Question quiz)
         {

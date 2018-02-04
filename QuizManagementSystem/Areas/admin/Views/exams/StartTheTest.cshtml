@@ -145,7 +145,17 @@
                 <div class="card-body text-center">
                     <strong> @Model.Exam.Titile.ToUpper()</strong><br />
                     <strong>Môn thi: @Model.Exam.Subject.Name</strong><br />
-                    <i>Thời gian làm bài: @Model.Time (phút)</i><br />
+                    <strong>Mã đề: @Model.CodeTest</strong><br />
+                    @{
+                        if (Model.Time == null | Model.Time == 0)
+                        {
+                            <i>Thời gian làm bài: không giới hạn thời gian</i><br />
+                        }
+                        else
+                        {
+                            <i>Thời gian làm bài: @Model.Time (phút)</i><br />
+                        }
+                    }
                 </div>
             </div>
             <hr />
@@ -160,18 +170,36 @@
                 string[] _answer = null;
                 <input type="checkbox" id="@i" data-toggle="tooltip" title="Đánh dấu câu hỏi này" /><strong id="@i">Câu @i: </strong>
                 @Html.Raw(quizList[i - 1].ContentQuestion);
-                _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
-                int index = 0;
-                for (int j = 0; j < _answer.Length; j++)
+                if (Model.MixAnswer == true)
                 {
-                    if (_answer[j] != null && _answer[j] != "")
+                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].MixAnswer, "\r\n");
+                    int index = 0;
+                    for (int j = 0; j < _answer.Length; j++)
                     {
-                        <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
-                        index++;
-                    }
+                        if (_answer[j] != null && _answer[j] != "")
+                        {
+                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                            index++;
+                        }
 
+                    }
+                    <hr />
                 }
-                <hr />
+                else
+                {
+                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
+                    int index = 0;
+                    for (int j = 0; j < _answer.Length; j++)
+                    {
+                        if (_answer[j] != null && _answer[j] != "")
+                        {
+                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                            index++;
+                        }
+
+                    }
+                    <hr />
+                }
             }
         </div>
     }

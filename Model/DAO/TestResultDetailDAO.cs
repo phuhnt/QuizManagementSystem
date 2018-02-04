@@ -28,10 +28,17 @@ namespace Model.DAO
             return db.TestResultDetails.Find(id);
         }
 
-        public TestResultDetail GetTestResult(int? userId, int? examId)
+        public int GetTimeToTake(int? userId, int? examId)
         {
             var model = db.TestResultDetails.Where(x => x.UserID == userId && x.ExamID == examId);
-            return model.OrderByDescending(x => x.TimeToTake).First();
+            if (model == null)
+            {
+                return 0;
+            }
+            else
+            {
+                return model.Count();
+            }
         }
 
         public List<TestResultDetail> GetAll(int? userId, int? examId)

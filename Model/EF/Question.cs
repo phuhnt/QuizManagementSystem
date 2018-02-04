@@ -1,4 +1,4 @@
-namespace Model.EF
+﻿namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -42,8 +42,14 @@ namespace Model.EF
         [MaxLength]
         public string AnswerTextEncode { get; set; }
 
+        [MaxLength]
+        public string MixAnswer { get; set; }  // Đảo đáp án
+
         [StringLength(128)]
-        public string KeyAnswer { get; set; }
+        public string KeyAnswer { get; set; }  
+
+        [StringLength(128)]
+        public string MixKeyAnswer { get; set; } //Đảo key đáp án
 
         [NotMapped]
         public List<string> AnswerList { get; set; }

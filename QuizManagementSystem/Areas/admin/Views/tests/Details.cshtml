@@ -89,7 +89,14 @@
                         for (int i = 1; i <= quizList.Count; i++)
                         {
                             @Html.Raw("<strong>Câu " + @i + "</strong>: " + quizList[i - 1].ContentQuestion);
-                            @Html.Raw(quizList[i - 1].AnswerText);
+                            if (Model.MixAnswer == true)
+                            {
+                                @Html.Raw(quizList[i - 1].MixAnswer);
+                            }
+                            else
+                            {
+                                @Html.Raw(quizList[i - 1].AnswerText);
+                            }
                             <br />
                         }
                     }

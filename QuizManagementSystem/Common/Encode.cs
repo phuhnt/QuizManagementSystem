@@ -40,5 +40,10 @@ namespace QuizManagementSystem.Common
         {
             return Regex.Replace(html, ConstantVariable.pTagPattern, string.Empty);
         }
+
+        public static string StripAnswerLabel(string answer, string strPattern)
+        {
+            return Regex.Replace(answer, strPattern, string.Empty);
+        }
     }
 }

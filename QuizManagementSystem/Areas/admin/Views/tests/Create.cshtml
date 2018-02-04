@@ -138,10 +138,10 @@
         <div class="form-group">
             @Html.Label("Trộn đề & câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixQuiz, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAnswer, new { htmlAttributes = new { @class = "form-control" } }) Trộn đáp án
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAll, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi và đáp án
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.NoMix, new { htmlAttributes = new { @class = "form-control" } }) Không trộn
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixQuiz, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAnswer, new { htmlAttributes = new { @class = "form-control" } }) Trộn đáp án <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAll, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi và đáp án <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.NoMix, new { htmlAttributes = new { @class = "form-control" } }) Không trộn <br />
                 @Html.ValidationMessageFor(model => model.Mix, "", new { @class = "text-danger" })
             </div>
         </div>

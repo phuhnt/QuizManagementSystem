@@ -105,6 +105,7 @@
                     }
                     Môn thi: @test.Exam.Subject.Name
                 </strong><br />
+                <strong>Mã đề: @test.CodeTest</strong> <br />
                 <i>Thời gian làm bài: @test.Time (phút)</i><br />
                 <hr />
                 <strong>KẾT QUẢ</strong><br />
@@ -137,46 +138,94 @@
                 string[] _answer = null;
                 <strong id="@i">Câu @i: </strong>
                 @Html.Raw(quizList[i - 1].ContentQuestion);
-                _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
-                int index = 0;
-                int flag = -1;
-                for (int j = 0; j < _answer.Length; j++)
-                {
-                    if (_answer[j] != null && _answer[j] != "")
-                    {  
-                        if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ". ") && !userAnswer[i - 1].Contains(quizList[i - 1].KeyAnswer.ToString())
-                            || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ".") && !userAnswer[i - 1].Contains(quizList[i - 1].KeyAnswer.ToString()))
-                        {
-                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-danger text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
-                            flag = 0;
-                        }
 
-                        else if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].KeyAnswer.ToString() + ". ")
-                            || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].KeyAnswer.ToString() + "."))
+                if (test.MixAnswer == true)
+                {
+                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].MixAnswer, "\r\n");
+                    int index = 0;
+                    int flag = -1;
+                    for (int j = 0; j < _answer.Length; j++)
+                    {
+                        if (_answer[j] != null && _answer[j] != "")
                         {
-                            if (flag == 0)
+                            if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ". ") && !userAnswer[i - 1].Contains(quizList[i - 1].MixKeyAnswer.ToString())
+                                || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ".") && !userAnswer[i - 1].Contains(quizList[i - 1].MixKeyAnswer.ToString()))
                             {
-                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-danger text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                flag = 0;
+                            }
+
+                            else if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].MixKeyAnswer.ToString() + ". ")
+                                || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].MixKeyAnswer.ToString() + "."))
+                            {
+                                if (flag == 0)
+                                {
+                                    <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                }
+                                else
+                                {
+                                    <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                }
+                                if (j == _answer.Length - 1)
+                                {
+                                    flag = -1;
+                                }
                             }
                             else
                             {
-                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
                             }
-                            if (j == _answer.Length - 1)
-                            {
-                                flag = -1;
-                            }
-                        }
-                        else
-                        {
-                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+
+                            index++;
                         }
 
-                        index++;
                     }
-
+                    <hr />
                 }
-                <hr />
+                else
+                {
+                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
+                    int index = 0;
+                    int flag = -1;
+                    for (int j = 0; j < _answer.Length; j++)
+                    {
+                        if (_answer[j] != null && _answer[j] != "")
+                        {
+                            if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ". ") && !userAnswer[i - 1].Contains(quizList[i - 1].KeyAnswer.ToString())
+                                || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(userAnswer[i - 1].ToString() + ".") && !userAnswer[i - 1].Contains(quizList[i - 1].KeyAnswer.ToString()))
+                            {
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-danger text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                flag = 0;
+                            }
+
+                            else if (QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].KeyAnswer.ToString() + ". ")
+                                || QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()).Contains(quizList[i - 1].KeyAnswer.ToString() + "."))
+                            {
+                                if (flag == 0)
+                                {
+                                    <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                }
+                                else
+                                {
+                                    <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" checked="checked" disabled /> <span class="bg-success text-white">@Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))</span><br>
+                                }
+                                if (j == _answer.Length - 1)
+                                {
+                                    flag = -1;
+                                }
+                            }
+                            else
+                            {
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" disabled /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                            }
+
+                            index++;
+                        }
+
+                    }
+                    <hr />
+                }
+
             }
         }
     </div>

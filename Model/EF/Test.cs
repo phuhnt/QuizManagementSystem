@@ -33,7 +33,7 @@
 
         public int? ScoreLadderID { get; set; }
 
-        public string MixAnswer { get; set; }
+        public bool? MixAnswer { get; set; }
 
         public int? CreatedBy { get; set; }
 

@@ -265,8 +265,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 }
             }
             // Kiểm tra số lượt làm bài
-            var _testResultUser = new TestResultDetailDAO().GetTestResult(_session.UserID, _exam.Id);
-            if (_testResultUser.TimeToTake >= _exam.NumberOfTurns)
+            var _timeToTakeUser = new TestResultDetailDAO().GetTimeToTake(_session.UserID, _exam.Id);
+            if (_timeToTakeUser >= _exam.NumberOfTurns)
             {
                 SetAlert("Bạn đã hết lượt làm bài của kỳ thi này.", "error");
                 return Redirect("/");

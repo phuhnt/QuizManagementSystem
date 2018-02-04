@@ -365,7 +365,97 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     if (test.Mix == ConstantVariable.MixQuiz)
                     {
                         List<int> _quizIdList = new List<int>();
+                        List<int> _quizIdList0 = new List<int>();
                         bool r = false;
+                        for (int i = 0; i < _codeTestArr.Length; i++)
+                        {
+                            if (!String.IsNullOrEmpty(_codeTestArr[i]))
+                            {
+                                test.CodeTest = int.Parse(_codeTestArr[i]); //Mã đề
+                                Random random = new Random();
+                                
+                                if (i == 0)
+                                {
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        do
+                                        {
+                                            quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
+                                        } while (_quizIdList.Contains(quizId));
+                                        _quizIdList.Add(quizId);
+                                    }
+
+                                    test.CreatedBy = _session.UserID;   //Người tạo
+                                    test.CreatedDate = DateTime.Now;
+                                    test.ModifiedDate = DateTime.Now;
+
+                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    if (r == false)
+                                    {
+                                        return r;
+                                    }
+                                    _quizIdList0 = _quizIdList;
+                                    new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                                }
+                                else
+                                {
+                                    List<int> _quizIdListMixQuiz = new List<int>();
+                                    List<int> _temp = _quizIdList0;
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        int index;
+                                        do
+                                        {
+                                            index = random.Next(0, _temp.Count - 1);
+                                            quizId = _temp[index];
+
+                                        } while (_quizIdListMixQuiz.Contains(quizId));
+
+                                        _quizIdListMixQuiz.Add(quizId);
+                                        _temp.RemoveAt(index);
+                                        if (j == test.NumberOfQuestions - 1)
+                                        {
+                                            int _count = 0;
+                                            for (int k = 0; k < test.NumberOfQuestions; k++)
+                                            {
+                                                if (_quizIdListMixQuiz[k] == _quizIdList0[k])
+                                                {
+                                                    _count++;
+                                                }
+                                            }
+                                            if (_count >= test.NumberOfQuestions)
+                                            {
+                                                j = 0;
+                                                _temp = null;
+                                                _temp = _quizIdListMixQuiz;
+                                                _quizIdListMixQuiz = null;
+                                            }
+                                        }
+                                    }
+                                    test.CreatedBy = _session.UserID;   //Người tạo
+                                    test.CreatedDate = DateTime.Now;
+                                    test.ModifiedDate = DateTime.Now;
+                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    if (r == false)
+                                    {
+                                        return r;
+                                    }
+                                    new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                                }
+                            }
+                        }//end:For
+                    }//end-if: trộn câu hỏi
+
+                    //Trộn đáp án
+                    else if (test.Mix == ConstantVariable.MixAnswer)
+                    {
+                        char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+                        List<int> _quizIdList = new List<int>();
+                        List<int> _quizIdList0 = new List<int>();
+                        bool r = false;
+
                         for (int i = 0; i < _codeTestArr.Length; i++)
                         {
                             if (!String.IsNullOrEmpty(_codeTestArr[i]))
@@ -394,22 +484,47 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                     {
                                         return r;
                                     }
+                                    _quizIdList0 = _quizIdList;
                                     new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                                 }
-                                else
+                                else //Mix: Answer
                                 {
-                                    List<int> _quizIdListMixQuiz = new List<int>();
-                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    List<int> _temp = _quizIdList0;
+                                    for (int j = 0; j < _temp.Count; j++)
                                     {
-                                        int quizId;
-                                        do
+                                        var _quiz = new QuizDAO().GetById(_temp[j]);
+                                        var _answer = Regex.Split(_quiz.AnswerText, "\r\n").ToList();
+                                        List<string> _answerArr = new List<string>();
+                                        int alpha = 0;
+                                        // Remove các giá trị null  hoặc ""
+                                        for (int k = 0; k < _answer.Count; k++)
+                                        { 
+                                            if (_answer[k] != null || _answer[k] != "")
+                                            {
+                                                var strPattern = "" + Alphabet[alpha] + ". ";
+                                                _answerArr.Add(Encode.StripAnswerLabel(Encode.StripPTag(_answer[k]), strPattern));
+                                                alpha++;
+                                            }
+                                            
+                                        }
+
+                                        // Trộn
+                                        for (int k = 0; k < _answerArr.Count; k++)
                                         {
-                                            int index = random.Next(0, _quizIdList.Count - 1);
-                                            quizId = _quizIdList[index];
+                                            var index = random.Next(0, _answerArr.Count - 1);
+                                            if (_answerArr[index] != null || _answerArr[index] != "")
+                                            {
+                                                _quiz.MixAnswer += "<p>" + Alphabet[k] + ". " + Encode.StripPTag(_answerArr[index]) + "\r\n</p>";
+                                                if (_answerArr[index].Contains(_quiz.KeyAnswer.ToString() + ". "))
+                                                {
+                                                    _quiz.MixKeyAnswer = Alphabet[index].ToString();
+                                                }
+                                                _answerArr.RemoveAt(index);
+                                                new QuizDAO().UpdateMixAnswer(_quiz);
+                                            }
+                                            
+                                        }
 
-                                        } while (_quizIdListMixQuiz.Contains(quizId));
-
-                                        _quizIdListMixQuiz.Add(quizId);                                       
                                     }
                                     test.CreatedBy = _session.UserID;   //Người tạo
                                     test.CreatedDate = DateTime.Now;
@@ -422,8 +537,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                     new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                                 }
                             }
-                        }//end:For
-                    }//end-if: trộn câu hỏi
+                        }
+
+                    }
                 }
 
             }
