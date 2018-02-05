@@ -1,0 +1,73 @@
+﻿@model PagedList.IPagedList<Model.EF.SystemLog>
+@using PagedList;
+@using PagedList.Mvc;
+@using Model.DAO;
+
+@{
+    ViewBag.Title = "Log hệ thống | Quiz Management System";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+@section linkHeader{
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <link href="~/Assets/Admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+@section breadcrumb{
+    <a href="/admin/log">Nhật ký hệ thống</a>
+}
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-table"></i> Nhật ký hệ thống
+    </div>
+
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "log", FormMethod.Get))
+        {
+            <div class="input-group col-6" style="margin-bottom: 20px;">
+                <input type="text" class="form-control" name="searchString" value="@ViewBag.SearchString" placeholder="Nhập thông tin cần tìm..." aria-label="searchString" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hành động</th>
+                            <th>Thực hiện bởi</th>
+                            <th>Thời gian thực hiện</th>
+                            <th>Ngày thực hiện</th>
+                            <th>Địa chỉ IP</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hành động</th>
+                            <th>Thực hiện bởi</th>
+                            <th>Thời gian thực hiện</th>
+                            <th>Ngày thực hiện</th>
+                            <th>Địa chỉ IP</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr>
+                            <td>@Html.DisplayFor(model => item.Id)</td>
+                            <td>@Html.DisplayFor(model => item.EventName)</td>
+                            <td>@Html.DisplayFor(model => item.PerformedBy)</td>
+                            <td>@item.ExTime.Value.ToString(@"hh\:mm\:ss")</td>
+                            <td>@item.ExDate.Value.ToShortDateString()</td>
+                            <td>@Html.DisplayFor(model => item.ClientIP)</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page, @searchString = @ViewBag.SearchString }))
+            </div>
+        }
+    </div>
+</div>
