@@ -73,7 +73,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         public ActionResult logout()
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
-            new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "] đăng xuất khỏi hệ thống", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+            if (_userSession != null)
+            {
+                new SystemLogDAO().Insert("Người dùng [" + _userSession.UserName + "] đăng xuất khỏi hệ thống", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+            }
+            
             Session[ConstantVariable.USER_SESSION] = null;
             return Redirect("/admin/login");
         }

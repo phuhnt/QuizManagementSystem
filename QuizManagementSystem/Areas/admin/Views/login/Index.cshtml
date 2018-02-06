@@ -38,20 +38,20 @@
                             <label for="exampleInputPassword1">Mật khẩu</label>
                             @Html.PasswordFor(model => model.PassWord, new { @class = "form-control" })
                         </div>
-                        <div class="form-group">
+                        @*<div class="form-group">
                             <div class="form-check">
                                 <label>
                                     @Html.CheckBoxFor(model => model.RememberMe, new { @class = "form-check-label" })Nhớ mật khẩu
                                 </label>
                             </div>
-                        </div>
+                        </div>*@
                         <button class="btn btn-primary btn-block" type="submit">Đăng nhập</button>
                     </form>
                 }
-                <div class="text-center">
+                @*<div class="text-center">
                     <a class="d-block small mt-3" href="register.html">Đăng ký tài khoản</a>
                     <a class="d-block small" href="forgot-password.html">Quên mật khẩu?</a>
-                </div>
+                </div>*@
             </div>
         </div>
     </div>

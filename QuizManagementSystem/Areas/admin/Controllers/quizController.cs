@@ -49,6 +49,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HasCredential(RoleID = "QUIZ_CREATE")]
         public ActionResult Create()
         {
+            SetSchoolYearViewBag();
             SetSubjectViewBag();
             SetGradeViewBag();
             SetCategoryViewBag();
@@ -91,11 +92,21 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     question.DateCreated = DateTime.Now;            //Ngày tạo
                     question.ModifiedDate = question.DateCreated;   // Ngày chỉnh sửa
 
-                    _quizDao.Insert(question);                      // Gọi phương thức để tạo câu hỏi
-                    new SystemLogDAO().Insert("Tạo câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
-                    return RedirectToAction("Index", "quiz");
+                    var r = _quizDao.Insert(question);              // Gọi phương thức để tạo câu hỏi
+                    if (r > 0)
+                    {
+                        new SystemLogDAO().Insert("Tạo câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        SetAlert("Tạo câu hỏi thành công.", "success");
+                        return RedirectToAction("Index", "quiz");
+                    }
+                    else
+                    {
+                        SetAlert("Chỉnh sửa câu hỏi không thành công.", "error");
+                        return Redirect("/admin/quiz");
+                    }                  
                 }
             }
+            SetSchoolYearViewBag();
             SetGradeViewBag(question);
             SetCategoryViewBag(question.CategoryID);
             SetKindViewBag(question.KindID);
@@ -129,6 +140,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                 return HttpNotFound();
             }
 
+            SetSchoolYearViewBag();
             SetGradeViewBag(_quiz);
             SetSubjectViewBag(_quiz.SubjectsID);
             SetCategoryViewBag(_quiz.CategoryID);
@@ -144,7 +156,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         [HasCredential(RoleID = "QUIZ_EDIT")]
-        public ActionResult Edit([Bind(Include = "Id,SubjectsID,CategoryID,KindID,LevelID,ContentQuestion,AnswerText,KeyAnswer,Status")] Question question)
+        public ActionResult Edit(Question question)
         {
             if (ModelState.IsValid)
             {
@@ -165,8 +177,14 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
                 if (_result == true)
                 {
+                    SetAlert("Chỉnh sửa câu hỏi thành công.", "success");
                     new SystemLogDAO().Insert("Sửa câu hỏi thành công [ID = " + question.Id + "] [ID môn học: " + question.SubjectsID + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                     return Redirect("/admin/quiz/details/" + question.Id);
+                }
+                else
+                {
+                    SetAlert("Chỉnh sửa câu hỏi không thành công.", "error");
+                    return Redirect("/admin/quiz");
                 }
 
             }
@@ -271,6 +289,11 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var _sub = new SubjectDAO();
 
             ViewBag.SubjectsID = new SelectList(_sub.GetAllSubjects(), "Id", "Name", selectedID);
+        }
+
+        private void SetSchoolYearViewBag(int? selectedID = null)
+        {
+            ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", selectedID);
         }
 
         public void SetGradeViewBag(Question quiz)

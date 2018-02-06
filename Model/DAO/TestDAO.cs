@@ -35,6 +35,16 @@ namespace Model.DAO
             return true;
         }
 
+        public bool UpdateMixQuiz(Test test)
+        {
+            var _testCurrent = GetTestById(test.Id);
+
+            _testCurrent.MixQuiz = test.MixQuiz;
+
+            db.SaveChanges();
+            return true;
+        }
+
         public bool UpdateMixAnswer(Test test)
         {
             var _testCurrent = GetTestById(test.Id);

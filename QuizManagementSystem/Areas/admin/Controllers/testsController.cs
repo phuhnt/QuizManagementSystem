@@ -10,12 +10,14 @@ using System.Web.Mvc;
 using Model.DAO;
 using Model.EF;
 using QuizManagementSystem.Common;
+using QuizManagementSystem.Controllers;
 
 namespace QuizManagementSystem.Areas.admin.Controllers
 {
     public class testsController : baseController
     {
 
+        [HasCredential(RoleID = "TEST_HOME")]
         // GET: admin/tests
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
@@ -24,6 +26,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(testModel);
         }
 
+        [HasCredential(RoleID = "TEST_DETAIL")]
         // GET: admin/tests/Details/5
         [HttpGet]
         public ActionResult Details(int? id)
@@ -40,13 +43,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(test);
         }
 
+        [HasCredential(RoleID = "TEST_CREATE")]
         // GET: admin/tests/Create
         public ActionResult Create()
         {
             SetExamViewBag();
             SetExamineeViewBag();
-            //SetSchoolYearViewBag();
-            //SetGradeViewBag();
             SetSubjectViewBag();
             SetScoreLadderViewBag();
             return View();
@@ -57,6 +59,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "TEST_CREATE")]
         public ActionResult Create(Test test)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
@@ -79,13 +82,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
             SetExamViewBag();
             SetExamineeViewBag();
-            //SetSchoolYearViewBag();
-            //SetGradeViewBag();
             SetSubjectViewBag();
             SetScoreLadderViewBag();
             return View(test);
         }
 
+        [HasCredential(RoleID = "TEST_EDIT")]
         // GET: admin/tests/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -112,6 +114,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "TEST_CREATE")]
         public ActionResult Edit([Bind(Include = "Id,CodeTest,Title,Note,NumberOfQuestions,Time,ExamID,ScoreLadderID,Status")] Test test)
         {
             var _userSession = Session[ConstantVariable.USER_SESSION] as UserLogin;
@@ -141,6 +144,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View();
         }
 
+        [HasCredential(RoleID = "TEST_DELETE")]
         // GET: admin/tests/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -156,6 +160,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View();
         }
 
+        [HasCredential(RoleID = "TEST_DELETE")]
         // POST: admin/tests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -271,7 +276,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     test.CodeTestArr = _codeTest;
                 }
             }
-            if (test.NumberOfQuestions <= 0)
+            if (test.NumberOfQuestions <= 0 || test.NumberOfQuestions == null)
             {
                 ModelState.AddModelError("", "Số câu hỏi không hợp lệ");
                 return false;
@@ -352,21 +357,23 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         }
                     }//end:For                    
                 }
-                //Hình thức: cố định câu hỏi
+                // Hình thức: cố định câu hỏi
                 else if (test.FixedOrChanged == ConstantVariable.FixedQuiz)
                 {
-                    //Kiểm tra số câu hỏi có đủ hay không
+                    // Kiểm tra số câu hỏi có đủ hay không
                     if (test.NumberOfQuestions > _quizList.Count)
                     {
                         ModelState.AddModelError("", "Số câu hỏi trong ngân hàng câu hỏi không đủ để tạo đề thi này.");
                         return false;
                     }
-                    //Trộn câu hỏi
+
+                    // Trộn câu hỏi
                     if (test.Mix == ConstantVariable.MixQuiz)
                     {
                         List<int> _quizIdList = new List<int>();
                         List<int> _quizIdList0 = new List<int>();
                         bool r = false;
+        
                         for (int i = 0; i < _codeTestArr.Length; i++)
                         {
                             if (!String.IsNullOrEmpty(_codeTestArr[i]))
@@ -384,6 +391,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                             quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
                                         } while (_quizIdList.Contains(quizId));
                                         _quizIdList.Add(quizId);
+
+                                        var _quiz = new QuizDAO().GetById(quizId);
+
+                                        _quiz.MixQuiz += "<" + test.CodeTest + ">" + j + "</" + test.CodeTest + ">";
+
+                                        new QuizDAO().UpdateMixQuiz(_quiz);
                                     }
 
                                     test.CreatedBy = _session.UserID;   //Người tạo
@@ -395,13 +408,13 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                     {
                                         return r;
                                     }
-                                    _quizIdList0 = _quizIdList;
+                                    _quizIdList0 = _quizIdList.ToList();
                                     new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                                 }
                                 else
                                 {
                                     List<int> _quizIdListMixQuiz = new List<int>();
-                                    List<int> _temp = _quizIdList0;
+                                    List<int> _temp = _quizIdList0.ToList();
                                     for (int j = 0; j < test.NumberOfQuestions; j++)
                                     {
                                         int quizId;
@@ -427,21 +440,31 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                                             }
                                             if (_count >= test.NumberOfQuestions)
                                             {
-                                                j = 0;
-                                                _temp = null;
-                                                _temp = _quizIdListMixQuiz;
-                                                _quizIdListMixQuiz = null;
+                                                j = -1;
+                                                _temp.Clear();
+                                                _temp = _quizIdListMixQuiz.ToList();
+                                                _quizIdListMixQuiz.Clear();
                                             }
                                         }
+                                    }
+                                    for (int p = 0; p < _quizIdListMixQuiz.Count; p++)
+                                    {
+                                        var _quiz = new QuizDAO().GetById(_quizIdListMixQuiz[p]);
+
+                                        _quiz.MixQuiz += "<" + test.CodeTest + ">" + p + "</" + test.CodeTest + ">";
+
+                                        new QuizDAO().UpdateMixQuiz(_quiz);
                                     }
                                     test.CreatedBy = _session.UserID;   //Người tạo
                                     test.CreatedDate = DateTime.Now;
                                     test.ModifiedDate = DateTime.Now;
-                                    r = new TestDAO().Insert(test, _quizIdList);
+                                    r = new TestDAO().Insert(test, _quizIdListMixQuiz);
                                     if (r == false)
                                     {
                                         return r;
                                     }
+                                    test.MixQuiz = true;
+                                    new TestDAO().UpdateMixQuiz(test);
                                     new SystemLogDAO().Insert("Tạo đề thi thành công [Mã đề: " + test.CodeTest + "] [Kỳ thi: " + _exam.Titile + "]", _session.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                                 }
                             }
@@ -570,7 +593,87 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         }
 
                     }
-                }
+
+                    // Trộn câu hỏi và đáp án
+                    else if (test.Mix == ConstantVariable.MixAll)
+                    {
+                        // Trộn câu hỏi
+                        List<int> _quizIdList = new List<int>(); //Chứa câu hỏi của đề đầu tiên
+                        List<int> _quizIdList0 = new List<int>(); //Chứa câu hỏi của các đề tiếp theo
+                        bool r = false;
+                        for (int i = 0; i < _codeTestArr.Length; i++)
+                        {
+                            if (!String.IsNullOrEmpty(_codeTestArr[i]))
+                            {
+                                test.CodeTest = int.Parse(_codeTestArr[i]); //Mã đề
+                                Random random = new Random();
+
+                                if (i == 0)
+                                {
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        do
+                                        {
+                                            quizId = _quizList[random.Next(0, _quizList.Count - 1)].Id;
+                                        } while (_quizIdList.Contains(quizId));
+                                        _quizIdList.Add(quizId);
+                                    }
+                                    _quizIdList0 = _quizIdList;
+                                }//end-if (i == 0)
+                                else
+                                {
+                                    List<int> _quizIdListMixQuiz = new List<int>();
+                                    List<int> _temp = _quizIdList0;
+                                    for (int j = 0; j < test.NumberOfQuestions; j++)
+                                    {
+                                        int quizId;
+                                        int index;
+                                        do
+                                        {
+                                            index = random.Next(0, _temp.Count - 1);
+                                            quizId = _temp[index];
+
+                                        } while (_quizIdListMixQuiz.Contains(quizId));
+
+                                        _quizIdListMixQuiz.Add(quizId);
+                                        _temp.RemoveAt(index);
+                                        if (j == test.NumberOfQuestions - 1)
+                                        {
+                                            int _count = 0;
+                                            for (int k = 0; k < test.NumberOfQuestions; k++)
+                                            {
+                                                if (_quizIdListMixQuiz[k] == _quizIdList0[k])
+                                                {
+                                                    _count++;
+                                                }
+                                            }
+                                            if (_count >= test.NumberOfQuestions)
+                                            {
+                                                j = 0;
+                                                _temp = null;
+                                                _temp = _quizIdListMixQuiz;
+                                                _quizIdListMixQuiz = null;
+                                            }
+                                        }
+                                    }
+                                }//end-else of if (i == 0)
+
+
+
+                            }//end-if (!String.IsNullOrEmpty(_codeTestArr[i]))
+                            
+                        }//end-for
+
+                        // Trộn đáp án
+
+
+                        // Insert dữ liệu
+
+
+
+                    }//end-if (test.Mix == ConstantVariable.MixAll)
+                }//end-if (test.FixedOrChanged == ConstantVariable.FixedQuiz)
 
             }
             // Chọn câu hỏi theo kiểu câu hỏi mới nhất

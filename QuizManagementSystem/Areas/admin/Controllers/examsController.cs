@@ -17,6 +17,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
     {
 
 
+        [HasCredential(RoleID = "EXAM_HOME")]
         // GET: admin/exams
         public ActionResult Index(string searchString, int page = 1, int pageSize = 10)
         {
@@ -25,6 +26,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(_model);
         }
 
+        [HasCredential(RoleID = "EXAM_DETAIL")]
         // GET: admin/exams/Details/5
         [HttpGet]
         public ActionResult Details(int? id)
@@ -50,8 +52,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             return View(_exam);
         }
 
+
         // GET: admin/exams/Create
         [HttpGet]
+        [HasCredential(RoleID = "EXAM_CREATE")]
         public ActionResult Create()
         {
             SetGradeViewBag();
@@ -66,6 +70,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "EXAM_CREATE")]
         public ActionResult Create(Exam exam)
         {
             if (CheckInputExam(exam))
@@ -108,6 +113,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         }
 
         [HttpGet]
+        [HasCredential(RoleID = "EXAM_EDIT")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -142,6 +148,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "EXAM_EDIT")]
         public ActionResult Edit(Exam exam)
         {
             if (String.IsNullOrEmpty(exam.Titile))
@@ -190,6 +197,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
 
         // GET: admin/exams/Delete/5
         [HttpGet]
+        [HasCredential(RoleID = "EXAM_DELETE")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -207,6 +215,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         // POST: admin/exams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [HasCredential(RoleID = "EXAM_DELETE")]
         public ActionResult DeleteConfirmed(int id)
         {
             Exam exam = new ExamDAO().GetExamById(id);
@@ -269,6 +278,15 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             if (_timeToTakeUser >= _exam.NumberOfTurns)
             {
                 SetAlert("Bạn đã hết lượt làm bài của kỳ thi này.", "error");
+                return Redirect("/");
+            }
+
+            if (_exam.ToDate < DateTime.Now)
+            {
+                SetAlert("Kỳ thi đã hết hạn.", "error");
+                _exam.Status = false;
+                new ExamDAO().UpdateStatus(_exam);
+
                 return Redirect("/");
             }
 

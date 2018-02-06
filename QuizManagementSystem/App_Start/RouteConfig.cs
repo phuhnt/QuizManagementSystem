@@ -21,6 +21,13 @@ namespace QuizManagementSystem
               namespaces: new[] { "QuizManagementSystem.Areas.admin.Controllers" }
             );
 
+            //routes.MapRoute(
+            //  name: "End The Test",
+            //  url: "ky-thi-{id}/ket-qua",
+            //  defaults: new { controller = "exams", action = "StartTheTest", id = UrlParameter.Optional },
+            //  namespaces: new[] { "QuizManagementSystem.Areas.admin.Controllers" }
+            //);
+
             routes.MapRoute(
               name: "Admin Login",
               url: "admin/dang-nhap",

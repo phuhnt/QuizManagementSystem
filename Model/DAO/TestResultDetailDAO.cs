@@ -55,7 +55,7 @@ namespace Model.DAO
                                     x.Exam.Subject.Name.Contains(searchString));
             }
 
-            return model.OrderByDescending(x => x.ActualTestDate).ToPagedList(page, pageSize);
+            return model.OrderByDescending(x => x.Id).ToPagedList(page, pageSize);
         }
     }
 }

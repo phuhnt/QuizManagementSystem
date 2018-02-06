@@ -55,7 +55,6 @@ namespace Model.EF
         public DateTime? ModifiedDate { get; set; }
 
         public bool? Status { get; set; }
-
         [NotMapped]
         public int[] SelectedClassID { get; set; }
 

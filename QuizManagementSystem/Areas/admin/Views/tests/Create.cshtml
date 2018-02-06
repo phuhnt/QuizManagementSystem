@@ -61,6 +61,23 @@
                 });  
             });
         });
+
+        $(document).ready(function () {
+            $('#FixedOrChanged').change(function () {
+                var value = $(this).val();
+               
+                if (@ConstantVariable.FixedQuiz == value)
+                {
+                    document.getElementById("MixQuiz").disabled = true;
+                    document.getElementById("MixAnswer").disabled = true;
+                }
+                else
+                {
+                    document.getElementById("MixQuiz").disabled = false;
+                    document.getElementById("MixAnswer").disabled = false;
+                }
+            });
+        });
     </script>
 
 }
@@ -124,7 +141,7 @@
             </div>
         </div>
         <div class="form-group">
-            @Html.Label("Câu hỏi của mỗi đề", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("Câu hỏi của mỗi đề", htmlAttributes: new { @class = "control-label col-md-2", @id = "FixedOrChanged" })
             <div class="col-md-10">
                 @Html.DropDownList("FixedOrChanged", new List<SelectListItem>
                    {
@@ -135,13 +152,13 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" >
             @Html.Label("Trộn đề & câu hỏi", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixQuiz, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi <br />
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAnswer, new { htmlAttributes = new { @class = "form-control" } }) Trộn đáp án <br />
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAll, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi và đáp án <br />
-                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.NoMix, new { htmlAttributes = new { @class = "form-control" } }) Không trộn <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixQuiz, new { htmlAttributes = new { @class = "form-control", @id = "MixQuiz" } }) Trộn câu hỏi <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAnswer, new { htmlAttributes = new { @class = "form-control", @id = "MixAnswer" } }) Trộn đáp án <br />
+                @*@Html.RadioButtonFor(model => model.Mix, ConstantVariable.MixAll, new { htmlAttributes = new { @class = "form-control" } }) Trộn câu hỏi và đáp án <br />
+                @Html.RadioButtonFor(model => model.Mix, ConstantVariable.NoMix, new { htmlAttributes = new { @class = "form-control" } }) Không trộn <br />*@
                 @Html.ValidationMessageFor(model => model.Mix, "", new { @class = "text-danger" })
             </div>
         </div>

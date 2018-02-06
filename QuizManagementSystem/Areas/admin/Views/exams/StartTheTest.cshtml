@@ -2,7 +2,7 @@
 @using PagedList.Mvc;
 @using Model.DAO;
 @using QuizManagementSystem.Common;
-
+@using Model.EF;
 @model Model.EF.Test
 
 @{
@@ -163,48 +163,102 @@
             @Html.HiddenFor(x => x.CodeTest)
             @Html.HiddenFor(x => x.ExamID)
 
-            @for (int i = 1; i <= quizList.Count; i++)
-            {
+            @{
+                List<Question> quizListIndex = new List<Question>();
 
-                char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
-                string[] _answer = null;
-                <input type="checkbox" id="@i" data-toggle="tooltip" title="Đánh dấu câu hỏi này" /><strong id="@i">Câu @i: </strong>
-                @Html.Raw(quizList[i - 1].ContentQuestion);
-                if (Model.MixAnswer == true)
+                if (Model.MixQuiz == true)
                 {
-                    string _pattern = "<" + Model.CodeTest.ToString() + ">";
-                    int startIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
-                    _pattern = "</" + _pattern.Substring(1);
-                    int endIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
-                    var _mixAnswer = quizList[i - 1].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
-
-                    _answer = System.Text.RegularExpressions.Regex.Split(Encode.StripCodeTestTag(_mixAnswer), "\r\n");
-                    int index = 0;
-                    for (int j = 0; j < _answer.Length; j++)
+                    int _min = 1000;
+                    for (int p = 0; p < quizList.Count; p++)
                     {
-                        if (!string.IsNullOrEmpty(_answer[j]) && _answer[j].Contains(Alphabet[index] + ". "))
-                        {
-                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(Encode.StripPTag(_answer[j].ToString()))<br>
-                            index++;
-                        }
+                        string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                        int startIndex = quizList[p].MixQuiz.IndexOf(_pattern);
+                        _pattern = "</" + _pattern.Substring(1);
+                        int endIndex = quizList[p].MixQuiz.IndexOf(_pattern);
 
+                        var _mixQuizCurr = quizList[p].MixQuiz.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                        var indexCurr = int.Parse(Encode.StripCodeTestTag(_mixQuizCurr));
+
+                        if (indexCurr == 0)
+                        {
+                            _min = 0;
+                            quizListIndex.Add(quizList[p]);
+                            break;
+                        }
                     }
-                    <hr />
+                    int count = 1;
+                    do
+                    {
+                        for (int t = 0; t < quizList.Count; t++)
+                        {
+                            string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                            int startIndex = quizList[t].MixQuiz.IndexOf(_pattern);
+                            _pattern = "</" + _pattern.Substring(1);
+                            int endIndex = quizList[t].MixQuiz.IndexOf(_pattern);
+
+                            var _mixQuiz = quizList[t].MixQuiz.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                            var index = int.Parse(Encode.StripCodeTestTag(_mixQuiz));
+
+                            if (index == (_min + 1))
+                            {
+                                count++;
+                                _min = index;
+                                quizListIndex.Add(quizList[t]);
+                            }
+                        }
+                    } while (count < quizList.Count);
                 }
                 else
                 {
-                    _answer = System.Text.RegularExpressions.Regex.Split(quizList[i - 1].AnswerText, "\r\n");
-                    int index = 0;
-                    for (int j = 0; j < _answer.Length; j++)
-                    {
-                        if (!string.IsNullOrEmpty(_answer[j]))
-                        {
-                            <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
-                            index++;
-                        }
+                    quizListIndex = quizList.ToList();
+                }
 
+                for (int i = 1; i <= quizListIndex.Count; i++)
+                {
+
+                    char[] Alphabet = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+                    string[] _answer = null;
+                    <input type="checkbox" id="@i" data-toggle="tooltip" title="Đánh dấu câu hỏi này" /><strong id="@i">Câu @i: </strong>
+                    @*@Html.Raw(quizList[i - 1].ContentQuestion);*@
+
+                    @Html.Raw(quizListIndex[i - 1].ContentQuestion);
+
+                    if (Model.MixAnswer == true)
+                    {
+                        string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                        int startIndex = quizListIndex[i - 1].MixAnswer.IndexOf(_pattern);
+                        _pattern = "</" + _pattern.Substring(1);
+                        int endIndex = quizListIndex[i - 1].MixAnswer.IndexOf(_pattern);
+                        var _mixAnswer = quizListIndex[i - 1].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+
+                        _answer = System.Text.RegularExpressions.Regex.Split(Encode.StripCodeTestTag(_mixAnswer), "\r\n");
+                        int index = 0;
+                        for (int j = 0; j < _answer.Length; j++)
+                        {
+                            if (!string.IsNullOrEmpty(_answer[j]) && _answer[j].Contains(Alphabet[index] + ". "))
+                            {
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(Encode.StripPTag(_answer[j].ToString()))<br>
+                                index++;
+                            }
+
+                        }
+                        <hr />
                     }
-                    <hr />
+                    else
+                    {
+                        _answer = System.Text.RegularExpressions.Regex.Split(quizListIndex[i - 1].AnswerText, "\r\n");
+                        int index = 0;
+                        for (int j = 0; j < _answer.Length; j++)
+                        {
+                            if (!string.IsNullOrEmpty(_answer[j]))
+                            {
+                                <input type="radio" name="UserAnswer[@(i-1)]" value="@Alphabet[index]" /> @Html.Raw(QuizManagementSystem.Common.Encode.StripPTag(_answer[j].ToString()))<br>
+                                index++;
+                            }
+
+                        }
+                        <hr />
+                    }
                 }
             }
         </div>

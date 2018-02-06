@@ -1,5 +1,6 @@
 ﻿@using Model.DAO;
 @using QuizManagementSystem.Common;
+@using Model.EF;
 
 @model Model.EF.Test
 
@@ -88,25 +89,78 @@
                     @{
                         var quizList = new TestDAO().GetAllQuiz(Model.Id);
 
-                        for (int i = 1; i <= quizList.Count; i++)
+                        List<Question> quizListIndex = new List<Question>();
+
+                        if (Model.MixQuiz == true)
                         {
-                            @Html.Raw("<strong>Câu " + @i + "</strong>: " + quizList[i - 1].ContentQuestion);
+                            int _min = 1000;
+                            for (int p = 0; p < quizList.Count; p++)
+                            {
+                                string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                                int startIndex = quizList[p].MixQuiz.IndexOf(_pattern);
+                                _pattern = "</" + _pattern.Substring(1);
+                                int endIndex = quizList[p].MixQuiz.IndexOf(_pattern);
+
+                                var _mixQuizCurr = quizList[p].MixQuiz.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                                var indexCurr = int.Parse(Encode.StripCodeTestTag(_mixQuizCurr));
+
+                                if (indexCurr == 0)
+                                {
+                                    _min = 0;
+                                    quizListIndex.Add(quizList[p]);
+                                    break;
+                                }
+                            }
+                            int count = 1;
+                            do
+                            {
+                                for (int t = 0; t < quizList.Count; t++)
+                                {
+                                    string _pattern = "<" + Model.CodeTest.ToString() + ">";
+                                    int startIndex = quizList[t].MixQuiz.IndexOf(_pattern);
+                                    _pattern = "</" + _pattern.Substring(1);
+                                    int endIndex = quizList[t].MixQuiz.IndexOf(_pattern);
+
+                                    var _mixQuiz = quizList[t].MixQuiz.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                                    var index = int.Parse(Encode.StripCodeTestTag(_mixQuiz));
+
+                                    if (index == (_min + 1))
+                                    {
+                                        count++;
+                                        _min = index;
+                                        quizListIndex.Add(quizList[t]);
+                                    }
+                                }
+                            } while (count < quizList.Count);
+                        }
+                        else
+                        {
+                            quizListIndex = quizList.ToList();
+                        }
+
+                        for (int k = 0; k < quizListIndex.Count; k++)
+                        {
+                            var c = k + 1;
+                            @Html.Raw("<strong>Câu " + c + "</strong>: " + quizListIndex[k].ContentQuestion);
+
+                            // Đáp án
                             if (Model.MixAnswer == true)
                             {
                                 string _pattern = "<" + Model.CodeTest.ToString() + ">";
-                                int startIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
+                                int startIndex = quizListIndex[k].MixAnswer.IndexOf(_pattern);
                                 _pattern = "</" + _pattern.Substring(1);
-                                int endIndex = quizList[i - 1].MixAnswer.IndexOf(_pattern);
-                                
-                                var _mixAnswer = quizList[i - 1].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
+                                int endIndex = quizListIndex[k].MixAnswer.IndexOf(_pattern);
+
+                                var _mixAnswer = quizListIndex[k].MixAnswer.Substring(startIndex, endIndex + _pattern.Length - startIndex);
                                 @Html.Raw(Encode.StripCodeTestTag(_mixAnswer));
                             }
                             else
                             {
-                                @Html.Raw(quizList[i - 1].AnswerText);
+                                @Html.Raw(quizListIndex[k].AnswerText);
                             }
                             <br />
                         }
+
                     }
                 </td>
             </tr>

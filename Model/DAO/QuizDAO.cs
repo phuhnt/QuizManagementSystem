@@ -63,6 +63,16 @@ namespace Model.DAO
             return true;
         }
 
+        public bool UpdateMixQuiz(Question question)
+        {
+            var _quizCurrent = GetById(question.Id);
+
+            _quizCurrent.MixQuiz = question.MixQuiz;
+
+            db.SaveChanges();
+            return true;
+        }
+
         // Delete
         public bool Delete(Question quiz)
         {

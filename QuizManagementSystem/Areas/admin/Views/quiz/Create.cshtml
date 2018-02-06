@@ -19,6 +19,22 @@
 
     <script>
         $(document).ready(function () {
+            var grades = $('#GradeID');
+
+            $('#SchoolYearID').change(function () {
+                var id = $(this).val();
+                $('#GradeID').html(null);
+                $.getJSON("/admin/tests/FillGrades", { schoolyearId: id }, function (data) {
+                    grades.append($('<option></option>').val("0").text(""));
+                    $.each(data, function (i, item) {
+                        grades.append($('<option></option>').val(item.Value).text(item.Text));
+                    });
+                });
+            });
+        });
+
+
+        $(document).ready(function () {
             var subj = $('#SubjectsID');
 
             $('#GradeID').change(function () {
@@ -103,6 +119,13 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
+            @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SchoolYearID", null, "--- Chọn ---", htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
+            </div>
+        </div>
+
+        <div class="form-group">
             @Html.Label("Khối lớp", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("GradeID", null, "--- Chọn ---", htmlAttributes: new { @class = "form-control", @id = "GradeID" })
@@ -144,7 +167,7 @@
         <div class="form-group">
             @Html.Label("Ghi chú", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control"}})
+                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -171,10 +194,10 @@
             @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Status", new List<SelectListItem>
-                                           {
-                                               new SelectListItem{ Text = "Hoạt động", Value = "True"},
-                                               new SelectListItem{ Text = "Không hoạt động", Value = "False"}
-                                           }, new { @class = "form-control" })
+                                       {
+                                           new SelectListItem{ Text = "Hoạt động", Value = "True"},
+                                           new SelectListItem{ Text = "Không hoạt động", Value = "False"}
+                                       }, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
         </div>

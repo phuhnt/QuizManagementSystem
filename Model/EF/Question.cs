@@ -1,4 +1,4 @@
-﻿namespace Model.EF
+namespace Model.EF
 {
     using System;
     using System.Collections.Generic;
@@ -34,6 +34,8 @@
         [MaxLength]
         public string ContentQuestionEncode { get; set; }
 
+        public string MixQuiz { get; set; }
+
         public int? AnswerChoiceNum { get; set; }
 
         [MaxLength]
@@ -43,19 +45,19 @@
         public string AnswerTextEncode { get; set; }
 
         [MaxLength]
-        public string MixAnswer { get; set; }  // Đảo đáp án
+        public string MixAnswer { get; set; }
 
         [StringLength(128)]
         public string KeyAnswer { get; set; }
 
         [StringLength(128)]
-        public string MixKeyAnswer { get; set; } //Đảo key đáp án
-
+        public string MixKeyAnswer { get; set; }
         [NotMapped]
         public List<string> AnswerList { get; set; }
 
         [NotMapped]
         public List<string> AnswerKey { get; set; }
+
         public int? UserID { get; set; }
 
         public DateTime? DateCreated { get; set; }

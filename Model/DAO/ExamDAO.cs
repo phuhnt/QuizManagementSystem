@@ -58,8 +58,31 @@ namespace Model.DAO
 
         public bool Update(Exam exam)
         {
+            var _exam = db.Exams.Find(exam.Id);      
+
+            _exam.Titile = exam.Titile;
+            _exam.Note = exam.Note;
+            _exam.NoteEncode = exam.NoteEncode;
+            _exam.SubjectID = exam.SubjectID;
+            _exam.NumberOfTurns = exam.NumberOfTurns;
+            _exam.FromDate = exam.FromDate;
+            _exam.ToDate = exam.ToDate;
+            _exam.StartTime = exam.StartTime;
+            _exam.EndTime = exam.EndTime;
+            _exam.ModifiedBy = exam.ModifiedBy;
+            _exam.ModifiedDate = exam.ModifiedDate;
+            _exam.Status = exam.Status;
+
+            db.SaveChanges();
+            return true;
+        }
+
+        public bool UpdateStatus(Exam exam)
+        {
             var _exam = db.Exams.Find(exam.Id);
-            db.Entry(_exam).CurrentValues.SetValues(exam);
+
+            _exam.Status = exam.Status;
+
             db.SaveChanges();
             return true;
         }
@@ -199,7 +222,8 @@ namespace Model.DAO
 
         public List<Exam> GetAllExamActive()
         {
-            return db.Exams.Where(x => x.Status == true).ToList();
+            var model = db.Exams.Where(x => x.Status == true);
+            return model.OrderByDescending(x => x.Id).ToList();
         }
 
     }
