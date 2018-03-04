@@ -27,6 +27,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
         [HttpGet]
         public ActionResult Create()
         {
+            SetSchoolYearViewBag();
             SetGradeViewBag();
             SetClassViewBag();
             SetGroupIDViewBag();
@@ -68,6 +69,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     }
                 }
             }
+            SetSchoolYearViewBag();
             SetGradeViewBag();
             SetClassViewBag();
             SetGroupIDViewBag();
@@ -96,7 +98,8 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             _user.ConfirmPasswordHash = null;
             var _class = new ClassDAO().GetClassById(_user.ClassID);
             var _grade = new GradeDAO().GetByClass(_class);
-            
+
+            SetSchoolYearViewBag(_grade.SchoolYearID);
             SetClassViewBag(_user.ClassID);
             SetGradeViewBag(_grade.Id);
             SetGroupIDViewBag(_user.GroupID);
@@ -191,6 +194,7 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             }
             var _class = new ClassDAO().GetClassById(user.ClassID);
             var _grade = new GradeDAO().GetByClass(_class);
+            SetSchoolYearViewBag(_grade.SchoolYearID);
             SetGradeViewBag(_grade.Id);
             SetClassViewBag(user.ClassID);
             SetGroupIDViewBag(user.GroupID);
@@ -335,6 +339,12 @@ namespace QuizManagementSystem.Areas.admin.Controllers
             var listUserGroup = new UserGroupDAO().GetAll();
             //var id = listUserGroup.First(x => x.Id == selectedID);
             ViewBag.GroupID = new SelectList(listUserGroup, "Id", "Name", selectedID);
+        }
+
+        //
+        private void SetSchoolYearViewBag(int? selectedID = null)
+        {
+            ViewBag.SchoolYearID = new SelectList(new SchoolYearDAO().GetAll(), "Id", "NameOfSchoolYear", selectedID);
         }
 
         public JsonResult FillClass(int? gradeId)

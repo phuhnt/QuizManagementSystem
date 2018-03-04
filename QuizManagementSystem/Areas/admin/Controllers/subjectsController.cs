@@ -112,8 +112,9 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                     var _result = new SubjectDAO().Update(subject);
                     if (_result)
                     {
+                        var s = new SubjectDAO().GetSubjectById(subject.Id);
                         SetAlert("Cập nhật thông tin môn học thành công", "success");
-                        new SystemLogDAO().Insert("Cập nhật môn học thành công [" + subject.Name + "] [Năm học: " + subject.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
+                        new SystemLogDAO().Insert("Cập nhật môn học thành công [" + s.Name + "] [Năm học: " + s.Grade.SchoolYear.NameOfSchoolYear + "]", _userSession.UserName, DateTime.Now.TimeOfDay, DateTime.Now.Date, GetIPAddress.GetLocalIPAddress());
                         return Redirect("/admin/subjects/details/" + subject.Id);
                     }
                     else
@@ -122,7 +123,10 @@ namespace QuizManagementSystem.Areas.admin.Controllers
                         return Redirect("/admin/subjects");
                     }
                 }
-            }          
+            }
+            SetGradeViewBag(subject.GradeID);
+            var _grade = new GradeDAO().GetBySubject(subject);
+            SetSchoolYearViewBag(_grade.SchoolYearID);
             return View(subject);
         }
 

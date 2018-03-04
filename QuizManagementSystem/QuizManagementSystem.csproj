@@ -1528,6 +1528,7 @@
     <Content Include="Areas\admin\Views\exams\StartTheTest.cshtml" />
     <Content Include="Areas\admin\Views\exams\ResultDetail.cshtml" />
     <Content Include="Areas\admin\Views\log\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.js" />
     <Content Include="Assets\Login\js\jquery-1.11.1.min.js" />

@@ -44,6 +44,20 @@
     </script>
     <script>
         $(document).ready(function () {
+            var grades = $('#GradeID');
+
+            $('#SchoolYearID').change(function () {
+                var id = $(this).val();
+                $('#GradeID').html(null);
+                $.getJSON("/admin/class/FillGrades", { schoolyearId: id }, function (data) {
+                    $.each(data, function (i, item) {
+                        grades.append($('<option></option>').val(item.Value).text(item.Text));
+                    });
+                });
+            });
+        });
+
+        $(document).ready(function () {
             var classes = $('#ClassID');
 
             $('#GradeID').change(function () {
@@ -78,14 +92,14 @@
         @Html.Label("Ảnh đại diện", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @{
-                if (Model.Avatar != null)
-                {
-                    <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px" />
-                }
-                else
-                {
-                    <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px" />
-                }
+            if (Model.Avatar != null)
+            {
+                <img id="avatar" src="@Model.Avatar" alt="avatar" style="width: 200px; height: 200px" />
+        }
+        else
+        {
+            <img id="avatar" src="~/Data/userdefault.png" alt="avatar" style="width: 200px; height: 200px" />
+    }
             }
 
             @Html.EditorFor(model => model.Avatar, new { htmlAttributes = new { @class = "form-control", @id = "txtImage", @readonly = "readonly" }, id = "txtImage" })
@@ -182,6 +196,12 @@
                 @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div class="form-group">
+            @Html.Label("Năm học", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SchoolYearID", null, "--- Chọn ---", htmlAttributes: new { @class = "form-control", @id = "SchoolYearID" })
+            </div>
+        </div>
 
         <div class="form-group">
             @Html.Label("Khối", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -200,7 +220,7 @@
         <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Cập nhật" class="btn btn-success pull-right" style="width: 100px"/>
+                <input type="submit" value="Cập nhật" class="btn btn-success pull-right" style="width: 100px" />
                 <a class="btn btn-info pull-left" href="/admin/user">Quay lại</a>
             </div>
         </div>

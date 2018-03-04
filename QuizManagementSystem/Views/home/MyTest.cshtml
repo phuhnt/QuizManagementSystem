@@ -108,7 +108,19 @@
                     var tests = new TestDAO().GetAllTestByExam(item);
                     <div class="card card-outline-primary mb-3">
                         <div class="card-body">
-                            <h2 class="card-title card-link"><a href="/admin/exams/startthetest/@item.Id"> @item.Titile</a></h2>
+                            <h2 class="card-title card-link" style="font-family: 'Times New Roman'">
+                                <a href="/admin/exams/startthetest/@item.Id"> @item.Titile</a>
+                                @{
+                                    if (item.Status == true)
+                                    {
+                                        <span class="badge badge-success" style="font-size: 14px">Đang mở</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger" style="font-size: 14px">Đã đóng</span>
+                                    }
+                                }
+                            </h2>
                             <span class="card-text">
                                 <em class="fa fa-book">Môn thi: <strong>@item.Subject.Name</strong></em>
                             </span>
